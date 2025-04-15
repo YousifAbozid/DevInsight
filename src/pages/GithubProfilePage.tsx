@@ -11,6 +11,8 @@ import LanguagePieChart from '../components/LanguagePieChart';
 import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
 import MostStarredRepos from '../components/MostStarredRepos';
+import DeveloperBadges from '../components/DeveloperBadges';
+import { useContributionData } from '../services/githubGraphQLService';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -25,6 +27,9 @@ export default function GithubProfilePage() {
 
   const { data: repositories, isLoading: isReposLoading } =
     useUserRepositories(username);
+
+  const { data: contributionData, isLoading: isContributionLoading } =
+    useContributionData(username, token);
 
   const handleSearch = (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
@@ -61,6 +66,14 @@ export default function GithubProfilePage() {
       ) : user ? (
         <div className="space-y-6">
           <GithubProfileCard user={user} />
+
+          {/* Developer badges */}
+          <DeveloperBadges
+            user={user}
+            repositories={repositories}
+            contributionData={contributionData}
+            loading={isReposLoading || isContributionLoading}
+          />
 
           {/* Most starred repositories */}
           <MostStarredRepos
