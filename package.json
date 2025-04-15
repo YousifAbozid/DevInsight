@@ -1,12 +1,12 @@
 {
-  "name": "template-react-ts",
+  "name": "devinsight",
   "private": true,
   "version": "1.0.0",
-  "description": "React + TypeScript + Vite + Tailwind CSS + ESLint + Prettier + Husky + Lint-Staged Template",
+  "description": "DevInsight - Visual GitHub dashboard for developers to analyze profiles, repositories, languages, and contributions.",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YousifAbozid/template-react-ts.git"
+    "url": "https://github.com/YousifAbozid/DevInsight.git"
   },
   "scripts": {
     "dev": "vite",
