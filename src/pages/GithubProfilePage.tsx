@@ -12,6 +12,7 @@ import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
 import MostStarredRepos from '../components/MostStarredRepos';
 import DeveloperBadges from '../components/DeveloperBadges';
+import PersonalizedSummary from '../components/PersonalizedSummary';
 import { useContributionData } from '../services/githubGraphQLService';
 
 export default function GithubProfilePage() {
@@ -66,6 +67,14 @@ export default function GithubProfilePage() {
       ) : user ? (
         <div className="space-y-6">
           <GithubProfileCard user={user} />
+
+          {/* Personalized Summary */}
+          <PersonalizedSummary
+            user={user}
+            repositories={repositories}
+            contributionData={contributionData}
+            loading={isReposLoading || isContributionLoading}
+          />
 
           {/* Developer badges */}
           <DeveloperBadges
