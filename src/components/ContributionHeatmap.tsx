@@ -31,30 +31,23 @@ export default function ContributionHeatmap({
     ) {
       const tooltipElement = tooltipRef.current;
       const cellRect = hoveredDay.element.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
 
       // Calculate position relative to the container
-      const cellCenterX =
-        cellRect.left + cellRect.width / 2 - containerRect.left;
-      const cellTopY = cellRect.top - containerRect.top;
+      // Use window coordinates instead of container-relative for better positioning
+      const cellCenterX = cellRect.left + cellRect.width / 2;
+      const cellTopY = cellRect.top;
 
       // Position tooltip above the cell by default
       let top = cellTopY - tooltipElement.offsetHeight - 8;
-      let left = cellCenterX - tooltipElement.offsetWidth / 2;
+      const left = cellCenterX - tooltipElement.offsetWidth / 2;
 
-      // Make sure tooltip stays within container bounds
-      if (top < 5) {
+      // Make sure tooltip stays within viewport bounds
+      if (top < 10) {
         // Position below the cell if not enough space above
-        top = cellTopY + cellRect.height + 8;
+        top = cellRect.bottom + 8;
       }
 
-      // Adjust horizontal position if needed
-      if (left < 5) {
-        left = 5;
-      } else if (left + tooltipElement.offsetWidth > containerRect.width - 5) {
-        left = containerRect.width - tooltipElement.offsetWidth - 5;
-      }
-
+      tooltipElement.style.position = 'fixed';
       tooltipElement.style.top = `${top}px`;
       tooltipElement.style.left = `${left}px`;
     }
@@ -181,8 +174,8 @@ export default function ContributionHeatmap({
         </span>
       </div>
 
-      <div className="relative overflow-x-auto pb-2" ref={containerRef}>
-        <div className="grid grid-cols-[auto_repeat(53,1fr)] gap-1 min-w-[700px]">
+      <div className="relative pb-2" ref={containerRef}>
+        <div className="grid grid-cols-[auto_repeat(53,1fr)] gap-1 w-full">
           {/* Month labels */}
           <div className="col-span-1"></div>
           <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
@@ -250,8 +243,7 @@ export default function ContributionHeatmap({
         {hoveredDay && (
           <div
             ref={tooltipRef}
-            className="absolute pointer-events-none bg-l-bg-1 dark:bg-d-bg-1 py-2 px-3 rounded-md shadow-lg border border-border-l dark:border-border-d text-sm z-10 transition-opacity duration-150 opacity-100"
-            style={{ transform: 'translateX(-50%)', marginTop: '-2px' }}
+            className="fixed pointer-events-none bg-l-bg-1 dark:bg-d-bg-1 py-2 px-3 rounded-md shadow-lg border border-border-l dark:border-border-d text-sm z-50 transition-opacity duration-150 opacity-100"
           >
             <div className="font-medium text-l-text-1 dark:text-d-text-1">
               {formatDate(hoveredDay.date)}
@@ -269,8 +261,6 @@ export default function ContributionHeatmap({
                     hoveredDay.count !== 1 ? 's' : ''
                   }`}
             </div>
-            {/* Triangle pointer */}
-            <div className="absolute left-1/2 -mt-4 w-0 h-0 -translate-x-1/2 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-current hidden"></div>
           </div>
         )}
       </div>
