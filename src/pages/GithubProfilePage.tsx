@@ -14,6 +14,7 @@ import MostStarredRepos from '../components/MostStarredRepos';
 import DeveloperBadges from '../components/DeveloperBadges';
 import PersonalizedSummary from '../components/PersonalizedSummary';
 import { useContributionData } from '../services/githubGraphQLService';
+import DevCardGenerator from '../components/DevCardGenerator';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -74,6 +75,14 @@ export default function GithubProfilePage() {
             repositories={repositories}
             contributionData={contributionData}
             loading={isReposLoading || isContributionLoading}
+          />
+
+          {/* Dev Card Generator - NEW */}
+          <DevCardGenerator
+            user={user}
+            repositories={repositories}
+            languageData={languageData}
+            badges={[]}
           />
 
           {/* Developer badges */}
