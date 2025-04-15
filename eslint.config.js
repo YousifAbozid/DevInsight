@@ -15,7 +15,7 @@ export default [
     rules: {
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
-      // 'react/prop-types': 'off',
+
       // Add these rules to catch console.log and no-unused-vars
       'no-console': ['error', { allow: ['warn', 'error'] }],
       '@typescript-eslint/no-unused-vars': 'error',
