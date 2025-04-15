@@ -1,22 +1,39 @@
 import { useState } from 'react';
-import { useGithubUser } from '../services/githubService';
+import {
+  useGithubUser,
+  useUserRepositories,
+  aggregateLanguageData,
+} from '../services/githubService';
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
 import ProfileSkeleton from '../components/ProfileSkeleton';
+import LanguagePieChart from '../components/LanguagePieChart';
+import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
-  const { data: user, isLoading, error, isError } = useGithubUser(username);
+
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    error: userError,
+    isError: isUserError,
+  } = useGithubUser(username);
+
+  const { data: repositories, isLoading: isReposLoading } =
+    useUserRepositories(username);
 
   const handleSearch = (searchUsername: string) => {
     setUsername(searchUsername);
   };
 
-  const errorMessage = isError
-    ? error instanceof Error
-      ? error.message
+  const errorMessage = isUserError
+    ? userError instanceof Error
+      ? userError.message
       : 'An error occurred'
     : null;
+
+  const languageData = repositories ? aggregateLanguageData(repositories) : [];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -29,16 +46,25 @@ export default function GithubProfilePage() {
         </p>
       </div>
 
-      <GithubProfileSearch onSearch={handleSearch} isLoading={isLoading} />
+      <GithubProfileSearch onSearch={handleSearch} isLoading={isUserLoading} />
 
-      {isLoading ? (
+      {isUserLoading ? (
         <ProfileSkeleton />
       ) : errorMessage ? (
         <div className="bg-accent-danger/10 border-l-4 border-accent-danger p-4 rounded">
           <p className="text-accent-danger">{errorMessage}</p>
         </div>
       ) : user ? (
-        <GithubProfileCard user={user} />
+        <div className="space-y-6">
+          <GithubProfileCard user={user} />
+
+          {/* Language pie chart */}
+          {isReposLoading ? (
+            <LanguageChartSkeleton />
+          ) : (
+            <LanguagePieChart data={languageData} loading={isReposLoading} />
+          )}
+        </div>
       ) : (
         <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d text-center">
           <p className="text-l-text-2 dark:text-d-text-2">
