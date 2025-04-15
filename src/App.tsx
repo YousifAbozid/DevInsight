@@ -1,5 +1,5 @@
 import ThemeToggle from './components/ThemeToggle';
-import GithubProfilePage from './features/github-profile/GithubProfilePage';
+import GithubProfilePage from './pages/GithubProfilePage';
 
 function App() {
   return (
