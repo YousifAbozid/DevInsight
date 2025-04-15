@@ -9,9 +9,11 @@ import GithubProfileSearch from '../components/GithubProfileSearch';
 import ProfileSkeleton from '../components/ProfileSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
 import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
+import ContributionHeatmap from '../components/ContributionHeatmap';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
+  const [token, setToken] = useState<string | undefined>();
 
   const {
     data: user,
@@ -23,8 +25,9 @@ export default function GithubProfilePage() {
   const { data: repositories, isLoading: isReposLoading } =
     useUserRepositories(username);
 
-  const handleSearch = (searchUsername: string) => {
+  const handleSearch = (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
+    setToken(accessToken);
   };
 
   const errorMessage = isUserError
@@ -63,6 +66,11 @@ export default function GithubProfilePage() {
             <LanguageChartSkeleton />
           ) : (
             <LanguagePieChart data={languageData} loading={isReposLoading} />
+          )}
+
+          {/* Contribution heatmap */}
+          {username && (
+            <ContributionHeatmap username={username} token={token} />
           )}
         </div>
       ) : (
