@@ -10,6 +10,7 @@ import ProfileSkeleton from '../components/ProfileSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
 import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
+import MostStarredRepos from '../components/MostStarredRepos';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -60,6 +61,12 @@ export default function GithubProfilePage() {
       ) : user ? (
         <div className="space-y-6">
           <GithubProfileCard user={user} />
+
+          {/* Most starred repositories */}
+          <MostStarredRepos
+            repositories={repositories}
+            loading={isReposLoading}
+          />
 
           {/* Language pie chart */}
           {isReposLoading ? (
