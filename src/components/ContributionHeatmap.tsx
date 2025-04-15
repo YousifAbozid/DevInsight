@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useContributionData } from '../services/githubGraphQLService';
 
 interface ContributionHeatmapProps {
@@ -13,11 +13,52 @@ export default function ContributionHeatmap({
   const [hoveredDay, setHoveredDay] = useState<{
     date: string;
     count: number;
-    x: number;
-    y: number;
+    element: HTMLElement | null;
   } | null>(null);
 
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const { data, isLoading, error } = useContributionData(username, token);
+
+  // Update tooltip position when hoveredDay changes
+  useEffect(() => {
+    if (
+      hoveredDay &&
+      hoveredDay.element &&
+      tooltipRef.current &&
+      containerRef.current
+    ) {
+      const tooltipElement = tooltipRef.current;
+      const cellRect = hoveredDay.element.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      // Calculate position relative to the container
+      const cellCenterX =
+        cellRect.left + cellRect.width / 2 - containerRect.left;
+      const cellTopY = cellRect.top - containerRect.top;
+
+      // Position tooltip above the cell by default
+      let top = cellTopY - tooltipElement.offsetHeight - 8;
+      let left = cellCenterX - tooltipElement.offsetWidth / 2;
+
+      // Make sure tooltip stays within container bounds
+      if (top < 5) {
+        // Position below the cell if not enough space above
+        top = cellTopY + cellRect.height + 8;
+      }
+
+      // Adjust horizontal position if needed
+      if (left < 5) {
+        left = 5;
+      } else if (left + tooltipElement.offsetWidth > containerRect.width - 5) {
+        left = containerRect.width - tooltipElement.offsetWidth - 5;
+      }
+
+      tooltipElement.style.top = `${top}px`;
+      tooltipElement.style.left = `${left}px`;
+    }
+  }, [hoveredDay]);
 
   if (!token) {
     return (
@@ -116,18 +157,15 @@ export default function ContributionHeatmap({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Handle tooltip position
+  // Handle day hover
   const handleDayHover = (
     day: { date: string; contributionCount: number },
     event: React.MouseEvent
   ) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-
     setHoveredDay({
       date: day.date,
       count: day.contributionCount,
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      element: event.currentTarget as HTMLElement,
     });
   };
 
@@ -143,7 +181,7 @@ export default function ContributionHeatmap({
         </span>
       </div>
 
-      <div className="relative overflow-x-auto pb-2">
+      <div className="relative overflow-x-auto pb-2" ref={containerRef}>
         <div className="grid grid-cols-[auto_repeat(53,1fr)] gap-1 min-w-[700px]">
           {/* Month labels */}
           <div className="col-span-1"></div>
@@ -188,9 +226,10 @@ export default function ContributionHeatmap({
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-3 h-3 rounded-sm ${colorClass} hover:ring-1 hover:ring-l-text-2 dark:hover:ring-d-text-2 transition-all`}
+                        className={`w-3 h-3 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all relative`}
                         onMouseEnter={e => handleDayHover(day, e)}
                         onMouseLeave={() => setHoveredDay(null)}
+                        aria-label={`${formatDate(day.date)}: ${day.contributionCount} contributions`}
                       ></div>
                     );
                   }
@@ -207,25 +246,31 @@ export default function ContributionHeatmap({
           </div>
         </div>
 
-        {/* Tooltip */}
+        {/* Enhanced Tooltip */}
         {hoveredDay && (
           <div
-            className="absolute pointer-events-none bg-l-bg-1 dark:bg-d-bg-1 p-2 rounded shadow-md border border-border-l dark:border-border-d text-xs z-10"
-            style={{
-              left: `${hoveredDay.x + 10}px`,
-              top: `${hoveredDay.y - 40}px`,
-              transform:
-                hoveredDay.x > 650 ? 'translateX(-100%)' : 'translateX(0)',
-            }}
+            ref={tooltipRef}
+            className="absolute pointer-events-none bg-l-bg-1 dark:bg-d-bg-1 py-2 px-3 rounded-md shadow-lg border border-border-l dark:border-border-d text-sm z-10 transition-opacity duration-150 opacity-100"
+            style={{ transform: 'translateX(-50%)', marginTop: '-2px' }}
           >
             <div className="font-medium text-l-text-1 dark:text-d-text-1">
               {formatDate(hoveredDay.date)}
             </div>
-            <div className="text-l-text-2 dark:text-d-text-2">
+            <div
+              className={`text-center font-bold mt-1 ${
+                hoveredDay.count > 0
+                  ? 'text-accent-success'
+                  : 'text-l-text-3 dark:text-d-text-3'
+              }`}
+            >
               {hoveredDay.count === 0
                 ? 'No contributions'
-                : `${hoveredDay.count} contribution${hoveredDay.count !== 1 ? 's' : ''}`}
+                : `${hoveredDay.count} contribution${
+                    hoveredDay.count !== 1 ? 's' : ''
+                  }`}
             </div>
+            {/* Triangle pointer */}
+            <div className="absolute left-1/2 -mt-4 w-0 h-0 -translate-x-1/2 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-current hidden"></div>
           </div>
         )}
       </div>
