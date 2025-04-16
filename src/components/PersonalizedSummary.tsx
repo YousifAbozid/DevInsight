@@ -336,6 +336,26 @@ function generateInsights(
     });
   }
 
+  // Account type insights
+  if (user.type && user.type !== 'User') {
+    insights.push({
+      text: `Account type: ${user.type}`,
+      subtext: `This is a special GitHub account with additional capabilities.`,
+      icon: ShieldIcon,
+      iconBg: 'bg-accent-2',
+    });
+  }
+
+  // Account status insights for staff
+  if (user.site_admin) {
+    insights.push({
+      text: `GitHub Staff Member!`,
+      subtext: `This user works at GitHub and has administrative privileges.`,
+      icon: StarIcon,
+      iconBg: 'bg-accent-warning',
+    });
+  }
+
   // Followers milestone
   if (user.followers > 0) {
     let followerMilestone = '';
@@ -601,6 +621,23 @@ function UsersIcon({ className }: { className?: string }) {
       className={className}
     >
       <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+    </svg>
+  );
+}
+
+function ShieldIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+    >
+      <path
+        fillRule="evenodd"
+        d="M12 2.25c.2 0 .398.05.577.146l7.5 3.75a.75.75 0 0 1 .423.674v6.75c0 4.95-3.5 8.75-8 9.75a.75.75 0 0 1-.346 0c-4.5-1-8-4.8-8-9.75V6.82a.75.75 0 0 1 .423-.674l7.5-3.75A1.25 1.25 0 0 1 12 2.25Zm0 1.5-7.5 3.75v6.375c0 4.35 3.05 7.75 7.5 8.625 4.45-.875 7.5-4.275 7.5-8.625V7.5L12 3.75Z"
+        clipRule="evenodd"
+      />
     </svg>
   );
 }
