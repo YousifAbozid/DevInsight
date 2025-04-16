@@ -112,7 +112,11 @@ export default function DevCardGenerator({
 
       // Get theme colors
       const theme = themeColors[selectedTheme];
-      const colors = darkMode && 'dark' in theme ? theme.dark : theme;
+      // Fix: Make sure we have access to accentColor even in dark mode
+      const colors =
+        darkMode && 'dark' in theme
+          ? { ...theme.dark, accentColor: theme.accentColor }
+          : theme;
 
       // Draw background
       ctx.fillStyle = colors.cardBg;
