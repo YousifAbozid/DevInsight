@@ -68,28 +68,32 @@ export default function GithubProfilePage() {
         </div>
       ) : user ? (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          {/* Improved Profile Card with Integrated Public Link */}
+          <div className="relative">
             <GithubProfileCard user={user} />
             <Link
               to={`/${user.login}`}
-              className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-l-text-inv dark:text-d-text-inv rounded-lg flex items-center gap-2 transition-colors"
+              className="absolute top-4 right-4 bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:text-accent-2 p-2 rounded-full border border-border-l dark:border-border-d hover:border-accent-1 group transition-all"
+              title="View Public Profile"
+              aria-label="View Public Profile"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="transition-transform group-hover:scale-110"
               >
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <line x1="10" y1="14" x2="21" y2="3"></line>
               </svg>
-              View Public Profile
+              <span className="sr-only">View Public Profile</span>
             </Link>
           </div>
 
