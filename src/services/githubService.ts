@@ -19,7 +19,9 @@ export const fetchGithubUser = async (
     throw new Error('Failed to fetch user data');
   }
 
-  return await response.json();
+  const userData = await response.json();
+  console.warn('GitHub User API Response:', userData);
+  return userData;
 };
 
 export const useGithubUser = (username: string) => {
@@ -53,7 +55,9 @@ export const fetchUserRepositories = async (
     throw new Error('Failed to fetch repositories');
   }
 
-  return await response.json();
+  const reposData = await response.json();
+  console.warn('GitHub Repositories API Response:', reposData);
+  return reposData;
 };
 
 export const useUserRepositories = (username: string) => {
@@ -111,3 +115,61 @@ export const aggregateLanguageData = (repos: Repository[]): LanguageData[] => {
     }))
     .sort((a, b) => b.value - a.value);
 };
+
+/**
+ * Saves GitHub API response data as a downloadable JSON file
+ */
+export function saveResponseAsJson(
+  data: object,
+  filename = 'github-data.json'
+): void {
+  // Create a Blob with the JSON data
+  const jsonString = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+
+  // Create a URL for the blob
+  const url = URL.createObjectURL(blob);
+
+  // Create a download link
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+  downloadLink.download = filename;
+
+  // Append to the document, trigger click, and remove
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+
+  // Clean up the URL object
+  URL.revokeObjectURL(url);
+
+  console.warn(`Data saved as ${filename}`);
+}
+
+/**
+ * Helper function to save user data to a file
+ */
+export function saveUserData(userData: GithubUser): void {
+  saveResponseAsJson(userData, `${userData.login}-user-data.json`);
+}
+
+/**
+ * Helper function to save repositories data to a file
+ */
+export function saveRepositoriesData(
+  username: string,
+  repositories: Repository[]
+): void {
+  saveResponseAsJson(repositories, `${username}-repositories.json`);
+}
+
+/**
+ * Helper function to save all GitHub data to files
+ */
+export function saveAllGithubData(
+  userData: GithubUser,
+  repositories: Repository[]
+): void {
+  saveUserData(userData);
+  saveRepositoriesData(userData.login, repositories);
+}
