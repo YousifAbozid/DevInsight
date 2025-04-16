@@ -1,14 +1,23 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 interface GithubProfileCardProps {
   user: GithubUser;
   publicProfileUrl?: string;
+  onSaveUserData?: () => void;
+  onSaveReposData?: () => void;
+  hasRepositories?: boolean;
 }
 
 export default function GithubProfileCard({
   user,
   publicProfileUrl,
+  onSaveUserData,
+  onSaveReposData,
+  hasRepositories = false,
 }: GithubProfileCardProps) {
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
@@ -19,7 +28,95 @@ export default function GithubProfileCard({
   };
 
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d relative">
+      {/* Save Options Dropdown */}
+      {(onSaveUserData || onSaveReposData) && (
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="p-2 rounded-full hover:bg-l-bg-1 dark:hover:bg-d-bg-1 transition-colors cursor-pointer"
+            title="Save options"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-l-text-2 dark:text-d-text-2"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="19" cy="12" r="1"></circle>
+              <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+          </button>
+
+          {showDropdown && (
+            <div className="absolute right-0 mt-1 w-48 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg shadow-lg border border-border-l dark:border-border-d z-10">
+              <div className="py-1">
+                {onSaveUserData && (
+                  <button
+                    onClick={() => {
+                      onSaveUserData();
+                      setShowDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Save user data
+                  </button>
+                )}
+
+                {onSaveReposData && hasRepositories && (
+                  <button
+                    onClick={() => {
+                      onSaveReposData();
+                      setShowDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Save repos data
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <div className="relative">
           <img

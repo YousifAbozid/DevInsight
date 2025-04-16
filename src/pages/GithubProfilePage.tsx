@@ -70,60 +70,15 @@ export default function GithubProfilePage() {
         </div>
       ) : user ? (
         <div className="space-y-6">
-          <div className="flex justify-between items-start">
-            <GithubProfileCard
-              user={user}
-              publicProfileUrl={`/${user.login}`}
-            />
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => saveUserData(user)}
-                className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1 cursor-pointer"
-                title="Save user data as JSON"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Save user data
-              </button>
-              {repositories && (
-                <button
-                  onClick={() => saveRepositoriesData(user.login, repositories)}
-                  className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1 cursor-pointer"
-                  title="Save repositories data as JSON"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  Save repos data
-                </button>
-              )}
-            </div>
-          </div>
+          <GithubProfileCard
+            user={user}
+            publicProfileUrl={`/${user.login}`}
+            onSaveUserData={() => saveUserData(user)}
+            onSaveReposData={() =>
+              repositories && saveRepositoriesData(user.login, repositories)
+            }
+            hasRepositories={!!repositories && repositories.length > 0}
+          />
 
           {/* Personalized Summary */}
           <PersonalizedSummary
