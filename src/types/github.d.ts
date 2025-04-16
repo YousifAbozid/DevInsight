@@ -9,6 +9,7 @@ interface GithubUser {
   location: string | null;
   email: string | null;
   bio: string | null;
+  hireable: boolean;
   twitter_username: string | null;
   public_repos: number;
   public_gists: number;

@@ -1,8 +1,14 @@
+import { Link } from 'react-router-dom';
+
 interface GithubProfileCardProps {
   user: GithubUser;
+  publicProfileUrl?: string;
 }
 
-export default function GithubProfileCard({ user }: GithubProfileCardProps) {
+export default function GithubProfileCard({
+  user,
+  publicProfileUrl,
+}: GithubProfileCardProps) {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
@@ -13,35 +19,54 @@ export default function GithubProfileCard({ user }: GithubProfileCardProps) {
   };
 
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
-      <div className="flex flex-col sm:flex-row gap-6">
-        {/* Profile Header */}
-        <div className="flex-shrink-0">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+        <div className="relative">
           <img
             src={user.avatar_url}
-            alt={`${user.login}'s profile`}
-            className="w-24 h-24 rounded-full border-2 border-accent-1"
+            alt={`${user.login}'s avatar`}
+            className="w-24 h-24 rounded-full border-4 border-accent-1"
           />
+          {user.hireable && (
+            <span className="absolute bottom-0 right-0 bg-accent-success text-white text-xs px-1 py-0.5 rounded-md">
+              Hireable
+            </span>
+          )}
         </div>
+        <div className="flex-1 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+            <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
+              {user.name || user.login}
+            </h2>
 
-        <div className="flex-grow">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
-                {user.name || user.login}
-              </h2>
-              <a
-                href={user.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent-1 hover:underline"
+            {/* Public profile link */}
+            {publicProfileUrl && (
+              <Link
+                to={publicProfileUrl}
+                className="mt-2 sm:mt-0 text-sm flex items-center gap-1 text-accent-1 hover:text-accent-2 transition-colors"
+                title="View Public Profile"
               >
-                @{user.login}
-              </a>
-            </div>
-            <div className="text-l-text-3 dark:text-d-text-3 text-sm">
-              Joined {formatDate(user.created_at)}
-            </div>
+                <span>View Public Profile</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </Link>
+            )}
+          </div>
+          <div className="text-l-text-3 dark:text-d-text-3 text-sm">
+            Joined {formatDate(user.created_at)}
           </div>
 
           {user.bio && (
