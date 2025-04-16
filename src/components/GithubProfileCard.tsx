@@ -27,6 +27,54 @@ export default function GithubProfileCard({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Calculate account age in years and months
+  const calculateAccountAge = () => {
+    const joinDate = new Date(user.created_at);
+    const now = new Date();
+
+    const yearDiff = now.getFullYear() - joinDate.getFullYear();
+    const monthDiff = now.getMonth() - joinDate.getMonth();
+
+    if (monthDiff < 0) {
+      return {
+        years: yearDiff - 1,
+        months: monthDiff + 12,
+      };
+    }
+
+    return {
+      years: yearDiff,
+      months: monthDiff,
+    };
+  };
+
+  // Calculate next GitHub anniversary
+  const calculateNextAnniversary = () => {
+    // const joinDate = new Date(user.created_at);
+    const now = new Date();
+
+    const nextAnniversary = new Date(user.created_at);
+    nextAnniversary.setFullYear(now.getFullYear());
+
+    // If the anniversary has already passed this year, set for next year
+    if (nextAnniversary < now) {
+      nextAnniversary.setFullYear(now.getFullYear() + 1);
+    }
+
+    const daysUntilAnniversary = Math.ceil(
+      (nextAnniversary.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    return {
+      date: nextAnniversary,
+      daysUntil: daysUntilAnniversary,
+    };
+  };
+
+  const accountAge = calculateAccountAge();
+  const nextAnniversary = calculateNextAnniversary();
+  const isBirthday = nextAnniversary.daysUntil === 0;
+
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d relative">
       {/* Save Options Dropdown */}
@@ -128,7 +176,7 @@ export default function GithubProfileCard({
               className="w-28 h-28 rounded-full border-4 border-accent-1 shadow-md"
             />
             {user.hireable && (
-              <span className="absolute bottom-0 right-0 bg-accent-success text-white text-xs px-2 py-1 rounded-md shadow-sm">
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 bg-accent-success text-white text-xs px-2 py-1 rounded-md shadow-sm">
                 Hireable
               </span>
             )}
@@ -217,6 +265,138 @@ export default function GithubProfileCard({
               {user.bio}
             </p>
           )}
+
+          {/* GitHub Anniversary Section */}
+          <div className="mt-4 bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-md border border-border-l/50 dark:border-border-d/50 relative overflow-hidden">
+            {isBirthday && (
+              <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-0 right-0 w-full h-full opacity-5 bg-confetti"></div>
+              </div>
+            )}
+
+            <div className="flex items-center">
+              <svg
+                className="w-5 h-5 mr-2 text-accent-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+                />
+              </svg>
+              <span className="text-l-text-1 dark:text-d-text-1 font-medium">
+                GitHub Membership
+              </span>
+
+              {isBirthday && (
+                <span className="ml-2 bg-accent-warning/20 text-accent-warning text-xs px-2 py-0.5 rounded-full flex items-center">
+                  <svg
+                    className="w-3 h-3 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                  </svg>
+                  GitHub Anniversary Today!
+                </span>
+              )}
+            </div>
+
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="flex flex-col">
+                <div className="text-l-text-2 dark:text-d-text-2">
+                  <span className="font-medium">Joined:</span>{' '}
+                  {formatDate(user.created_at)}
+                </div>
+
+                <div className="text-l-text-2 dark:text-d-text-2 flex items-center mt-1">
+                  <svg
+                    className="w-4 h-4 mr-1 text-accent-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span>
+                    {accountAge.years > 0
+                      ? `${accountAge.years} year${
+                          accountAge.years !== 1 ? 's' : ''
+                        }`
+                      : ''}{' '}
+                    {accountAge.months > 0
+                      ? ` ${accountAge.months} month${
+                          accountAge.months !== 1 ? 's' : ''
+                        }`
+                      : ''}
+                    {accountAge.years === 0 && accountAge.months === 0
+                      ? 'Just joined'
+                      : ''}{' '}
+                    on GitHub
+                  </span>
+                </div>
+              </div>
+
+              {!isBirthday && (
+                <div className="flex flex-col">
+                  <div className="text-l-text-2 dark:text-d-text-2 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1 text-accent-success"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>Next Anniversary:</span>
+                  </div>
+
+                  <div className="text-l-text-2 dark:text-d-text-2 mt-1 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1 text-accent-warning"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>
+                      {formatDate(nextAnniversary.date.toISOString())}{' '}
+                      <span className="text-accent-success ml-1">
+                        ({nextAnniversary.daysUntil} day
+                        {nextAnniversary.daysUntil !== 1 ? 's' : ''} from now)
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {isBirthday && (
+              <div className="mt-2 bg-accent-warning/10 p-2 rounded-md border border-accent-warning/30 text-center">
+                <span className="text-accent-warning font-medium">
+                  🎉 Happy GitHub Anniversary! 🎉
+                </span>
+                <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-1">
+                  Celebrating {accountAge.years} year
+                  {accountAge.years !== 1 ? 's' : ''} on GitHub today!
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* Contact and Info Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mt-4">
