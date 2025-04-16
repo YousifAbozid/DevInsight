@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react';
-import html2canvas from 'html2canvas';
+import { useRef, useState, useEffect } from 'react';
 import DevCard from './DevCard';
 
 interface DevCardGeneratorProps {
@@ -11,6 +10,56 @@ interface DevCardGeneratorProps {
 
 type ThemeVariant = 'default' | 'minimal' | 'gradient' | 'github';
 
+// Color definitions for each theme
+const themeColors = {
+  default: {
+    bg: '#f6f8fa',
+    cardBg: '#ffffff',
+    text: '#24292f',
+    secondaryText: '#57606a',
+    accentColor: '#58a6ff',
+    dark: {
+      bg: '#0d1117',
+      cardBg: '#161b22',
+      text: '#f0f6fc',
+      secondaryText: '#c9d1d9',
+    },
+  },
+  minimal: {
+    bg: '#f6f8fa',
+    cardBg: '#ffffff',
+    text: '#24292f',
+    secondaryText: '#57606a',
+    accentColor: '#58a6ff',
+    dark: {
+      bg: '#0d1117',
+      cardBg: '#161b22',
+      text: '#f0f6fc',
+      secondaryText: '#c9d1d9',
+    },
+  },
+  gradient: {
+    bg: 'linear-gradient(135deg, #1a6dff 0%, #c822ff 100%)',
+    cardBg: 'linear-gradient(135deg, #1a6dff 0%, #c822ff 100%)',
+    text: '#ffffff',
+    secondaryText: 'rgba(255, 255, 255, 0.8)',
+    accentColor: '#ffffff',
+  },
+  github: {
+    bg: '#ffffff',
+    cardBg: '#ffffff',
+    text: '#24292e',
+    secondaryText: '#586069',
+    accentColor: '#0366d6',
+    dark: {
+      bg: '#0d1117',
+      cardBg: '#0d1117',
+      text: '#f0f6fc',
+      secondaryText: '#c9d1d9',
+    },
+  },
+};
+
 export default function DevCardGenerator({
   user,
   repositories,
@@ -21,54 +70,250 @@ export default function DevCardGenerator({
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
-
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Generate the image from the dev card
+  // Detect dark mode
+  useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setDarkMode(isDarkMode);
+
+    // Listen for theme changes
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.attributeName === 'class') {
+          setDarkMode(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Generate the image directly using Canvas API
   const generateImage = async (format: 'png' | 'svg') => {
-    if (!cardRef.current) return;
+    if (!canvasRef.current || !user || !repositories) return;
 
     setIsExporting(true);
 
     try {
-      // Add a class to hide interactive elements during export
-      cardRef.current.classList.add('exporting');
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        backgroundColor: null,
-        logging: false,
-        allowTaint: true,
-        useCORS: true,
-      });
+      // Set canvas dimensions
+      const width = 600;
+      const height = 320;
+      canvas.width = width;
+      canvas.height = height;
 
-      // Remove the export class
-      cardRef.current.classList.remove('exporting');
+      // Get theme colors
+      const theme = themeColors[selectedTheme];
+      const colors = darkMode && 'dark' in theme ? theme.dark : theme;
 
-      // Create download link
-      const link = document.createElement('a');
+      // Draw background
+      ctx.fillStyle = colors.cardBg;
+      if (selectedTheme === 'gradient') {
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#1a6dff');
+        gradient.addColorStop(1, '#c822ff');
+        ctx.fillStyle = gradient;
+      }
+      ctx.fillRect(0, 0, width, height);
 
-      if (format === 'png') {
-        link.download = `${user.login}-github-card.png`;
-        link.href = canvas.toDataURL('image/png');
-      } else {
-        // For SVG, we'd need to convert canvas to SVG
-        // This is simplified and would need a better conversion in a real app
-        const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
-          <image href="${canvas.toDataURL('image/png')}" width="${canvas.width}" height="${canvas.height}"/>
-        </svg>`;
-
-        const blob = new Blob([svgData], { type: 'image/svg+xml' });
-        link.download = `${user.login}-github-card.svg`;
-        link.href = URL.createObjectURL(blob);
+      // Draw card container
+      if (selectedTheme !== 'gradient') {
+        ctx.fillStyle = colors.cardBg;
+        ctx.fillRect(20, 20, width - 40, height - 40);
       }
 
-      link.click();
-      setExportSuccess(true);
-      setTimeout(() => setExportSuccess(false), 3000);
+      // Load user avatar
+      const avatar = new Image();
+      avatar.crossOrigin = 'anonymous';
+
+      avatar.onload = async () => {
+        // Draw rounded avatar
+        const avatarSize = 80;
+        const avatarX = 40;
+        const avatarY = 40;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(
+          avatarX + avatarSize / 2,
+          avatarY + avatarSize / 2,
+          avatarSize / 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
+        ctx.restore();
+
+        // Draw border around avatar for certain themes
+        if (selectedTheme === 'default' || selectedTheme === 'github') {
+          ctx.strokeStyle = colors.accentColor;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(
+            avatarX + avatarSize / 2,
+            avatarY + avatarSize / 2,
+            avatarSize / 2,
+            0,
+            Math.PI * 2
+          );
+          ctx.stroke();
+        }
+
+        // Draw user name
+        ctx.fillStyle = colors.text;
+        ctx.font = 'bold 22px Arial, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(user.name || user.login, 140, 60);
+
+        // Draw username
+        ctx.fillStyle = colors.secondaryText;
+        ctx.font = '16px Arial, sans-serif';
+        ctx.fillText(`@${user.login}`, 140, 85);
+
+        // Draw stats
+        const repoCount = repositories.length;
+        const starCount = repositories.reduce(
+          (sum, repo) => sum + repo.stargazers_count,
+          0
+        );
+        const forkCount = repositories.reduce(
+          (sum, repo) => sum + repo.forks_count,
+          0
+        );
+
+        // Stats background
+        if (selectedTheme !== 'gradient') {
+          const statsY = 120;
+          const statBoxWidth = (width - 80) / 3;
+
+          // Draw stat boxes
+          ctx.fillStyle =
+            selectedTheme === 'minimal'
+              ? colors.bg
+              : selectedTheme === 'github'
+                ? colors.bg
+                : darkMode
+                  ? '#21262d'
+                  : '#f6f8fa';
+
+          ctx.fillRect(40, statsY, statBoxWidth - 10, 70);
+          ctx.fillRect(40 + statBoxWidth, statsY, statBoxWidth - 10, 70);
+          ctx.fillRect(40 + statBoxWidth * 2, statsY, statBoxWidth - 10, 70);
+        }
+
+        // Draw stats content
+        const statsItems = [
+          { label: 'Repositories', value: repoCount },
+          { label: 'Stars', value: starCount },
+          { label: 'Forks', value: forkCount },
+        ];
+
+        statsItems.forEach((stat, index) => {
+          const statX = 40 + ((width - 80) / 3) * index + (width - 80) / 3 / 2;
+
+          ctx.fillStyle = colors.text;
+          ctx.font = 'bold 24px Arial, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(stat.value.toString(), statX, 155);
+
+          ctx.fillStyle = colors.secondaryText;
+          ctx.font = '14px Arial, sans-serif';
+          ctx.fillText(stat.label, statX, 175);
+        });
+
+        // Draw languages
+        const topLanguages = languageData.slice(0, 3);
+
+        if (topLanguages.length > 0) {
+          ctx.fillStyle = colors.text;
+          ctx.font = 'bold 16px Arial, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText('Top Languages', 40, 220);
+
+          // Draw language bar
+          const barY = 235;
+          const barHeight = 8;
+          let currentX = 40;
+
+          topLanguages.forEach(lang => {
+            const width = (lang.percentage / 100) * (canvas.width - 80);
+            ctx.fillStyle = lang.color;
+            ctx.fillRect(currentX, barY, width, barHeight);
+            currentX += width;
+          });
+
+          // Draw language labels
+          const labelY = 260;
+          topLanguages.forEach((lang, i) => {
+            const labelX = 40 + i * 100;
+
+            // Draw color dot
+            ctx.fillStyle = lang.color;
+            ctx.beginPath();
+            ctx.arc(labelX + 5, labelY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw language name and percentage
+            ctx.fillStyle = colors.secondaryText;
+            ctx.font = '14px Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(
+              `${lang.name} ${lang.percentage}%`,
+              labelX + 15,
+              labelY + 5
+            );
+          });
+        }
+
+        // Draw footer
+        ctx.fillStyle = colors.secondaryText;
+        ctx.font = '12px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Generated with DevInsight', width / 2, height - 20);
+
+        // Create download link
+        const link = document.createElement('a');
+
+        if (format === 'png') {
+          link.download = `${user.login}-github-card.png`;
+          link.href = canvas.toDataURL('image/png');
+        } else {
+          // Convert canvas to SVG
+          const svgData = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+            <image href="${canvas.toDataURL('image/png')}" width="${width}" height="${height}"/>
+          </svg>
+          `;
+          const blob = new Blob([svgData], { type: 'image/svg+xml' });
+          link.download = `${user.login}-github-card.svg`;
+          link.href = URL.createObjectURL(blob);
+        }
+
+        link.click();
+        setExportSuccess(true);
+        setTimeout(() => setExportSuccess(false), 3000);
+        setIsExporting(false);
+      };
+
+      avatar.onerror = () => {
+        console.error('Error loading avatar');
+        setIsExporting(false);
+      };
+
+      avatar.src = user.avatar_url;
     } catch (error) {
       console.error('Error generating image:', error);
-    } finally {
       setIsExporting(false);
     }
   };
@@ -262,6 +507,14 @@ export default function DevCardGenerator({
           </div>
         </div>
       </div>
+
+      {/* Hidden canvas for image generation */}
+      <canvas
+        ref={canvasRef}
+        style={{ display: 'none' }}
+        width="600"
+        height="320"
+      />
     </div>
   );
 }
