@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   useGithubUser,
   useUserRepositories,
@@ -39,14 +39,48 @@ export default function PublicProfilePage() {
   // Add token state and UI controls
   const [token, setToken] = useState<string>('');
   const [showTokenInput, setShowTokenInput] = useState(false);
+  const [savedToken, setSavedToken] = useState<string | null>(null);
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const tokenTimeoutRef = useRef<number | null>(null);
 
   // Load token from localStorage on component mount
   useEffect(() => {
-    const savedToken = localStorage.getItem('github_token');
-    if (savedToken) {
-      setToken(savedToken);
+    const storedToken = localStorage.getItem('github_token');
+    if (storedToken) {
+      setToken(storedToken);
+      setSavedToken(storedToken);
     }
   }, []);
+
+  // Debounced token saving with feedback
+  useEffect(() => {
+    if (token === savedToken) return;
+
+    // Clear previous timeout if it exists
+    if (tokenTimeoutRef.current) {
+      clearTimeout(tokenTimeoutRef.current);
+    }
+
+    // Only save if token changes and isn't empty
+    if (token.trim()) {
+      tokenTimeoutRef.current = setTimeout(() => {
+        localStorage.setItem('github_token', token.trim());
+        setSavedToken(token);
+        setShowSaveMessage(true);
+
+        // Hide message after 3 seconds
+        setTimeout(() => {
+          setShowSaveMessage(false);
+        }, 3000);
+      }, 1000); // 1 second debounce
+    }
+
+    return () => {
+      if (tokenTimeoutRef.current) {
+        clearTimeout(tokenTimeoutRef.current);
+      }
+    };
+  }, [token, savedToken]);
 
   // Fetch data using the same hooks as in GithubProfilePage
   const {
@@ -60,7 +94,7 @@ export default function PublicProfilePage() {
     useUserRepositories(username);
 
   const { data: contributionData, isLoading: isContributionLoading } =
-    useContributionData(username, token);
+    useContributionData(username, savedToken || undefined);
 
   // Generate page URL and description
   const pageUrl = `${window.location.origin}/profile/${username}`;
@@ -196,13 +230,6 @@ export default function PublicProfilePage() {
     };
   }, [username, user, pageTitle, pageDescription, pageUrl, structuredData]);
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (token.trim()) {
-      localStorage.setItem('github_token', token.trim());
-    }
-  };
-
   const errorMessage = isUserError
     ? userError instanceof Error
       ? userError.message
@@ -210,6 +237,15 @@ export default function PublicProfilePage() {
     : null;
 
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
+
+  // Handle token clearing
+  const handleClearToken = () => {
+    localStorage.removeItem('github_token');
+    setToken('');
+    setSavedToken(null);
+    setShowSaveMessage(true);
+    setTimeout(() => setShowSaveMessage(false), 3000);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -222,7 +258,7 @@ export default function PublicProfilePage() {
         </p>
       </div>
 
-      {/* Token Input Section */}
+      {/* Enhanced Token Input Section */}
       <div className="mb-6">
         <button
           type="button"
@@ -231,44 +267,44 @@ export default function PublicProfilePage() {
         >
           {showTokenInput ? 'Hide token input' : 'Show token input'}
           <span className="text-xs">(for enhanced data access)</span>
+          {!showTokenInput && savedToken && (
+            <span className="ml-1 text-xs px-2 py-0.5 bg-accent-success/10 text-accent-success rounded-full">
+              Token active
+            </span>
+          )}
         </button>
 
         {showTokenInput && (
-          <form onSubmit={handleTokenSubmit} className="flex flex-col gap-2">
+          <div className="relative bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 border border-border-l dark:border-border-d">
+            {showSaveMessage && (
+              <div className="absolute -top-2 right-4 px-3 py-1 bg-accent-success/10 text-accent-success text-xs rounded-full transform translate-y-0 animate-fade-in-down">
+                {token ? 'Token saved!' : 'Token cleared!'}
+              </div>
+            )}
             <div className="relative">
               <input
                 type="password"
                 value={token}
                 onChange={e => setToken(e.target.value)}
                 placeholder="GitHub Personal Access Token"
-                className="w-full px-4 py-2 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
               />
               {token && (
                 <button
                   type="button"
-                  onClick={() => {
-                    localStorage.removeItem('github_token');
-                    setToken('');
-                  }}
+                  onClick={handleClearToken}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
                 >
-                  Clear token
+                  Clear
                 </button>
               )}
             </div>
-            <div className="flex justify-between items-center">
-              <p className="text-xs text-l-text-3 dark:text-d-text-3">
-                The token enables fetching contribution data. It&apos;s stored
-                only in your browser.
-              </p>
-              <button
-                type="submit"
-                className="px-3 py-1 rounded-lg bg-accent-1 hover:bg-accent-2 text-l-text-inv dark:text-d-text-inv text-sm transition-colors"
-              >
-                Apply Token
-              </button>
-            </div>
-          </form>
+            <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
+              The token enables fetching contribution data. Changes are
+              automatically saved after typing. Your token is stored only in
+              your browser.
+            </p>
+          </div>
         )}
       </div>
 
@@ -321,7 +357,10 @@ export default function PublicProfilePage() {
 
           {/* Contribution heatmap */}
           {username && (
-            <ContributionHeatmap username={username} token={token} />
+            <ContributionHeatmap
+              username={username}
+              token={savedToken || undefined}
+            />
           )}
         </div>
       ) : (
