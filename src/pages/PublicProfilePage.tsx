@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useGithubUser,
   useUserRepositories,
@@ -36,6 +36,18 @@ export default function PublicProfilePage() {
   // Get username from URL params
   const { username = '' } = useParams<{ username: string }>();
 
+  // Add token state and UI controls
+  const [token, setToken] = useState<string>('');
+  const [showTokenInput, setShowTokenInput] = useState(false);
+
+  // Load token from localStorage on component mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem('github_token');
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+
   // Fetch data using the same hooks as in GithubProfilePage
   const {
     data: user,
@@ -48,7 +60,7 @@ export default function PublicProfilePage() {
     useUserRepositories(username);
 
   const { data: contributionData, isLoading: isContributionLoading } =
-    useContributionData(username);
+    useContributionData(username, token);
 
   // Generate page URL and description
   const pageUrl = `${window.location.origin}/profile/${username}`;
@@ -184,6 +196,13 @@ export default function PublicProfilePage() {
     };
   }, [username, user, pageTitle, pageDescription, pageUrl, structuredData]);
 
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (token.trim()) {
+      localStorage.setItem('github_token', token.trim());
+    }
+  };
+
   const errorMessage = isUserError
     ? userError instanceof Error
       ? userError.message
@@ -201,6 +220,56 @@ export default function PublicProfilePage() {
         <p className="text-l-text-2 dark:text-d-text-2 text-base md:text-lg">
           View public profile information and stats
         </p>
+      </div>
+
+      {/* Token Input Section */}
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => setShowTokenInput(!showTokenInput)}
+          className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1 mb-2"
+        >
+          {showTokenInput ? 'Hide token input' : 'Show token input'}
+          <span className="text-xs">(for enhanced data access)</span>
+        </button>
+
+        {showTokenInput && (
+          <form onSubmit={handleTokenSubmit} className="flex flex-col gap-2">
+            <div className="relative">
+              <input
+                type="password"
+                value={token}
+                onChange={e => setToken(e.target.value)}
+                placeholder="GitHub Personal Access Token"
+                className="w-full px-4 py-2 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+              />
+              {token && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    localStorage.removeItem('github_token');
+                    setToken('');
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
+                >
+                  Clear token
+                </button>
+              )}
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-l-text-3 dark:text-d-text-3">
+                The token enables fetching contribution data. It&apos;s stored
+                only in your browser.
+              </p>
+              <button
+                type="submit"
+                className="px-3 py-1 rounded-lg bg-accent-1 hover:bg-accent-2 text-l-text-inv dark:text-d-text-inv text-sm transition-colors"
+              >
+                Apply Token
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       {isUserLoading ? (
@@ -251,7 +320,9 @@ export default function PublicProfilePage() {
           )}
 
           {/* Contribution heatmap */}
-          {username && <ContributionHeatmap username={username} />}
+          {username && (
+            <ContributionHeatmap username={username} token={token} />
+          )}
         </div>
       ) : (
         <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d text-center">
