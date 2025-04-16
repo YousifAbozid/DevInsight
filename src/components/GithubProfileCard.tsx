@@ -60,7 +60,7 @@ export default function GithubProfileCard({
               href={user.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-1 hover:underline flex items-center"
+              className="text-accent-1 hover:underline flex items-center cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ export default function GithubProfileCard({
             {publicProfileUrl && (
               <Link
                 to={publicProfileUrl}
-                className="text-accent-1 hover:underline flex items-center"
+                className="text-accent-1 hover:underline flex items-center cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -169,7 +169,7 @@ export default function GithubProfileCard({
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-accent-1 hover:underline"
+                className="text-accent-1 hover:underline cursor-pointer"
               >
                 {
                   new URL(
@@ -195,7 +195,7 @@ export default function GithubProfileCard({
                 href={`https://twitter.com/${user.twitter_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-accent-1 hover:underline"
+                className="text-accent-1 hover:underline cursor-pointer"
               >
                 @{user.twitter_username}
               </a>
@@ -219,7 +219,7 @@ export default function GithubProfileCard({
               </svg>
               <a
                 href={`mailto:${user.email}`}
-                className="text-accent-1 hover:underline"
+                className="text-accent-1 hover:underline cursor-pointer"
               >
                 {user.email}
               </a>

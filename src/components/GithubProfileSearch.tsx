@@ -65,7 +65,7 @@ export default function GithubProfileSearch({
           <button
             type="submit"
             disabled={isLoading || !username.trim()}
-            className="px-6 py-2 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-colors"
+            className="px-6 py-2 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-colors cursor-pointer"
           >
             {isLoading ? 'Searching...' : 'Search'}
           </button>

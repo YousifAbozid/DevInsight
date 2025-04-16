@@ -78,7 +78,7 @@ export default function GithubProfilePage() {
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => saveUserData(user)}
-                className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1"
+                className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1 cursor-pointer"
                 title="Save user data as JSON"
               >
                 <svg
@@ -101,7 +101,7 @@ export default function GithubProfilePage() {
               {repositories && (
                 <button
                   onClick={() => saveRepositoriesData(user.login, repositories)}
-                  className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1"
+                  className="text-sm px-3 py-1 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-1 cursor-pointer"
                   title="Save repositories data as JSON"
                 >
                   <svg
