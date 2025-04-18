@@ -161,8 +161,8 @@ export default function DeveloperBadges({
   );
 }
 
-// Helper function to calculate badges based on user data
-function calculateBadges(
+// Export the badge calculation function so it can be reused in the battle component
+export function calculateBadges(
   _: GithubUser,
   repositories: Repository[],
   contributionData?: ContributionData
