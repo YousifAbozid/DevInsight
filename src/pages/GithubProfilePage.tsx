@@ -18,6 +18,7 @@ import DeveloperBadges from '../components/DeveloperBadges';
 import PersonalizedSummary from '../components/PersonalizedSummary';
 import { useContributionData } from '../services/githubGraphQLService';
 import DevCardGenerator from '../components/DevCardGenerator';
+import CoderPersona from '../components/CoderPersona';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -50,7 +51,7 @@ export default function GithubProfilePage() {
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
           GitHub Profile Explorer
@@ -69,7 +70,7 @@ export default function GithubProfilePage() {
           <p className="text-accent-danger">{errorMessage}</p>
         </div>
       ) : user ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <GithubProfileCard
             user={user}
             publicProfileUrl={`/${user.login}`}
@@ -88,7 +89,15 @@ export default function GithubProfilePage() {
             loading={isReposLoading || isContributionLoading}
           />
 
-          {/* Dev Card Generator - NEW */}
+          {/* Coder Persona - NEW */}
+          <CoderPersona
+            user={user}
+            repositories={repositories}
+            contributionData={contributionData}
+            loading={isReposLoading || isContributionLoading}
+          />
+
+          {/* Dev Card Generator */}
           <DevCardGenerator
             user={user}
             repositories={repositories}
