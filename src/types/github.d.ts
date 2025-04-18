@@ -74,3 +74,14 @@ interface LanguageData {
   percentage: number;
   color: string;
 }
+
+interface SearchRepositoryResponse {
+  total_count: number;
+  incomplete_results: boolean;
+  items: Repository[];
+}
+
+// If needed, add fields that might be specific to search results
+interface SearchRepository extends Repository {
+  score: number;
+}
