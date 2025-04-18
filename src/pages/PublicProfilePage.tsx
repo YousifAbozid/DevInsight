@@ -16,6 +16,7 @@ import PersonalizedSummary from '../components/PersonalizedSummary';
 import { useContributionData } from '../services/githubGraphQLService';
 import DevCardGenerator from '../components/DevCardGenerator';
 import CoderPersona from '../components/CoderPersona';
+import DevJourneyTimeline from '../components/DevJourneyTimeline';
 
 // Define interface for JSON-LD structured data
 interface StructuredData {
@@ -327,7 +328,15 @@ export default function PublicProfilePage() {
             loading={isReposLoading || isContributionLoading}
           />
 
-          {/* Coder Persona - NEW */}
+          {/* Dev Journey Timeline - NEW COMPONENT */}
+          <DevJourneyTimeline
+            user={user}
+            repositories={repositories}
+            contributionData={contributionData}
+            loading={isReposLoading || isContributionLoading}
+          />
+
+          {/* Coder Persona */}
           <CoderPersona
             user={user}
             repositories={repositories}
