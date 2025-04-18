@@ -20,6 +20,7 @@ import { useContributionData } from '../services/githubGraphQLService';
 import DevCardGenerator from '../components/DevCardGenerator';
 import CoderPersona from '../components/CoderPersona';
 import DevJourneyTimeline from '../components/DevJourneyTimeline';
+import RepoRecommender from '../components/RepoRecommender';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -126,6 +127,13 @@ export default function GithubProfilePage() {
           <MostStarredRepos
             repositories={repositories}
             loading={isReposLoading}
+          />
+
+          {/* Recommended repositories */}
+          <RepoRecommender
+            repositories={repositories}
+            loading={isReposLoading}
+            token={token}
           />
 
           {/* Language pie chart */}
