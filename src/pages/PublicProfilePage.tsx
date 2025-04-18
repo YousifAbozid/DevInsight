@@ -15,6 +15,7 @@ import DeveloperBadges from '../components/DeveloperBadges';
 import PersonalizedSummary from '../components/PersonalizedSummary';
 import { useContributionData } from '../services/githubGraphQLService';
 import DevCardGenerator from '../components/DevCardGenerator';
+import CoderPersona from '../components/CoderPersona';
 
 // Define interface for JSON-LD structured data
 interface StructuredData {
@@ -320,6 +321,14 @@ export default function PublicProfilePage() {
 
           {/* Personalized Summary */}
           <PersonalizedSummary
+            user={user}
+            repositories={repositories}
+            contributionData={contributionData}
+            loading={isReposLoading || isContributionLoading}
+          />
+
+          {/* Coder Persona - NEW */}
+          <CoderPersona
             user={user}
             repositories={repositories}
             contributionData={contributionData}
