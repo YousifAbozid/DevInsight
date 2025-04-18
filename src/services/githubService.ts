@@ -117,6 +117,124 @@ export const aggregateLanguageData = (repos: Repository[]): LanguageData[] => {
 };
 
 /**
+ * Analyzes user repositories to determine preferred languages and topics
+ */
+export const analyzeUserPreferences = (repositories: Repository[]) => {
+  if (!repositories || repositories.length === 0) {
+    return { languages: [], topics: [] };
+  }
+
+  // Count languages
+  const languageCount: Record<string, number> = {};
+  repositories.forEach(repo => {
+    if (repo.language) {
+      languageCount[repo.language] = (languageCount[repo.language] || 0) + 1;
+    }
+  });
+
+  // Count topics
+  const topicCount: Record<string, number> = {};
+  repositories.forEach(repo => {
+    if (repo.topics && repo.topics.length) {
+      repo.topics.forEach(topic => {
+        topicCount[topic] = (topicCount[topic] || 0) + 1;
+      });
+    }
+  });
+
+  // Sort and get top languages and topics
+  const languages = Object.entries(languageCount)
+    .filter(([lang]) => lang !== null)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([lang]) => lang);
+
+  const topics = Object.entries(topicCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([topic]) => topic);
+
+  return { languages, topics };
+};
+
+/**
+ * Fetches recommended repositories based on user preferences
+ */
+export const fetchRecommendedRepos = async (
+  preferences: { languages: string[]; topics: string[] },
+  token?: string
+): Promise<Repository[]> => {
+  if (
+    (!preferences.languages || preferences.languages.length === 0) &&
+    (!preferences.topics || preferences.topics.length === 0)
+  ) {
+    return [];
+  }
+
+  // Build search query
+  const languageQuery = preferences.languages
+    .map(lang => `language:${lang}`)
+    .join(' ');
+  const topicQuery = preferences.topics
+    .map(topic => `topic:${topic}`)
+    .join(' ');
+
+  let query = '';
+  if (languageQuery && topicQuery) {
+    query = `${languageQuery} ${topicQuery}`;
+  } else {
+    query = languageQuery || topicQuery;
+  }
+
+  // Add sorting by stars
+  query += ' sort:stars';
+
+  const headers: HeadersInit = {
+    Accept: 'application/vnd.github.v3+json',
+  };
+
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  const response = await fetch(
+    `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&per_page=10`,
+    { headers }
+  );
+
+  if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error(
+        'API rate limit exceeded. Consider adding a GitHub token.'
+      );
+    }
+    throw new Error('Failed to fetch recommended repositories');
+  }
+
+  const data = await response.json();
+  return data.items;
+};
+
+/**
+ * React Query hook for fetching recommended repositories
+ */
+export const useRecommendedRepos = (
+  repositories: Repository[] | undefined,
+  token?: string
+) => {
+  const preferences = repositories
+    ? analyzeUserPreferences(repositories)
+    : { languages: [], topics: [] };
+
+  return useQuery({
+    queryKey: ['recommendedRepos', preferences],
+    queryFn: () => fetchRecommendedRepos(preferences, token),
+    enabled: !!repositories && repositories.length > 0,
+    staleTime: 30 * 60 * 1000, // 30 minutes
+  });
+};
+
+/**
  * Saves GitHub API response data as a downloadable JSON file
  */
 export function saveResponseAsJson(
