@@ -291,3 +291,111 @@ export function saveAllGithubData(
   saveUserData(userData);
   saveRepositoriesData(userData.login, repositories);
 }
+
+/**
+ * Fetches the number of pull requests created by a user
+ */
+export const fetchUserPullRequests = async (
+  username: string,
+  token?: string
+): Promise<number> => {
+  if (!username.trim()) {
+    return 0;
+  }
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  // Add authorization header if token is provided
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/search/issues?q=author:${username}+type:pr&per_page=1`,
+      { headers }
+    );
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('API rate limit exceeded. Please try again later.');
+      }
+      throw new Error('Failed to fetch pull requests data');
+    }
+
+    const data = await response.json();
+    return data.total_count || 0;
+  } catch (error) {
+    console.error('Error fetching pull requests:', error);
+    return 0;
+  }
+};
+
+/**
+ * Fetches the number of issues created by a user
+ */
+export const fetchUserIssues = async (
+  username: string,
+  token?: string
+): Promise<number> => {
+  if (!username.trim()) {
+    return 0;
+  }
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  // Add authorization header if token is provided
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/search/issues?q=author:${username}+type:issue&per_page=1`,
+      { headers }
+    );
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error('API rate limit exceeded. Please try again later.');
+      }
+      throw new Error('Failed to fetch issues data');
+    }
+
+    const data = await response.json();
+    return data.total_count || 0;
+  } catch (error) {
+    console.error('Error fetching issues:', error);
+    return 0;
+  }
+};
+
+/**
+ * React Query hook for fetching a user's pull requests count
+ */
+export const useUserPullRequests = (username: string, token?: string) => {
+  return useQuery({
+    queryKey: ['userPRs', username, token],
+    queryFn: () => fetchUserPullRequests(username, token),
+    enabled: !!username.trim(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+};
+
+/**
+ * React Query hook for fetching a user's issues count
+ */
+export const useUserIssues = (username: string, token?: string) => {
+  return useQuery({
+    queryKey: ['userIssues', username, token],
+    queryFn: () => fetchUserIssues(username, token),
+    enabled: !!username.trim(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+  });
+};
