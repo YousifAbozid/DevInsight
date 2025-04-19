@@ -1,64 +1,47 @@
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { useState, useEffect } from 'react';
-import { Swords } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
-
-  // Add scroll effect for elegant shadow transition
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <header
-      className={`sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 ${
-        scrolled ? 'shadow-lg' : 'shadow-sm'
-      }`}
-    >
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo and Brand Name */}
-        <Link
-          to="/"
-          className="flex items-center gap-2 group"
-          aria-label="DevInsight Home"
-        >
-          {/* Using the favicon as logo with simpler styling */}
-          <img src="/favicon.svg" alt="DevInsight Logo" className="w-8 h-8" />
-          <span className="text-xl font-bold text-l-text-1 dark:text-d-text-1 group-hover:text-accent-1 transition-colors duration-200">
-            DevInsight
-          </span>
-        </Link>
-
-        {/* Navigation */}
-        <nav className="flex items-center gap-6">
-          {/* Battle Mode Link with Lucide-React Swords Icon */}
+    <header className="sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 shadow-lg">
+      <div className="container mx-auto">
+        <div className="flex justify-between items-center">
+          {/* Logo and Brand Name */}
           <Link
-            to="/battle"
-            className="relative px-4 py-2 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 flex items-center gap-2 group transition-all duration-200 rounded-full hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
-            aria-label="Battle Mode"
+            to="/"
+            className="flex items-center gap-2 group"
+            aria-label="DevInsight Home"
           >
-            <div className="relative w-6 h-6 flex items-center justify-center">
-              <Swords
-                className="text-accent-1 group-hover:scale-110 transition-transform duration-200"
-                size={20}
-              />
-            </div>
-            <span className="font-medium group-hover:font-semibold transition-all">
-              Battle Mode
+            {/* Using the favicon as logo with simpler styling */}
+            <img src="/favicon.svg" alt="DevInsight Logo" className="w-8 h-8" />
+            <span className="text-xl font-bold text-l-text-1 dark:text-d-text-1 group-hover:text-accent-1 transition-colors duration-200">
+              DevInsight
             </span>
-            <span className="absolute inset-0 rounded-full border border-transparent group-hover:border-accent-1/30 transition-all duration-200"></span>
           </Link>
 
-          {/* Theme Toggle */}
-          <ThemeToggle />
-        </nav>
+          {/* Navigation */}
+          <nav className="flex items-center gap-4">
+            {/* Battle Mode with Trophy Icon - Fill Background Effect */}
+            <Link
+              to="/battle"
+              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              aria-label="Battle Mode"
+            >
+              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <Trophy
+                className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
+                size={16}
+              />
+              <span className="font-medium text-sm z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+                Battle Mode
+              </span>
+            </Link>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
+          </nav>
+        </div>
       </div>
     </header>
   );
