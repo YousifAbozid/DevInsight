@@ -497,44 +497,6 @@ function BadgeCard({ badge }: { badge: Badge }) {
   );
 }
 
-// Category pill component
-function CategoryPill({
-  category,
-  title,
-  isActive,
-  badgeCount,
-  onClick,
-}: {
-  category: string;
-  title: string;
-  isActive: boolean;
-  badgeCount: number;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className={`px-3 py-1 text-sm rounded-full transition-colors flex items-center gap-1.5 ${
-        isActive
-          ? 'bg-accent-1 text-white shadow-sm'
-          : 'bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-      }`}
-      onClick={onClick}
-    >
-      {categoryInfo[category as keyof typeof categoryInfo]?.icon({
-        className: 'w-3.5 h-3.5',
-      })}
-      <span>{title}</span>
-      <span
-        className={`${
-          isActive ? 'bg-white/20' : 'bg-l-bg-1 dark:bg-d-bg-1'
-        } text-xs px-1.5 py-0.5 rounded-full`}
-      >
-        {badgeCount}
-      </span>
-    </button>
-  );
-}
-
 export default function DeveloperBadges({
   user,
   repositories,
@@ -601,7 +563,7 @@ export default function DeveloperBadges({
           badge{earnedBadges.length !== 1 ? 's' : ''} earned
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 rounded-full p-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+            className="bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 rounded-full p-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -632,36 +594,49 @@ export default function DeveloperBadges({
         </div>
       )}
 
-      {/* Category filters with improved styling */}
-      <div className="flex flex-wrap gap-2 mb-6 items-center p-2 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg border border-border-l dark:border-border-d">
-        <div className="flex items-center gap-1.5 text-sm text-l-text-2 dark:text-d-text-2 px-2">
+      {/* Category filters with style matching DevJourneyTimeline */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2">
           <Icons.Filter className="w-4 h-4" />
-          <span>Filter:</span>
+          <span className="text-sm">Filter:</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <CategoryPill
-            category="all"
-            title="All Earned"
-            isActive={activeCategory === null}
-            badgeCount={earnedBadges.length}
+          <button
             onClick={() => setActiveCategory(null)}
-          />
+            className={`px-2.5 py-1 text-xs rounded-full flex items-center gap-1.5 transition-colors ${
+              activeCategory === null
+                ? 'bg-accent-1 text-white'
+                : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+            }`}
+          >
+            All Earned ({earnedBadges.length})
+          </button>
 
           {Object.entries(badgesByCategory).map(
-            ([category, categoryBadges]) => (
-              <CategoryPill
-                key={category}
-                category={category}
-                title={
-                  categoryInfo[category as keyof typeof categoryInfo]?.title ||
-                  category
-                }
-                isActive={activeCategory === category}
-                badgeCount={categoryBadges.filter(b => b.earned).length}
-                onClick={() => setActiveCategory(category)}
-              />
-            )
+            ([category, categoryBadges]) => {
+              const earnedCount = categoryBadges.filter(b => b.earned).length;
+              if (earnedCount === 0) return null;
+
+              return (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-2.5 py-1 text-xs rounded-full flex items-center gap-1.5 transition-colors ${
+                    activeCategory === category
+                      ? 'bg-accent-1 text-white'
+                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                  }`}
+                >
+                  {categoryInfo[category as keyof typeof categoryInfo]?.icon({
+                    className: 'w-3.5 h-3.5',
+                  })}
+                  {categoryInfo[category as keyof typeof categoryInfo]?.title ||
+                    category}{' '}
+                  ({earnedCount})
+                </button>
+              );
+            }
           )}
         </div>
       </div>
