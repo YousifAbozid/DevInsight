@@ -1,5 +1,25 @@
-import { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
+import { Radar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  ChartOptions,
+  TooltipItem,
+} from 'chart.js';
+
+// Register required Chart.js components
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend
+);
 
 interface PersonaRadarChartProps {
   strengths: {
@@ -13,278 +33,141 @@ interface PersonaRadarChartProps {
   color: string;
 }
 
+// Define proper types for chart options
+type RadarChartOptions = ChartOptions<'radar'> & {
+  scales: {
+    r: {
+      angleLines: { color: string };
+      grid: { color: string };
+      pointLabels: {
+        color: string;
+        font: { size: number; family: string };
+      };
+      ticks: {
+        backdropColor: string;
+        color: string;
+        stepSize: number;
+        font: { size: number };
+        showLabelBackdrop: boolean;
+      };
+      suggestedMin: number;
+      suggestedMax: number;
+    };
+  };
+};
+
 export default function PersonaRadarChart({
   strengths,
   color,
 }: PersonaRadarChartProps) {
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const chartInstanceRef = useRef<Chart | null>(null);
-
-  // Extract color values from Tailwind classes
-  const getColorFromClass = (colorClass: string): string => {
-    // Default colors if we can't extract from the class
-    const defaultColors = {
-      'bg-purple-100': {
-        light: 'rgba(233, 213, 255, 0.6)',
-        dark: 'rgba(91, 33, 182, 0.6)',
-      },
-      'bg-blue-100': {
-        light: 'rgba(191, 219, 254, 0.6)',
-        dark: 'rgba(37, 99, 235, 0.6)',
-      },
-      'bg-green-100': {
-        light: 'rgba(187, 247, 208, 0.6)',
-        dark: 'rgba(22, 163, 74, 0.6)',
-      },
-      'bg-orange-100': {
-        light: 'rgba(254, 215, 170, 0.6)',
-        dark: 'rgba(234, 88, 12, 0.6)',
-      },
-      'bg-gray-100': {
-        light: 'rgba(243, 244, 246, 0.6)',
-        dark: 'rgba(75, 85, 99, 0.6)',
-      },
-      'bg-pink-100': {
-        light: 'rgba(252, 231, 243, 0.6)',
-        dark: 'rgba(219, 39, 119, 0.6)',
-      },
-      'bg-yellow-100': {
-        light: 'rgba(254, 249, 195, 0.6)',
-        dark: 'rgba(202, 138, 4, 0.6)',
-      },
-      'bg-teal-100': {
-        light: 'rgba(204, 251, 241, 0.6)',
-        dark: 'rgba(20, 184, 166, 0.6)',
-      },
-      'bg-indigo-100': {
-        light: 'rgba(224, 231, 255, 0.6)',
-        dark: 'rgba(79, 70, 229, 0.6)',
-      },
-    };
-
-    // Extract the color and shade from the class
-    const colorMatch = colorClass.match(/bg-(\w+)-\d+/);
-    if (!colorMatch) {
-      return 'rgba(99, 102, 241, 0.6)'; // Default indigo color
-    }
-
-    const colorName = colorMatch[1];
-    const isDark = document.documentElement.classList.contains('dark');
-
-    // Find the matching color or use a default
-    for (const [key, value] of Object.entries(defaultColors)) {
-      if (key.includes(colorName)) {
-        return isDark ? value.dark : value.light;
-      }
-    }
-
-    return isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(99, 102, 241, 0.6)';
+  // Prepare nice labels for the strengths
+  const labels = {
+    languageDiversity: 'Language Diversity',
+    contributionConsistency: 'Contribution Consistency',
+    collaboration: 'Collaboration',
+    projectPopularity: 'Project Popularity',
+    codeQuality: 'Code Quality',
+    communityImpact: 'Community Impact',
   };
 
-  useEffect(() => {
-    if (!chartRef.current) return;
+  // Use app's primary accent color if none provided
+  const chartColor = color || '#3b82f6'; // Default to accent-1 color
 
-    // Destroy existing chart if it exists
-    if (chartInstanceRef.current) {
-      chartInstanceRef.current.destroy();
-    }
-
-    const bgColor = getColorFromClass(color);
-    const isDark = document.documentElement.classList.contains('dark');
-    const textColor = isDark ? '#e5e7eb' : '#374151';
-
-    const ctx = chartRef.current.getContext('2d');
-    if (!ctx) return;
-
-    chartInstanceRef.current = new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: [
-          'Language Diversity',
-          'Contribution Consistency',
-          'Collaboration',
-          'Project Popularity',
-          'Code Quality',
-          'Community Impact',
-        ],
-        datasets: [
-          {
-            label: 'Developer Strengths',
-            data: [
-              strengths.languageDiversity,
-              strengths.contributionConsistency,
-              strengths.collaboration,
-              strengths.projectPopularity,
-              strengths.codeQuality,
-              strengths.communityImpact,
-            ],
-            backgroundColor: bgColor,
-            borderColor: bgColor.replace('0.6', '1'),
-            borderWidth: 2,
-            pointBackgroundColor: bgColor.replace('0.6', '1'),
-            pointRadius: 4,
-            pointHoverRadius: 6,
-          },
-        ],
+  // Create data for the radar chart
+  const data = {
+    labels: Object.values(labels),
+    datasets: [
+      {
+        label: 'Your Developer Profile',
+        data: Object.keys(strengths).map(key =>
+          Math.round(strengths[key as keyof typeof strengths])
+        ),
+        backgroundColor: `${chartColor}33`, // Add transparency
+        borderColor: chartColor,
+        borderWidth: 2,
+        pointBackgroundColor: chartColor,
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: chartColor,
+        pointHoverBorderColor: '#fff',
+        pointRadius: 4,
       },
-      options: {
-        scales: {
-          r: {
-            beginAtZero: true,
-            max: 100,
-            ticks: {
-              display: false,
-              stepSize: 25,
-            },
-            pointLabels: {
-              color: textColor,
-              font: {
-                size: 12,
-              },
-            },
-            grid: {
-              color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-            },
-            angleLines: {
-              color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-            },
+    ],
+  };
+
+  // Chart options with proper typing
+  const options: RadarChartOptions = {
+    scales: {
+      r: {
+        angleLines: {
+          color: 'rgba(150, 150, 150, 0.2)', // Subtle angle lines
+        },
+        grid: {
+          color: 'rgba(150, 150, 150, 0.2)', // Subtle grid lines
+        },
+        pointLabels: {
+          color:
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--color-l-text-1'
+            ) || '#111827',
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif",
           },
         },
-        plugins: {
-          legend: {
-            display: false,
+        ticks: {
+          backdropColor: 'transparent', // Remove tick backdrop
+          color:
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--color-l-text-3'
+            ) || '#6b7280',
+          stepSize: 20,
+          font: {
+            size: 10,
           },
-          tooltip: {
-            backgroundColor: isDark ? '#374151' : '#ffffff',
-            titleColor: isDark ? '#e5e7eb' : '#111827',
-            bodyColor: isDark ? '#e5e7eb' : '#374151',
-            borderColor: isDark ? '#4b5563' : '#e5e7eb',
-            borderWidth: 1,
-            padding: 10,
-            displayColors: false,
-            callbacks: {
-              label: function (context) {
-                return `Score: ${context.raw}/100`;
-              },
-            },
+          showLabelBackdrop: false, // Remove tick label backdrop
+        },
+        suggestedMin: 0,
+        suggestedMax: 100,
+      },
+    },
+    plugins: {
+      legend: {
+        display: false, // Hide legend as we don't need it for single dataset
+      },
+      tooltip: {
+        backgroundColor: '#ffffff', // Light background for visibility
+        titleColor: '#111827', // Dark text for contrast
+        bodyColor: '#4b5563',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 6,
+        displayColors: false,
+        callbacks: {
+          title: (items: TooltipItem<'radar'>[]) => {
+            return items[0].label;
+          },
+          label: (context: TooltipItem<'radar'>) => {
+            return `Score: ${context.raw}/100`;
           },
         },
-        responsive: true,
-        maintainAspectRatio: true,
+        // Fix tooltip text visibility
+        titleFont: { size: 14, weight: 'bold' },
+        bodyFont: { size: 13 },
       },
-    });
-
-    // Add event listener for theme changes
-    const observer = new MutationObserver(() => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-        // Re-render the chart
-        const newBgColor = getColorFromClass(color);
-        const isDark = document.documentElement.classList.contains('dark');
-        const newTextColor = isDark ? '#e5e7eb' : '#374151';
-
-        if (ctx) {
-          chartInstanceRef.current = new Chart(ctx, {
-            type: 'radar',
-            data: {
-              labels: [
-                'Language Diversity',
-                'Contribution Consistency',
-                'Collaboration',
-                'Project Popularity',
-                'Code Quality',
-                'Community Impact',
-              ],
-              datasets: [
-                {
-                  label: 'Developer Strengths',
-                  data: [
-                    strengths.languageDiversity,
-                    strengths.contributionConsistency,
-                    strengths.collaboration,
-                    strengths.projectPopularity,
-                    strengths.codeQuality,
-                    strengths.communityImpact,
-                  ],
-                  backgroundColor: newBgColor,
-                  borderColor: newBgColor.replace('0.6', '1'),
-                  borderWidth: 2,
-                  pointBackgroundColor: newBgColor.replace('0.6', '1'),
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
-                },
-              ],
-            },
-            options: {
-              scales: {
-                r: {
-                  beginAtZero: true,
-                  max: 100,
-                  ticks: {
-                    display: false,
-                    stepSize: 25,
-                  },
-                  pointLabels: {
-                    color: newTextColor,
-                    font: {
-                      size: 12,
-                    },
-                  },
-                  grid: {
-                    color: isDark
-                      ? 'rgba(255, 255, 255, 0.1)'
-                      : 'rgba(0, 0, 0, 0.1)',
-                  },
-                  angleLines: {
-                    color: isDark
-                      ? 'rgba(255, 255, 255, 0.1)'
-                      : 'rgba(0, 0, 0, 0.1)',
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  display: false,
-                },
-                tooltip: {
-                  backgroundColor: isDark ? '#374151' : '#ffffff',
-                  titleColor: isDark ? '#e5e7eb' : '#111827',
-                  bodyColor: isDark ? '#e5e7eb' : '#374151',
-                  borderColor: isDark ? '#4b5563' : '#e5e7eb',
-                  borderWidth: 1,
-                  padding: 10,
-                  displayColors: false,
-                  callbacks: {
-                    label: function (context) {
-                      return `Score: ${context.raw}/100`;
-                    },
-                  },
-                },
-              },
-              responsive: true,
-              maintainAspectRatio: true,
-            },
-          });
-        }
-      }
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => {
-      observer.disconnect();
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
-    };
-  }, [strengths, color]);
+    },
+    maintainAspectRatio: true,
+    responsive: true,
+    elements: {
+      line: {
+        tension: 0.2, // Slight curve for the lines
+      },
+    },
+  };
 
   return (
-    <div className="w-full h-64">
-      <canvas ref={chartRef}></canvas>
+    <div className="w-full h-full min-h-[280px] flex items-center justify-center">
+      <Radar data={data} options={options} />
     </div>
   );
 }
