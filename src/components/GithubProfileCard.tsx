@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface GithubProfileCardProps {
   user: GithubUser;
@@ -17,6 +17,64 @@ export default function GithubProfileCard({
   hasRepositories = false,
 }: GithubProfileCardProps) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null);
+  const [pullRequests, setPullRequests] = useState<number>(0);
+  const [issues, setIssues] = useState<number>(0);
+  const [isLoadingCounts, setIsLoadingCounts] = useState<boolean>(false);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        dropdownButtonRef.current &&
+        !dropdownButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Fetch PRs and Issues counts
+  useEffect(() => {
+    const fetchGitHubStats = async () => {
+      if (!user.login) return;
+
+      setIsLoadingCounts(true);
+      try {
+        // Fetch PRs created by the user
+        const prsResponse = await fetch(
+          `https://api.github.com/search/issues?q=author:${user.login}+type:pr&per_page=1`
+        );
+
+        // Fetch issues created by the user
+        const issuesResponse = await fetch(
+          `https://api.github.com/search/issues?q=author:${user.login}+type:issue&per_page=1`
+        );
+
+        if (prsResponse.ok && issuesResponse.ok) {
+          const prsData = await prsResponse.json();
+          const issuesData = await issuesResponse.json();
+
+          setPullRequests(prsData.total_count);
+          setIssues(issuesData.total_count);
+        }
+      } catch (error) {
+        console.error('Error fetching GitHub stats:', error);
+      } finally {
+        setIsLoadingCounts(false);
+      }
+    };
+
+    fetchGitHubStats();
+  }, [user.login]);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -50,7 +108,6 @@ export default function GithubProfileCard({
 
   // Calculate next GitHub anniversary
   const calculateNextAnniversary = () => {
-    // const joinDate = new Date(user.created_at);
     const now = new Date();
 
     const nextAnniversary = new Date(user.created_at);
@@ -81,6 +138,7 @@ export default function GithubProfileCard({
       {(onSaveUserData || onSaveReposData) && (
         <div className="absolute top-4 right-4">
           <button
+            ref={dropdownButtonRef}
             onClick={() => setShowDropdown(!showDropdown)}
             className="p-2 rounded-full hover:bg-l-bg-1 dark:hover:bg-d-bg-1 transition-colors cursor-pointer"
             title="Save options"
@@ -104,7 +162,10 @@ export default function GithubProfileCard({
           </button>
 
           {showDropdown && (
-            <div className="absolute right-0 mt-1 w-48 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg shadow-lg border border-border-l dark:border-border-d z-10">
+            <div
+              ref={dropdownRef}
+              className="absolute right-0 mt-1 w-48 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg shadow-lg border border-border-l dark:border-border-d z-10"
+            >
               <div className="py-1">
                 {onSaveUserData && (
                   <button
@@ -266,7 +327,7 @@ export default function GithubProfileCard({
             </p>
           )}
 
-          {/* GitHub Anniversary Section */}
+          {/* GitHub Anniversary Section - Improved Layout */}
           <div className="mt-4 bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-md border border-border-l/50 dark:border-border-d/50 relative overflow-hidden">
             {isBirthday && (
               <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
@@ -276,7 +337,7 @@ export default function GithubProfileCard({
 
             <div className="flex items-center">
               <svg
-                className="w-5 h-5 mr-2 text-accent-1"
+                className="w-5 h-5 mr-2 text-accent-1 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -288,12 +349,12 @@ export default function GithubProfileCard({
                   d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
                 />
               </svg>
-              <span className="text-l-text-1 dark:text-d-text-1 font-medium">
+              <span className="text-l-text-1 dark:text-d-text-1 font-medium truncate">
                 GitHub Membership
               </span>
 
               {isBirthday && (
-                <span className="ml-2 bg-accent-warning/20 text-accent-warning text-xs px-2 py-0.5 rounded-full flex items-center">
+                <span className="ml-2 bg-accent-warning/20 text-accent-warning text-xs px-2 py-0.5 rounded-full flex items-center flex-shrink-0">
                   <svg
                     className="w-3 h-3 mr-1"
                     fill="currentColor"
@@ -315,7 +376,7 @@ export default function GithubProfileCard({
 
                 <div className="text-l-text-2 dark:text-d-text-2 flex items-center mt-1">
                   <svg
-                    className="w-4 h-4 mr-1 text-accent-1"
+                    className="w-4 h-4 mr-1 text-accent-1 flex-shrink-0"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -325,7 +386,7 @@ export default function GithubProfileCard({
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>
+                  <span className="truncate">
                     {accountAge.years > 0
                       ? `${accountAge.years} year${
                           accountAge.years !== 1 ? 's' : ''
@@ -348,7 +409,7 @@ export default function GithubProfileCard({
                 <div className="flex flex-col">
                   <div className="text-l-text-2 dark:text-d-text-2 flex items-center">
                     <svg
-                      className="w-4 h-4 mr-1 text-accent-success"
+                      className="w-4 h-4 mr-1 text-accent-success flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -363,7 +424,7 @@ export default function GithubProfileCard({
 
                   <div className="text-l-text-2 dark:text-d-text-2 mt-1 flex items-center">
                     <svg
-                      className="w-4 h-4 mr-1 text-accent-warning"
+                      className="w-4 h-4 mr-1 text-accent-warning flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -373,7 +434,7 @@ export default function GithubProfileCard({
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span>
+                    <span className="truncate">
                       {formatDate(nextAnniversary.date.toISOString())}{' '}
                       <span className="text-accent-success ml-1">
                         ({nextAnniversary.daysUntil} day
@@ -499,48 +560,43 @@ export default function GithubProfileCard({
             </div>
           </div>
 
-          {/* Additional Row for Email + Date Info */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 gap-2">
-            {user.email && (
-              <div className="flex items-center text-l-text-2 dark:text-d-text-2">
-                <svg
-                  className="w-4 h-4 mr-2 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                  />
-                </svg>
-                <a
-                  href={`mailto:${user.email}`}
-                  className="text-accent-1 hover:underline cursor-pointer"
-                >
-                  {user.email}
-                </a>
-              </div>
-            )}
-
-            <div className="text-l-text-3 dark:text-d-text-3 text-sm">
-              <span className="bg-l-bg-1 dark:bg-d-bg-1 px-2 py-1 rounded-md mr-2">
-                Joined {formatDate(user.created_at)}
-              </span>
-              <span className="bg-l-bg-1 dark:bg-d-bg-1 px-2 py-1 rounded-md">
-                Updated {formatDate(user.updated_at)}
-              </span>
+          {/* Email Info - Removed duplicate join date */}
+          {user.email && (
+            <div className="flex items-center text-l-text-2 dark:text-d-text-2 mt-4">
+              <svg
+                className="w-4 h-4 mr-2 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                />
+              </svg>
+              <a
+                href={`mailto:${user.email}`}
+                className="text-accent-1 hover:underline cursor-pointer"
+              >
+                {user.email}
+              </a>
             </div>
+          )}
+
+          <div className="text-l-text-3 dark:text-d-text-3 text-sm mt-4">
+            <span className="bg-l-bg-1 dark:bg-d-bg-1 px-2 py-1 rounded-md">
+              Last updated {formatDate(user.updated_at)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+      {/* Stats Cards - Updated labels and using actual data */}
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
         <StatCard
-          title="Repositories"
+          title="Repos"
           value={user.public_repos}
           icon={
             <svg
@@ -615,6 +671,47 @@ export default function GithubProfileCard({
             </svg>
           }
         />
+        {/* Updated PR and Issues cards with real data */}
+        <StatCard
+          title="PRs"
+          value={pullRequests}
+          isLoading={isLoadingCounts}
+          icon={
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+              />
+            </svg>
+          }
+        />
+        <StatCard
+          title="Issues"
+          value={issues}
+          isLoading={isLoadingCounts}
+          icon={
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+              />
+            </svg>
+          }
+        />
       </div>
     </div>
   );
@@ -624,9 +721,10 @@ interface StatCardProps {
   title: string;
   value: number;
   icon?: React.ReactNode;
+  isLoading?: boolean;
 }
 
-function StatCard({ title, value, icon }: StatCardProps) {
+function StatCard({ title, value, icon, isLoading = false }: StatCardProps) {
   return (
     <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l dark:border-border-d hover:shadow-md transition-all hover:border-accent-1/30 group">
       <div className="flex items-center gap-2">
@@ -640,7 +738,11 @@ function StatCard({ title, value, icon }: StatCardProps) {
         </div>
       </div>
       <div className="text-l-text-1 dark:text-d-text-1 text-xl font-bold mt-2">
-        {value.toLocaleString()}
+        {isLoading ? (
+          <div className="w-6 h-5 bg-l-bg-3 dark:bg-d-bg-3 rounded animate-pulse"></div>
+        ) : (
+          value.toLocaleString()
+        )}
       </div>
     </div>
   );
