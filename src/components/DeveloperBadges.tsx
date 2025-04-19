@@ -783,9 +783,18 @@ function DeveloperBadgesSkeleton() {
 
 // Export the badge calculation function so it can be reused in the battle component
 export function calculateBadges(
-  repositories: Repository[],
+  repositories: Repository[] | undefined | null,
   contributionData?: ContributionData
 ): Badge[] {
+  // Early return if repositories is not a valid array
+  if (
+    !repositories ||
+    !Array.isArray(repositories) ||
+    repositories.length === 0
+  ) {
+    return [];
+  }
+
   // Use the same function from the custom hook but call it directly
   const getIcon = (type: string): React.FC<{ className?: string }> => {
     switch (type) {
