@@ -286,18 +286,18 @@ export default function CoderPersona({
       {/* Persona Card */}
       <div
         ref={cardRef}
-        className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-6 border border-border-l dark:border-border-d"
+        className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-4 border border-border-l dark:border-border-d"
       >
-        <div className="flex flex-col md:flex-row gap-6 items-center">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
           {/* Persona Icon and Title */}
           <div className="md:w-1/3 flex flex-col items-center text-center">
-            <div className={`p-4 rounded-full ${persona.color} mb-4`}>
-              <persona.icon className="w-8 h-8" />
+            <div className={`p-3 rounded-full ${persona.color} mb-3`}>
+              <persona.icon className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-l-text-1 dark:text-d-text-1">
+            <h3 className="text-base font-bold text-l-text-1 dark:text-d-text-1">
               {persona.type}
             </h3>
-            <div className="text-sm text-l-text-2 dark:text-d-text-2 mt-2">
+            <div className="text-xs text-l-text-2 dark:text-d-text-2 mt-1">
               {user.name || user.login}
             </div>
           </div>
@@ -312,16 +312,16 @@ export default function CoderPersona({
         </div>
 
         {/* Personality Description */}
-        <div className="mt-6">
-          <h4 className="font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
+        <div className="mt-4">
+          <h4 className="font-semibold text-l-text-1 dark:text-d-text-1 mb-1 text-sm">
             What This Says About You
           </h4>
-          <p className="text-sm text-l-text-2 dark:text-d-text-2">
+          <p className="text-xs text-l-text-2 dark:text-d-text-2">
             {personalityText}
           </p>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-border-l dark:border-border-d text-xs text-l-text-3 dark:text-d-text-3 text-center">
+        <div className="mt-3 pt-2 border-t border-border-l dark:border-border-d text-xs text-l-text-3 dark:text-d-text-3 text-center">
           Generated with DevInsight • github.com/YousifAbozid/DevInsight
         </div>
       </div>
