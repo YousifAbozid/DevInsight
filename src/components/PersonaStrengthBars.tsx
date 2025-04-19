@@ -35,10 +35,10 @@ const PersonaStrengthBars = memo(
       .sort((a, b) => b.value - a.value);
 
     return (
-      <div className="space-y-2 w-full">
+      <div className="space-y-3 w-full">
         {sortedStrengths.map(strength => (
-          <div key={strength.key} className="mb-1.5 last:mb-0">
-            <div className="flex justify-between mb-0.5 text-xs">
+          <div key={strength.key} className="mb-2 last:mb-0">
+            <div className="flex justify-between mb-1 text-sm">
               <span className="text-l-text-2 dark:text-d-text-2 font-medium">
                 {strength.label}
               </span>
@@ -46,7 +46,7 @@ const PersonaStrengthBars = memo(
                 {strength.value}
               </span>
             </div>
-            <div className="h-2 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
+            <div className="h-2.5 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{
