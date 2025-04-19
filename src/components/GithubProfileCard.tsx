@@ -219,12 +219,13 @@ export default function GithubProfileCard({
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-2">
+          {/* Modified: Links in column layout for better mobile display */}
+          <div className="flex flex-col w-full gap-3 mt-2">
             <a
               href={user.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-1 hover:underline flex items-center cursor-pointer bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1.5 rounded-md hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              className="w-full text-center text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center justify-center cursor-pointer bg-l-bg-1 dark:bg-d-bg-1 px-3 py-2 rounded-md transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +237,7 @@ export default function GithubProfileCard({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="mr-1"
+                className="mr-2"
               >
                 <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
               </svg>
@@ -246,24 +247,31 @@ export default function GithubProfileCard({
             {publicProfileUrl && (
               <Link
                 to={publicProfileUrl}
-                className="text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center cursor-pointer bg-l-bg-1 dark:bg-d-bg-1 p-1.5 rounded-md transition-colors"
-                title="View public profile"
+                className="w-full group relative flex items-center justify-center bg-gradient-to-r from-accent-1 to-accent-2 text-white px-3 py-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
               >
+                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
+                  className="w-4 h-4 mr-2 group-hover:animate-pulse"
                   fill="none"
                   stroke="currentColor"
+                  viewBox="0 0 24 24"
                   strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
                 </svg>
+                <span className="font-medium">DevInsight Profile</span>
+                <span className="ml-1.5 px-1 py-0.5 bg-white/20 rounded text-xs font-medium">
+                  Public
+                </span>
               </Link>
             )}
           </div>
