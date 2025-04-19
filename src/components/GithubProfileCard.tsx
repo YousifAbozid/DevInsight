@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
+import { useUserPullRequests, useUserIssues } from '../services/githubService';
 
 interface GithubProfileCardProps {
   user: GithubUser;
@@ -19,9 +20,18 @@ export default function GithubProfileCard({
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
-  const [pullRequests, setPullRequests] = useState<number>(0);
-  const [issues, setIssues] = useState<number>(0);
-  const [isLoadingCounts, setIsLoadingCounts] = useState<boolean>(false);
+
+  // Get token from localStorage for authenticated requests
+  const token = localStorage.getItem('github_token') || undefined;
+
+  // Use the new React Query hooks for PRs and issues
+  const { data: pullRequests = 0, isLoading: isPRsLoading } =
+    useUserPullRequests(user.login, token);
+
+  const { data: issues = 0, isLoading: isIssuesLoading } = useUserIssues(
+    user.login,
+    token
+  );
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -41,40 +51,6 @@ export default function GithubProfileCard({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Fetch PRs and Issues counts
-  useEffect(() => {
-    const fetchGitHubStats = async () => {
-      if (!user.login) return;
-
-      setIsLoadingCounts(true);
-      try {
-        // Fetch PRs created by the user
-        const prsResponse = await fetch(
-          `https://api.github.com/search/issues?q=author:${user.login}+type:pr&per_page=1`
-        );
-
-        // Fetch issues created by the user
-        const issuesResponse = await fetch(
-          `https://api.github.com/search/issues?q=author:${user.login}+type:issue&per_page=1`
-        );
-
-        if (prsResponse.ok && issuesResponse.ok) {
-          const prsData = await prsResponse.json();
-          const issuesData = await issuesResponse.json();
-
-          setPullRequests(prsData.total_count);
-          setIssues(issuesData.total_count);
-        }
-      } catch (error) {
-        console.error('Error fetching GitHub stats:', error);
-      } finally {
-        setIsLoadingCounts(false);
-      }
-    };
-
-    fetchGitHubStats();
-  }, [user.login]);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -593,7 +569,7 @@ export default function GithubProfileCard({
         </div>
       </div>
 
-      {/* Stats Cards - Updated labels and using actual data */}
+      {/* Stats Cards - Updated with React Query hooks */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
         <StatCard
           title="Repos"
@@ -671,11 +647,11 @@ export default function GithubProfileCard({
             </svg>
           }
         />
-        {/* Updated PR and Issues cards with real data */}
+        {/* Updated PR and Issues cards with React Query */}
         <StatCard
           title="PRs"
           value={pullRequests}
-          isLoading={isLoadingCounts}
+          isLoading={isPRsLoading}
           icon={
             <svg
               className="w-5 h-5"
@@ -695,7 +671,7 @@ export default function GithubProfileCard({
         <StatCard
           title="Issues"
           value={issues}
-          isLoading={isLoadingCounts}
+          isLoading={isIssuesLoading}
           icon={
             <svg
               className="w-5 h-5"
