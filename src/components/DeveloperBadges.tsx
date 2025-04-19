@@ -512,6 +512,10 @@ export default function DeveloperBadges({
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState<boolean>(false);
 
+  // Move the hook call here before any conditional returns
+  // This ensures hooks are always called in the same order
+  const badges = useBadges(user, repositories, contributionData);
+
   if (loading) {
     return <DeveloperBadgesSkeleton />;
   }
@@ -529,9 +533,6 @@ export default function DeveloperBadges({
       </div>
     );
   }
-
-  // Use the custom hook to get badges
-  const badges = useBadges(user, repositories, contributionData);
 
   // Group badges by category
   const badgesByCategory = badges.reduce(
