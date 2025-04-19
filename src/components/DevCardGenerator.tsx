@@ -95,7 +95,24 @@ export default function DevCardGenerator({
     setTimeout(() => setCopiedSnippet(false), 3000);
   };
 
-  console.warn(generateMarkdownSnippet);
+  // Download markdown snippet as .md file
+  const downloadMarkdown = () => {
+    if (!user) return;
+
+    const baseUrl = window.location.origin;
+    const imageUrl = `${baseUrl}/api/devcard/${user.login}?theme=${selectedTheme}`;
+    const markdown = `[![${user.login}'s GitHub Stats](${imageUrl})](https://github.com/${user.login})`;
+
+    // Create blob and download link
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const link = document.createElement('a');
+    link.download = `${user.login}-github-card.md`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+
+    setExportSuccess(true);
+    setTimeout(() => setExportSuccess(false), 3000);
+  };
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
@@ -192,6 +209,44 @@ export default function DevCardGenerator({
                   />
                 </svg>
                 Download as SVG
+              </button>
+
+              <button
+                onClick={generateMarkdownSnippet}
+                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H16A1.5 1.5 0 0 1 17.5 6v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V6c0-.001 0-.001 0-.002a1.5 1.5 0 0 1 1.5-1.498H6A1.5 1.5 0 0 1 7.5 3H9a1.5 1.5 0 0 1 1.5 1.5h1.5Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Copy Markdown
+              </button>
+
+              <button
+                onClick={downloadMarkdown}
+                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Download .MD
               </button>
             </div>
 
