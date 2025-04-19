@@ -61,31 +61,43 @@ export default function GithubProfileCard({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Calculate account age in years and months
+  // Calculate account age in years, months, and days
   const calculateAccountAge = () => {
     const joinDate = new Date(user.created_at);
     const now = new Date();
 
-    const yearDiff = now.getFullYear() - joinDate.getFullYear();
-    const monthDiff = now.getMonth() - joinDate.getMonth();
+    let yearDiff = now.getFullYear() - joinDate.getFullYear();
+    let monthDiff = now.getMonth() - joinDate.getMonth();
 
+    // Calculate days
+    const currentDay = now.getDate();
+    const joinDay = joinDate.getDate();
+    let dayDiff = currentDay - joinDay;
+
+    // Adjust for negative days
+    if (dayDiff < 0) {
+      // Get the last day of previous month
+      const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      dayDiff = dayDiff + lastMonth.getDate();
+      monthDiff--;
+    }
+
+    // Adjust for negative months
     if (monthDiff < 0) {
-      return {
-        years: yearDiff - 1,
-        months: monthDiff + 12,
-      };
+      yearDiff--;
+      monthDiff = monthDiff + 12;
     }
 
     return {
       years: yearDiff,
       months: monthDiff,
+      days: dayDiff,
     };
   };
 
-  // Calculate next GitHub anniversary
+  // Calculate next GitHub anniversary with countdown
   const calculateNextAnniversary = () => {
     const now = new Date();
-
     const nextAnniversary = new Date(user.created_at);
     nextAnniversary.setFullYear(now.getFullYear());
 
@@ -94,13 +106,20 @@ export default function GithubProfileCard({
       nextAnniversary.setFullYear(now.getFullYear() + 1);
     }
 
-    const daysUntilAnniversary = Math.ceil(
-      (nextAnniversary.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    const diffTime = nextAnniversary.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Calculate hours, minutes left for more precise countdown
+    const hoursLeft = Math.floor(
+      (diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
+    const minutesLeft = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
 
     return {
       date: nextAnniversary,
-      daysUntil: daysUntilAnniversary,
+      daysUntil: diffDays,
+      hoursLeft,
+      minutesLeft,
     };
   };
 
@@ -321,8 +340,8 @@ export default function GithubProfileCard({
             )}
 
             {/* Section Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center mb-2 sm:mb-0">
                 <svg
                   className="w-5 h-5 mr-2 text-accent-1 flex-shrink-0"
                   fill="none"
@@ -354,19 +373,28 @@ export default function GithubProfileCard({
                     clipRule="evenodd"
                   />
                 </svg>
-                {accountAge.years > 0
-                  ? `${accountAge.years} year${
-                      accountAge.years !== 1 ? 's' : ''
-                    }`
-                  : ''}{' '}
-                {accountAge.months > 0
-                  ? `${accountAge.months} month${
-                      accountAge.months !== 1 ? 's' : ''
-                    }`
-                  : ''}
-                {accountAge.years === 0 && accountAge.months === 0
-                  ? 'Just joined'
-                  : ''}
+                <span className="whitespace-nowrap">
+                  {accountAge.years > 0
+                    ? `${accountAge.years} year${
+                        accountAge.years !== 1 ? 's' : ''
+                      } `
+                    : ''}
+                  {accountAge.months > 0
+                    ? `${accountAge.months} month${
+                        accountAge.months !== 1 ? 's' : ''
+                      } `
+                    : ''}
+                  {accountAge.days > 0
+                    ? `${accountAge.days} day${
+                        accountAge.days !== 1 ? 's' : ''
+                      }`
+                    : ''}
+                  {accountAge.years === 0 &&
+                  accountAge.months === 0 &&
+                  accountAge.days === 0
+                    ? 'Just joined'
+                    : ''}
+                </span>
               </div>
             </div>
 
@@ -413,17 +441,50 @@ export default function GithubProfileCard({
                       />
                     </svg>
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="font-medium text-l-text-1 dark:text-d-text-1">
                       Next Anniversary
                     </p>
                     <p className="text-l-text-2 dark:text-d-text-2 text-sm">
-                      {formatDate(nextAnniversary.date.toISOString())}{' '}
-                      <span className="text-accent-success">
-                        ({nextAnniversary.daysUntil} day
-                        {nextAnniversary.daysUntil !== 1 ? 's' : ''} from now)
-                      </span>
+                      {formatDate(nextAnniversary.date.toISOString())}
                     </p>
+
+                    {/* Enhanced countdown display */}
+                    <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span className="inline-flex items-center bg-accent-success/10 text-accent-success text-xs px-2 py-1 rounded-md">
+                        <svg
+                          className="w-3 h-3 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        {nextAnniversary.daysUntil} day
+                        {nextAnniversary.daysUntil !== 1 ? 's' : ''}
+                      </span>
+
+                      {nextAnniversary.daysUntil <= 7 && (
+                        <span className="inline-flex items-center bg-accent-warning/10 text-accent-warning text-xs px-2 py-1 rounded-md">
+                          <svg
+                            className="w-3 h-3 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          {nextAnniversary.hoursLeft}h{' '}
+                          {nextAnniversary.minutesLeft}m
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
