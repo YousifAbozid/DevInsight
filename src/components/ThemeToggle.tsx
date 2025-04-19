@@ -22,7 +22,7 @@ const ThemeToggle = () => {
       onClick={() => {
         setDarkMode(darkMode === 'dark' ? 'light' : 'dark');
       }}
-      className="relative p-2 rounded-md group overflow-hidden border border-border-l dark:border-border-d"
+      className="relative p-2 rounded-md group overflow-hidden border border-border-l dark:border-border-d cursor-pointer"
       aria-label={
         darkMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
       }
