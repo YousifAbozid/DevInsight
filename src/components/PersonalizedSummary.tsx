@@ -539,6 +539,14 @@ export default function PersonalizedSummary({
 }: PersonalizedSummaryProps) {
   const [expanded, setExpanded] = useState(false);
 
+  // Move the custom hook call to the top level, before any conditional returns
+  // This ensures hooks are always called in the same order
+  const insights = useGithubInsights(
+    user,
+    repositories || [],
+    contributionData
+  );
+
   if (loading) {
     return <PersonalizedSummarySkeleton />;
   }
@@ -546,9 +554,6 @@ export default function PersonalizedSummary({
   if (!repositories || !repositories.length) {
     return null;
   }
-
-  // Use the custom hook to generate insights
-  const insights = useGithubInsights(user, repositories, contributionData);
 
   // Select a subset of insights to display initially
   const initialInsights = insights.slice(0, 3);
