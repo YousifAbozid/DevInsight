@@ -44,17 +44,6 @@ export default function DevCard({
                 className="w-16 h-16 rounded-full border-2 border-gray-200 dark:border-gray-700 transition-transform duration-300"
                 style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
               />
-              {user.twitter_username && (
-                <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.035 10.035 0 01-3.127 1.195 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z" />
-                  </svg>
-                </div>
-              )}
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -208,17 +197,6 @@ export default function DevCard({
                 alt={`${user.login}'s avatar`}
                 className={`w-24 h-24 rounded-full border-4 border-white/40 shadow-lg transition-all duration-300 ${isHovered ? 'scale-105' : ''}`}
               />
-              {user.twitter_username && (
-                <div className="absolute -bottom-2 -right-2 bg-blue-400 rounded-full w-8 h-8 flex items-center justify-center shadow-lg border-2 border-white/50">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.035 10.035 0 01-3.127 1.195 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.937 4.937 0 004.604 3.417 9.868 9.868 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63a9.936 9.936 0 002.46-2.548l-.047-.02z" />
-                  </svg>
-                </div>
-              )}
             </div>
 
             <h2 className="mt-4 text-xl font-bold text-white">
@@ -290,7 +268,7 @@ export default function DevCard({
                     fill="currentColor"
                     viewBox="0 0 16 16"
                   >
-                    <path d="M1.5 3.25a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 111.5 3.25zm5.677-.177L9.573.677A.25.25 0 0110 .854V2.5h1A2.5 2.5 0 0113.5 5v5.628a2.251 2.251 0 11-1.5 0V5a1 1 0 00-1-1h-1v1.646a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm0 9.5a.75.75 0 100 1.5.75.75 0 000-1.5zm8.25.75a.75.75 0 101.5 0 .75.75 0 00-1.5 0z" />
+                    <path d="M1.5 3.25a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zm5.677-.177L9.573.677A.25.25 0 0110 .854V2.5h1A2.5 2.5 0 0113.5 5v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z" />
                   </svg>
                 </div>
                 <div className="text-xl font-bold">{user.followers}</div>
@@ -417,18 +395,29 @@ export default function DevCard({
 
     case 'github':
       return (
-        <div className="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md w-full max-w-md">
+        <div
+          className="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md w-full max-w-md shadow-sm hover:shadow-md transition-all duration-300"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <div className="flex gap-4">
             <img
               src={user.avatar_url}
               alt={`${user.login}'s avatar`}
-              className="w-16 h-16 rounded-full"
+              className={`w-16 h-16 rounded-full transition-transform duration-300 ${isHovered ? 'scale-105' : ''}`}
             />
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 {user.name || user.login}
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                <svg
+                  className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
                 @{user.login}
               </p>
               {user.bio && (
@@ -458,81 +447,143 @@ export default function DevCard({
                 <span>{user.location}</span>
               </div>
             )}
-            {user.twitter_username && (
-              <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.615 11.615 0 006.29 1.84" />
-                </svg>
-                <span>@{user.twitter_username}</span>
-              </div>
-            )}
           </div>
 
           <div className="mt-4 py-3 border-t border-gray-200 dark:border-gray-700">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+            <div className="grid grid-cols-4 gap-3">
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 16 16"
                     className="w-4 h-4"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
                   >
-                    <path
-                      fill="currentColor"
-                      d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5V2.5Zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 0 1 1-1h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2v-3.25Z"
-                    />
+                    <path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8z" />
                   </svg>
-                  <span className="text-sm font-semibold">Repositories</span>
+                  <span className="text-xs font-medium">Repos</span>
                 </div>
-                <div className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
                   {repoCount}
                 </div>
               </div>
 
-              <div>
-                <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1">
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4 text-yellow-500"
+                    fill="currentColor"
                     viewBox="0 0 16 16"
-                    className="w-4 h-4"
                   >
-                    <path
-                      fill="currentColor"
-                      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
-                    />
+                    <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
                   </svg>
-                  <span className="text-sm font-semibold">Stars Earned</span>
+                  <span className="text-xs font-medium">Stars</span>
                 </div>
-                <div className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
                   {starCount}
+                </div>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1">
+                  <svg
+                    className="w-4 h-4 text-blue-500"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878z" />
+                  </svg>
+                  <span className="text-xs font-medium">Forks</span>
+                </div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                  {forkCount}
+                </div>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1">
+                  <svg
+                    className="w-4 h-4 text-purple-500"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5z" />
+                  </svg>
+                  <span className="text-xs font-medium">Followers</span>
+                </div>
+                <div className="text-xl font-bold text-gray-900 dark:text-white">
+                  {user.followers}
+                </div>
+              </div>
+            </div>
+
+            {/* GitHub Stats Section with PRs and Issues */}
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md flex items-center gap-3">
+                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-md">
+                  <svg
+                    className="w-5 h-5 text-green-600 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Pull Requests
+                  </div>
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.public_repos || '?'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md flex items-center gap-3">
+                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-md">
+                  <svg
+                    className="w-5 h-5 text-purple-600 dark:text-purple-400"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                    <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Issues
+                  </div>
+                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                    {user.public_gists || '?'}
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-4">
-              <div className="flex items-center gap-2 mb-2 text-gray-800 dark:text-gray-200">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  className="w-4 h-4"
-                >
-                  <path
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                  <svg
+                    className="w-4 h-4"
                     fill="currentColor"
-                    d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"
-                  />
-                </svg>
-                <span className="text-sm font-semibold">Languages</span>
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Z" />
+                  </svg>
+                  <span className="text-sm font-semibold">Languages</span>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {languageData.length} total
+                </span>
               </div>
 
-              <div className="h-2 flex rounded-full overflow-hidden">
-                {topLanguages.map(lang => (
+              <div className="h-2 flex rounded-full overflow-hidden shadow-sm">
+                {topLanguages.map((lang, index) => (
                   <div
                     key={lang.name}
-                    className="h-full"
+                    className={`h-full ${index === 0 ? 'rounded-l-full' : ''} ${
+                      index === topLanguages.length - 1 ? 'rounded-r-full' : ''
+                    } hover:brightness-110 transition-all duration-200`}
                     style={{
                       backgroundColor: lang.color,
                       width: `${lang.percentage}%`,
@@ -563,11 +614,11 @@ export default function DevCard({
           </div>
 
           {badges && badges.length > 0 && (
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               {badges.map(badge => (
                 <div
                   key={badge.id}
-                  className="px-2 py-1 text-xs rounded-full flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                  className="px-2.5 py-1.5 text-xs rounded-full flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   title={badge.name}
                 >
                   <badge.icon className="w-3.5 h-3.5" />
@@ -580,7 +631,7 @@ export default function DevCard({
           <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500 dark:text-gray-400">
             <a
               href="https://github.com/YousifAbozid/DevInsight"
-              className="hover:text-blue-500"
+              className="hover:text-blue-500 transition-colors"
             >
               Generated with DevInsight
             </a>
@@ -591,26 +642,37 @@ export default function DevCard({
     // Default theme
     default:
       return (
-        <div className="p-6 bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border border-border-l dark:border-border-d w-full max-w-md">
+        <div
+          className="p-6 bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border border-border-l dark:border-border-d w-full max-w-md shadow-sm hover:shadow transition-all duration-300"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <div className="flex flex-col items-center">
             <img
               src={user.avatar_url}
               alt={`${user.login}'s avatar`}
-              className="w-24 h-24 rounded-full border-4 border-accent-1"
+              className={`w-24 h-24 rounded-full border-4 border-accent-1 transition-transform duration-300 ${isHovered ? 'scale-105' : ''}`}
             />
             <h2 className="mt-2 text-xl font-bold text-l-text-1 dark:text-d-text-1">
               {user.name || user.login}
             </h2>
             <a
               href={`https://github.com/${user.login}`}
-              className="text-accent-1 hover:underline"
+              className="text-accent-1 hover:underline flex items-center gap-1"
               target="_blank"
               rel="noopener noreferrer"
             >
+              <svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+              </svg>
               @{user.login}
             </a>
             {user.bio && (
-              <p className="mt-2 text-center text-sm text-l-text-2 dark:text-d-text-2">
+              <p className="mt-2 text-center text-sm text-l-text-2 dark:text-d-text-2 bg-l-bg-1/50 dark:bg-d-bg-1/50 p-2 rounded-lg">
                 {user.bio.length > 100
                   ? `${user.bio.substring(0, 100)}...`
                   : user.bio}
@@ -618,36 +680,130 @@ export default function DevCard({
             )}
           </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-4">
-            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-2 rounded-lg text-center">
-              <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+          <div className="mt-6 grid grid-cols-4 gap-3">
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg text-center hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="flex justify-center mb-2 text-accent-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9z" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
                 {repoCount}
               </div>
               <div className="text-xs text-l-text-3 dark:text-d-text-3">
-                Repositories
+                Repos
               </div>
             </div>
-            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-2 rounded-lg text-center">
-              <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg text-center hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="flex justify-center mb-2 text-yellow-500 dark:text-yellow-400">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
                 {starCount}
               </div>
               <div className="text-xs text-l-text-3 dark:text-d-text-3">
                 Stars
               </div>
             </div>
-            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-2 rounded-lg text-center">
-              <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg text-center hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="flex justify-center mb-2 text-green-500 dark:text-green-400">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878z" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
                 {forkCount}
               </div>
               <div className="text-xs text-l-text-3 dark:text-d-text-3">
                 Forks
               </div>
             </div>
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg text-center hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="flex justify-center mb-2 text-blue-500 dark:text-blue-400">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5z" />
+                </svg>
+              </div>
+              <div className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
+                {user.followers}
+              </div>
+              <div className="text-xs text-l-text-3 dark:text-d-text-3">
+                Followers
+              </div>
+            </div>
           </div>
 
-          <div className="mt-6">
+          {/* Activity Stats - PRs and Issues */}
+          <div className="mt-5 grid grid-cols-2 gap-4">
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg flex items-center gap-3 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="p-2 bg-accent-1/10 rounded-lg">
+                <svg
+                  className="w-5 h-5 text-accent-1"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1">
+                  Pull Requests
+                </div>
+                <div className="text-lg font-bold text-accent-1">
+                  {user.public_repos || '?'}
+                </div>
+              </div>
+            </div>
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-lg flex items-center gap-3 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+              <div className="p-2 bg-accent-2/10 rounded-lg">
+                <svg
+                  className="w-5 h-5 text-accent-2"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                  <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1">
+                  Issues
+                </div>
+                <div className="text-lg font-bold text-accent-2">
+                  {user.public_gists || '?'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5">
             <div className="flex justify-between items-center mb-2">
-              <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1">
+              <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center gap-1.5">
+                <svg
+                  className="w-4 h-4 text-l-text-2 dark:text-d-text-2"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Z" />
+                </svg>
                 Top Languages
               </div>
               <div className="text-xs text-l-text-3 dark:text-d-text-3">
@@ -655,17 +811,38 @@ export default function DevCard({
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="h-2.5 flex rounded-full overflow-hidden mb-3">
+              {topLanguages.map((lang, index) => (
+                <div
+                  key={lang.name}
+                  className={`h-full ${index === 0 ? 'rounded-l-full' : ''} ${
+                    index === topLanguages.length - 1 ? 'rounded-r-full' : ''
+                  } transition-all duration-300 hover:brightness-110`}
+                  style={{
+                    backgroundColor: lang.color,
+                    width: `${lang.percentage}%`,
+                  }}
+                  title={`${lang.name}: ${lang.percentage}%`}
+                />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
               {topLanguages.map(lang => (
-                <div key={lang.name} className="flex items-center">
-                  <div
-                    className="w-3 h-3 rounded-full mr-2"
-                    style={{ backgroundColor: lang.color }}
-                  />
-                  <div className="text-sm text-l-text-2 dark:text-d-text-2">
-                    {lang.name}
+                <div
+                  key={lang.name}
+                  className="flex items-center justify-between p-2 bg-l-bg-1 dark:bg-d-bg-1 rounded-md hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: lang.color }}
+                    />
+                    <div className="text-sm text-l-text-2 dark:text-d-text-2">
+                      {lang.name}
+                    </div>
                   </div>
-                  <div className="ml-auto text-xs text-l-text-3 dark:text-d-text-3">
+                  <div className="font-medium text-l-text-1 dark:text-d-text-1">
                     {lang.percentage}%
                   </div>
                 </div>
@@ -674,15 +851,23 @@ export default function DevCard({
           </div>
 
           {badges && badges.length > 0 && (
-            <div className="mt-6">
-              <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-2">
+            <div className="mt-5">
+              <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-2 flex items-center gap-1.5">
+                <svg
+                  className="w-4 h-4 text-l-text-2 dark:text-d-text-2"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M3.486 8.647c.243-.429 0-1-.75-1h-2c-.414 0-.75.336-.75.75v4.5c0 .414.336.75.75.75h2c.75 0 .993-.571.75-1a24.997 24.997 0 01-1.608-4zm.774 1.613a34.072 34.072 0 001.374 3.493c.134.308.127.682-.019.981-.148.302-.465.495-.803.495h-2c-.414 0-.75-.336-.75-.75v-4.5c0-.414.336-.75.75-.75h2c.338 0 .655.193.803.495.146.299.153.673.02.981a24.464 24.464 0 00-1.375 3.55z" />
+                  <path d="M14.564 9.01c-.14-.28-.537-.5-.937-.01-1.13 1.38-2.293 2.493-3.467 3.34v-3.1l2.925-2.892c.86-.85.896-2.25.07-3.08-.834-.84-2.235-.81-3.094.05l-1.42 1.4v-2.56c0-1.09-.89-1.975-1.975-1.975-1.094 0-1.976.885-1.976 1.974v5.878c-.259-.405-.564-.83-.916-1.28-.4-.49-.796-.27-.936.01-.13.263-.08.698.28 1.13l4.17 5.092c.28.342.704.542 1.152.54.447 0 .87-.198 1.15-.538l4.17-5.092c.36-.432.41-.868.28-1.13z" />
+                </svg>
                 Developer Badges
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {badges.map(badge => (
                   <div
                     key={badge.id}
-                    className={`p-2 rounded-lg ${getBadgeBgClass(badge.tier)} flex flex-col items-center gap-1`}
+                    className={`p-2 rounded-lg ${getBadgeBgClass(badge.tier)} flex flex-col items-center gap-1 hover:scale-105 transition-transform duration-200`}
                     title={badge.name}
                   >
                     <badge.icon className="w-6 h-6 text-l-text-1 dark:text-d-text-1" />
@@ -695,7 +880,7 @@ export default function DevCard({
             </div>
           )}
 
-          <div className="mt-6 pt-4 border-t border-border-l dark:border-border-d text-center">
+          <div className="mt-5 pt-3 border-t border-border-l dark:border-border-d text-center">
             <div className="text-xs text-l-text-3 dark:text-d-text-3">
               Generated with
               <a
