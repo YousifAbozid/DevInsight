@@ -216,7 +216,6 @@ export default function CoderPersona({
   contributionData,
   loading,
 }: CoderPersonaProps) {
-  const [copied, setCopied] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -253,82 +252,6 @@ export default function CoderPersona({
     return null;
   }
 
-  // Function to generate markdown content for sharing
-  const generateMarkdown = () => {
-    const strengthsText = Object.entries(persona.strengths)
-      .map(
-        ([key, value]) =>
-          `- ${formatStrengthName(key)}: ${Math.round(value)}/100`
-      )
-      .join('\n');
-
-    return `# ${user.name || user.login}'s Coder Persona: ${persona.type}
-
-${personalityText}
-
-## Strengths
-${strengthsText}
-
-*Generated with [DevInsight](https://github.com/YousifAbozid/DevInsight)*
-`;
-  };
-
-  // Copy markdown to clipboard
-  const copyToClipboard = async () => {
-    try {
-      const markdown = generateMarkdown();
-      await navigator.clipboard.writeText(markdown);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
-      console.error('Error copying to clipboard:', error);
-    }
-  };
-
-  // SVG export function
-  const downloadAsSVG = () => {
-    if (!cardRef.current) return;
-
-    try {
-      // Clone the card element for manipulation
-      const clone = cardRef.current.cloneNode(true) as HTMLElement;
-
-      // Apply computed styles to make it look the same
-      const serializer = new XMLSerializer();
-
-      // Find all SVGs in the card and extract them
-      const svgElements = clone.querySelectorAll('svg');
-      const svgStrings: string[] = [];
-
-      svgElements.forEach(svg => {
-        const svgString = serializer.serializeToString(svg);
-        svgStrings.push(svgString);
-      });
-
-      // Create and trigger download
-      const link = document.createElement('a');
-      link.download = `${user.login}-coder-persona.svg`;
-
-      // Create a blob with simple content for now
-      // In a real implementation, this would be a full SVG representation
-      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
-        <foreignObject width="100%" height="100%">
-          <div xmlns="http://www.w3.org/1999/xhtml" style="padding: 20px;">
-            <h2 style="margin: 0;">${persona.type}</h2>
-            <p>${personalityText}</p>
-            <div>Generated with DevInsight</div>
-          </div>
-        </foreignObject>
-      </svg>`;
-
-      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    } catch (error) {
-      console.error('Error generating SVG:', error);
-    }
-  };
-
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
@@ -339,6 +262,7 @@ ${strengthsText}
           <button
             onClick={() => setShowInfo(!showInfo)}
             className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-1 rounded-full hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors cursor-pointer"
+            aria-label="Show information about coder persona"
           >
             <Icons.Info className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
           </button>
@@ -359,12 +283,12 @@ ${strengthsText}
         </div>
       )}
 
-      {/* Persona Card - This will be the shareable element */}
+      {/* Persona Card */}
       <div
         ref={cardRef}
         className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-6 border border-border-l dark:border-border-d"
       >
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-6 items-center">
           {/* Persona Icon and Title */}
           <div className="md:w-1/3 flex flex-col items-center text-center">
             <div className={`p-4 rounded-full ${persona.color} mb-4`}>
@@ -401,33 +325,8 @@ ${strengthsText}
           Generated with DevInsight • github.com/YousifAbozid/DevInsight
         </div>
       </div>
-
-      {/* Action Buttons */}
-      <div className="mt-4 flex flex-wrap gap-3 justify-center">
-        <button
-          onClick={downloadAsSVG}
-          className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 transition-colors"
-        >
-          <Icons.Download className="w-5 h-5" />
-          Download as Image
-        </button>
-
-        <button
-          onClick={copyToClipboard}
-          className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 transition-colors"
-        >
-          <Icons.Copy className="w-5 h-5" />
-          {copied ? 'Copied!' : 'Copy as Markdown'}
-        </button>
-      </div>
     </div>
   );
-}
-
-// Helper function to format strength names for display
-function formatStrengthName(key: string): string {
-  // Convert camelCase to separate words and capitalize first letter
-  return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 }
 
 // Helper function to get chart color based on persona
