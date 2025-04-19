@@ -33,7 +33,7 @@ export default function Header() {
                 className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
                 size={16}
               />
-              <span className="font-medium text-sm z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+              <span className="font-medium text-md z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
                 Battle Mode
               </span>
             </Link>
