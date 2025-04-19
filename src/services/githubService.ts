@@ -20,7 +20,6 @@ export const fetchGithubUser = async (
   }
 
   const userData = await response.json();
-  console.warn('GitHub User API Response:', userData);
   return userData;
 };
 
@@ -56,7 +55,6 @@ export const fetchUserRepositories = async (
   }
 
   const reposData = await response.json();
-  console.warn('GitHub Repositories API Response:', reposData);
   return reposData;
 };
 
