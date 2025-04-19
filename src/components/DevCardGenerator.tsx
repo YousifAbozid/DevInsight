@@ -1,5 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import DevCard from './DevCard';
+import * as htmlToImage from 'html-to-image';
 
 interface DevCardGeneratorProps {
   user: GithubUser;
@@ -9,56 +10,6 @@ interface DevCardGeneratorProps {
 }
 
 type ThemeVariant = 'default' | 'minimal' | 'gradient' | 'github';
-
-// Color definitions for each theme
-const themeColors = {
-  default: {
-    bg: '#f6f8fa',
-    cardBg: '#ffffff',
-    text: '#24292f',
-    secondaryText: '#57606a',
-    accentColor: '#58a6ff',
-    dark: {
-      bg: '#0d1117',
-      cardBg: '#161b22',
-      text: '#f0f6fc',
-      secondaryText: '#c9d1d9',
-    },
-  },
-  minimal: {
-    bg: '#f6f8fa',
-    cardBg: '#ffffff',
-    text: '#24292f',
-    secondaryText: '#57606a',
-    accentColor: '#58a6ff',
-    dark: {
-      bg: '#0d1117',
-      cardBg: '#161b22',
-      text: '#f0f6fc',
-      secondaryText: '#c9d1d9',
-    },
-  },
-  gradient: {
-    bg: 'linear-gradient(135deg, #1a6dff 0%, #c822ff 100%)',
-    cardBg: 'linear-gradient(135deg, #1a6dff 0%, #c822ff 100%)',
-    text: '#ffffff',
-    secondaryText: 'rgba(255, 255, 255, 0.8)',
-    accentColor: '#ffffff',
-  },
-  github: {
-    bg: '#ffffff',
-    cardBg: '#ffffff',
-    text: '#24292e',
-    secondaryText: '#586069',
-    accentColor: '#0366d6',
-    dark: {
-      bg: '#0d1117',
-      cardBg: '#0d1117',
-      text: '#f0f6fc',
-      secondaryText: '#c9d1d9',
-    },
-  },
-};
 
 export default function DevCardGenerator({
   user,
@@ -70,254 +21,62 @@ export default function DevCardGenerator({
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Detect dark mode
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setDarkMode(isDarkMode);
-
-    // Listen for theme changes
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        if (mutation.attributeName === 'class') {
-          setDarkMode(document.documentElement.classList.contains('dark'));
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, { attributes: true });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Generate the image directly using Canvas API
+  // Generate the image using html-to-image
   const generateImage = async (format: 'png' | 'svg') => {
-    if (!canvasRef.current || !user || !repositories) return;
+    if (!cardRef.current || !user) {
+      console.error('Card reference not available');
+      return;
+    }
 
     setIsExporting(true);
 
     try {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      // Add a small delay to ensure all styles are properly applied
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Set canvas dimensions
-      const width = 600;
-      const height = 320;
-      canvas.width = width;
-      canvas.height = height;
+      let dataUrl: string;
 
-      // Get theme colors
-      const theme = themeColors[selectedTheme];
-      // Fix: Make sure we have access to accentColor even in dark mode
-      const colors =
-        darkMode && 'dark' in theme
-          ? { ...theme.dark, accentColor: theme.accentColor }
-          : theme;
-
-      // Draw background
-      ctx.fillStyle = colors.cardBg;
-      if (selectedTheme === 'gradient') {
-        const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, '#1a6dff');
-        gradient.addColorStop(1, '#c822ff');
-        ctx.fillStyle = gradient;
-      }
-      ctx.fillRect(0, 0, width, height);
-
-      // Draw card container
-      if (selectedTheme !== 'gradient') {
-        ctx.fillStyle = colors.cardBg;
-        ctx.fillRect(20, 20, width - 40, height - 40);
-      }
-
-      // Load user avatar
-      const avatar = new Image();
-      avatar.crossOrigin = 'anonymous';
-
-      avatar.onload = async () => {
-        // Draw rounded avatar
-        const avatarSize = 80;
-        const avatarX = 40;
-        const avatarY = 40;
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(
-          avatarX + avatarSize / 2,
-          avatarY + avatarSize / 2,
-          avatarSize / 2,
-          0,
-          Math.PI * 2
-        );
-        ctx.closePath();
-        ctx.clip();
-
-        ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
-        ctx.restore();
-
-        // Draw border around avatar for certain themes
-        if (selectedTheme === 'default' || selectedTheme === 'github') {
-          ctx.strokeStyle = colors.accentColor;
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(
-            avatarX + avatarSize / 2,
-            avatarY + avatarSize / 2,
-            avatarSize / 2,
-            0,
-            Math.PI * 2
-          );
-          ctx.stroke();
-        }
-
-        // Draw user name
-        ctx.fillStyle = colors.text;
-        ctx.font = 'bold 22px Arial, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(user.name || user.login, 140, 60);
-
-        // Draw username
-        ctx.fillStyle = colors.secondaryText;
-        ctx.font = '16px Arial, sans-serif';
-        ctx.fillText(`@${user.login}`, 140, 85);
-
-        // Draw stats
-        const repoCount = repositories.length;
-        const starCount = repositories.reduce(
-          (sum, repo) => sum + repo.stargazers_count,
-          0
-        );
-        const forkCount = repositories.reduce(
-          (sum, repo) => sum + repo.forks_count,
-          0
-        );
-
-        // Stats background
-        if (selectedTheme !== 'gradient') {
-          const statsY = 120;
-          const statBoxWidth = (width - 80) / 3;
-
-          // Draw stat boxes
-          ctx.fillStyle =
-            selectedTheme === 'minimal'
-              ? colors.bg
-              : selectedTheme === 'github'
-                ? colors.bg
-                : darkMode
-                  ? '#21262d'
-                  : '#f6f8fa';
-
-          ctx.fillRect(40, statsY, statBoxWidth - 10, 70);
-          ctx.fillRect(40 + statBoxWidth, statsY, statBoxWidth - 10, 70);
-          ctx.fillRect(40 + statBoxWidth * 2, statsY, statBoxWidth - 10, 70);
-        }
-
-        // Draw stats content
-        const statsItems = [
-          { label: 'Repositories', value: repoCount },
-          { label: 'Stars', value: starCount },
-          { label: 'Forks', value: forkCount },
-        ];
-
-        statsItems.forEach((stat, index) => {
-          const statX = 40 + ((width - 80) / 3) * index + (width - 80) / 3 / 2;
-
-          ctx.fillStyle = colors.text;
-          ctx.font = 'bold 24px Arial, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(stat.value.toString(), statX, 155);
-
-          ctx.fillStyle = colors.secondaryText;
-          ctx.font = '14px Arial, sans-serif';
-          ctx.fillText(stat.label, statX, 175);
+      if (format === 'png') {
+        dataUrl = await htmlToImage.toPng(cardRef.current, {
+          quality: 1,
+          pixelRatio: 2, // Better quality for retina displays
+          cacheBust: true,
+          style: {
+            // Force visible overflow for screenshot
+            overflow: 'visible',
+            borderRadius: '8px',
+          },
         });
 
-        // Draw languages
-        const topLanguages = languageData.slice(0, 3);
-
-        if (topLanguages.length > 0) {
-          ctx.fillStyle = colors.text;
-          ctx.font = 'bold 16px Arial, sans-serif';
-          ctx.textAlign = 'left';
-          ctx.fillText('Top Languages', 40, 220);
-
-          // Draw language bar
-          const barY = 235;
-          const barHeight = 8;
-          let currentX = 40;
-
-          topLanguages.forEach(lang => {
-            const width = (lang.percentage / 100) * (canvas.width - 80);
-            ctx.fillStyle = lang.color;
-            ctx.fillRect(currentX, barY, width, barHeight);
-            currentX += width;
-          });
-
-          // Draw language labels
-          const labelY = 260;
-          topLanguages.forEach((lang, i) => {
-            const labelX = 40 + i * 100;
-
-            // Draw color dot
-            ctx.fillStyle = lang.color;
-            ctx.beginPath();
-            ctx.arc(labelX + 5, labelY, 5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw language name and percentage
-            ctx.fillStyle = colors.secondaryText;
-            ctx.font = '14px Arial, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText(
-              `${lang.name} ${lang.percentage}%`,
-              labelX + 15,
-              labelY + 5
-            );
-          });
-        }
-
-        // Draw footer
-        ctx.fillStyle = colors.secondaryText;
-        ctx.font = '12px Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Generated with DevInsight', width / 2, height - 20);
-
-        // Create download link
+        // Create and trigger download link
         const link = document.createElement('a');
-
-        if (format === 'png') {
-          link.download = `${user.login}-github-card.png`;
-          link.href = canvas.toDataURL('image/png');
-        } else {
-          // Convert canvas to SVG
-          const svgData = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-            <image href="${canvas.toDataURL('image/png')}" width="${width}" height="${height}"/>
-          </svg>
-          `;
-          const blob = new Blob([svgData], { type: 'image/svg+xml' });
-          link.download = `${user.login}-github-card.svg`;
-          link.href = URL.createObjectURL(blob);
-        }
-
+        link.download = `${user.login}-github-card.png`;
+        link.href = dataUrl;
         link.click();
-        setExportSuccess(true);
-        setTimeout(() => setExportSuccess(false), 3000);
-        setIsExporting(false);
-      };
+      } else {
+        // For SVG format
+        dataUrl = await htmlToImage.toSvg(cardRef.current, {
+          cacheBust: true,
+          style: {
+            overflow: 'visible',
+            borderRadius: '8px',
+          },
+        });
 
-      avatar.onerror = () => {
-        console.error('Error loading avatar');
-        setIsExporting(false);
-      };
+        // Create and trigger download link
+        const link = document.createElement('a');
+        link.download = `${user.login}-github-card.svg`;
+        link.href = dataUrl;
+        link.click();
+      }
 
-      avatar.src = user.avatar_url;
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 3000);
     } catch (error) {
-      console.error('Error generating image:', error);
+      console.error(`Error generating ${format} image:`, error);
+    } finally {
       setIsExporting(false);
     }
   };
@@ -335,6 +94,8 @@ export default function DevCardGenerator({
     setCopiedSnippet(true);
     setTimeout(() => setCopiedSnippet(false), 3000);
   };
+
+  console.warn(generateMarkdownSnippet);
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
@@ -432,30 +193,31 @@ export default function DevCardGenerator({
                 </svg>
                 Download as SVG
               </button>
-
-              <button
-                onClick={generateMarkdownSnippet}
-                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H16A1.5 1.5 0 0 1 17.5 6v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V6c0-.001 0-.001 0-.002a1.5 1.5 0 0 1 1.5-1.498H6A1.5 1.5 0 0 1 7.5 3H9a1.5 1.5 0 0 1 1.5 1.5h1.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Copy Markdown
-              </button>
             </div>
 
             {/* Status messages */}
             {isExporting && (
-              <div className="text-l-text-2 dark:text-d-text-2 text-sm">
+              <div className="text-l-text-2 dark:text-d-text-2 text-sm flex items-center gap-2">
+                <svg
+                  className="animate-spin h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
                 Generating image...
               </div>
             )}
@@ -511,14 +273,6 @@ export default function DevCardGenerator({
           </div>
         </div>
       </div>
-
-      {/* Hidden canvas for image generation */}
-      <canvas
-        ref={canvasRef}
-        style={{ display: 'none' }}
-        width="600"
-        height="320"
-      />
     </div>
   );
 }
