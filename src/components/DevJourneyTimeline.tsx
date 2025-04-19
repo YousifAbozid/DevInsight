@@ -511,6 +511,14 @@ export default function DevJourneyTimeline({
   const [filter, setFilter] = useState<string>('all');
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  // Move the hook call here before any conditional returns
+  // This ensures hooks are always called in the same order
+  const timelineEvents = useTimelineEvents(
+    user,
+    repositories,
+    contributionData
+  );
+
   if (loading) {
     return <DevJourneyTimelineSkeleton />;
   }
@@ -518,13 +526,6 @@ export default function DevJourneyTimeline({
   if (!repositories || repositories.length === 0) {
     return null;
   }
-
-  // Use the custom hook to get timeline events
-  const timelineEvents = useTimelineEvents(
-    user,
-    repositories,
-    contributionData
-  );
 
   // Sort events by date (newest first)
   const sortedEvents = [...timelineEvents].sort(
