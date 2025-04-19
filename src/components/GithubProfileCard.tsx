@@ -303,104 +303,98 @@ export default function GithubProfileCard({
             </p>
           )}
 
-          {/* GitHub Anniversary Section - Improved Layout */}
-          <div className="mt-4 bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded-md border border-border-l/50 dark:border-border-d/50 relative overflow-hidden">
+          {/* Redesigned GitHub Membership Section */}
+          <div className="mt-4 bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-md border border-border-l/50 dark:border-border-d/50 relative overflow-hidden">
+            {/* Birthday confetti background effect */}
             {isBirthday && (
               <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-0 right-0 w-full h-full opacity-5 bg-confetti"></div>
               </div>
             )}
 
-            <div className="flex items-center">
-              <svg
-                className="w-5 h-5 mr-2 text-accent-1 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
-                />
-              </svg>
-              <span className="text-l-text-1 dark:text-d-text-1 font-medium truncate">
-                GitHub Membership
-              </span>
+            {/* Section Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg
+                  className="w-5 h-5 mr-2 text-accent-1 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                  />
+                </svg>
+                <h3 className="text-l-text-1 dark:text-d-text-1 font-medium">
+                  GitHub Membership
+                </h3>
+              </div>
 
-              {isBirthday && (
-                <span className="ml-2 bg-accent-warning/20 text-accent-warning text-xs px-2 py-0.5 rounded-full flex items-center flex-shrink-0">
-                  <svg
-                    className="w-3 h-3 mr-1"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                  </svg>
-                  GitHub Anniversary Today!
-                </span>
-              )}
+              {/* Membership Duration Badge */}
+              <div className="bg-accent-1/10 text-accent-1 px-3 py-1 rounded-full text-sm flex items-center">
+                <svg
+                  className="w-4 h-4 mr-1.5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {accountAge.years > 0
+                  ? `${accountAge.years} year${
+                      accountAge.years !== 1 ? 's' : ''
+                    }`
+                  : ''}{' '}
+                {accountAge.months > 0
+                  ? `${accountAge.months} month${
+                      accountAge.months !== 1 ? 's' : ''
+                    }`
+                  : ''}
+                {accountAge.years === 0 && accountAge.months === 0
+                  ? 'Just joined'
+                  : ''}
+              </div>
             </div>
 
-            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div className="flex flex-col">
-                <div className="text-l-text-2 dark:text-d-text-2">
-                  <span className="font-medium">Joined:</span>{' '}
-                  {formatDate(user.created_at)}
-                </div>
-
-                <div className="text-l-text-2 dark:text-d-text-2 flex items-center mt-1">
+            {/* Membership Timeline */}
+            <div className="mt-4 space-y-3">
+              {/* Join Date with Icon */}
+              <div className="flex items-start">
+                <div className="bg-l-bg-2 dark:bg-d-bg-2 p-1.5 rounded-full mr-3 mt-0.5">
                   <svg
-                    className="w-4 h-4 mr-1 text-accent-1 flex-shrink-0"
+                    className="w-4 h-4 text-accent-success"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
                     <path
                       fillRule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0V5z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="truncate">
-                    {accountAge.years > 0
-                      ? `${accountAge.years} year${
-                          accountAge.years !== 1 ? 's' : ''
-                        }`
-                      : ''}{' '}
-                    {accountAge.months > 0
-                      ? ` ${accountAge.months} month${
-                          accountAge.months !== 1 ? 's' : ''
-                        }`
-                      : ''}
-                    {accountAge.years === 0 && accountAge.months === 0
-                      ? 'Just joined'
-                      : ''}{' '}
-                    on GitHub
-                  </span>
+                </div>
+                <div>
+                  <p className="font-medium text-l-text-1 dark:text-d-text-1">
+                    Joined GitHub
+                  </p>
+                  <p className="text-l-text-2 dark:text-d-text-2 text-sm">
+                    {formatDate(user.created_at)}
+                  </p>
                 </div>
               </div>
 
+              {/* Future Anniversary (Only shown when not birthday) */}
               {!isBirthday && (
-                <div className="flex flex-col">
-                  <div className="text-l-text-2 dark:text-d-text-2 flex items-center">
+                <div className="flex items-start">
+                  <div className="bg-l-bg-2 dark:bg-d-bg-2 p-1.5 rounded-full mr-3 mt-0.5">
                     <svg
-                      className="w-4 h-4 mr-1 text-accent-success flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>Next Anniversary:</span>
-                  </div>
-
-                  <div className="text-l-text-2 dark:text-d-text-2 mt-1 flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-1 text-accent-warning flex-shrink-0"
+                      className="w-4 h-4 text-accent-warning"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -410,27 +404,41 @@ export default function GithubProfileCard({
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="truncate">
+                  </div>
+                  <div>
+                    <p className="font-medium text-l-text-1 dark:text-d-text-1">
+                      Next Anniversary
+                    </p>
+                    <p className="text-l-text-2 dark:text-d-text-2 text-sm">
                       {formatDate(nextAnniversary.date.toISOString())}{' '}
-                      <span className="text-accent-success ml-1">
+                      <span className="text-accent-success">
                         ({nextAnniversary.daysUntil} day
                         {nextAnniversary.daysUntil !== 1 ? 's' : ''} from now)
                       </span>
-                    </span>
+                    </p>
                   </div>
                 </div>
               )}
             </div>
 
+            {/* Anniversary Celebration (Only shown on birthday) */}
             {isBirthday && (
-              <div className="mt-2 bg-accent-warning/10 p-2 rounded-md border border-accent-warning/30 text-center">
-                <span className="text-accent-warning font-medium">
-                  🎉 Happy GitHub Anniversary! 🎉
-                </span>
-                <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-1">
-                  Celebrating {accountAge.years} year
-                  {accountAge.years !== 1 ? 's' : ''} on GitHub today!
-                </p>
+              <div className="mt-3 bg-accent-warning/10 p-3 rounded-md border border-accent-warning/30">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 mr-3">
+                    <span className="inline-block text-2xl">🎉</span>
+                  </div>
+                  <div>
+                    <p className="text-accent-warning font-medium">
+                      Happy GitHub Anniversary!
+                    </p>
+                    <p className="text-sm text-l-text-2 dark:text-d-text-2">
+                      Today marks {accountAge.years} year
+                      {accountAge.years !== 1 ? 's' : ''} since you joined
+                      GitHub!
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
