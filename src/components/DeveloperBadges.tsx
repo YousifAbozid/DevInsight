@@ -474,7 +474,13 @@ function BadgeCard({ badge }: { badge: Badge }) {
     <div
       className={`bg-l-bg-1 dark:bg-d-bg-1 border rounded-lg p-4 flex flex-col items-center text-center transition-all ${getBadgeBorderClass(
         badge.tier
-      )} hover:shadow-md hover:scale-[1.02] transform-gpu`}
+      )} hover:shadow-md hover:scale-[1.02] transform-gpu ${
+        badge.tier === 'silver'
+          ? 'hover:shadow-[#8E8E93]/20'
+          : badge.tier === 'platinum'
+            ? 'hover:shadow-[#8A9BA8]/20'
+            : ''
+      }`}
     >
       <div className={`p-3 rounded-full mb-3 ${getBadgeBgClass(badge.tier)}`}>
         <badge.icon />
@@ -693,11 +699,11 @@ function getBadgeBorderClass(tier: string): string {
     case 'bronze':
       return 'border-[#CD7F32]';
     case 'silver':
-      return 'border-[#C0C0C0]';
+      return 'border-[#8E8E93]'; // Darker silver for better visibility
     case 'gold':
       return 'border-[#FFD700]';
     case 'platinum':
-      return 'border-[#E5E4E2]';
+      return 'border-[#8A9BA8]'; // More distinctive platinum color
     default:
       return 'border-border-l dark:border-border-d';
   }
@@ -706,13 +712,13 @@ function getBadgeBorderClass(tier: string): string {
 function getBadgeBgClass(tier: string): string {
   switch (tier) {
     case 'bronze':
-      return 'bg-[#CD7F32]/10 text-[#CD7F32]';
+      return 'bg-[#CD7F32]/20 text-[#CD7F32] dark:bg-[#CD7F32]/30 dark:text-[#CD7F32]';
     case 'silver':
-      return 'bg-[#C0C0C0]/10 text-[#C0C0C0]';
+      return 'bg-[#8E8E93]/20 text-[#8E8E93] dark:bg-[#8E8E93]/30 dark:text-[#C8C8C8]';
     case 'gold':
-      return 'bg-[#FFD700]/10 text-[#FFD700]';
+      return 'bg-[#FFD700]/20 text-[#FFD700] dark:bg-[#FFD700]/30 dark:text-[#FFD700]';
     case 'platinum':
-      return 'bg-[#E5E4E2]/10 text-[#E5E4E2]';
+      return 'bg-[#8A9BA8]/20 text-[#8A9BA8] dark:bg-[#8A9BA8]/30 dark:text-[#B8C5D0]';
     default:
       return 'bg-l-bg-3 dark:bg-d-bg-3';
   }
@@ -721,13 +727,13 @@ function getBadgeBgClass(tier: string): string {
 function getBadgeTierClass(tier: string): string {
   switch (tier) {
     case 'bronze':
-      return 'bg-[#CD7F32]/20 text-[#CD7F32]';
+      return 'bg-[#CD7F32]/20 text-[#CD7F32] dark:bg-[#CD7F32]/30 dark:text-[#CD7F32]';
     case 'silver':
-      return 'bg-[#C0C0C0]/20 text-[#C0C0C0]';
+      return 'bg-[#8E8E93]/20 text-[#8E8E93] dark:bg-[#8E8E93]/30 dark:text-[#C8C8C8]';
     case 'gold':
-      return 'bg-[#FFD700]/20 text-[#FFD700]';
+      return 'bg-[#FFD700]/20 text-[#FFD700] dark:bg-[#FFD700]/30 dark:text-[#FFD700]';
     case 'platinum':
-      return 'bg-[#E5E4E2]/20 text-[#E5E4E2]';
+      return 'bg-[#8A9BA8]/20 text-[#8A9BA8] dark:bg-[#8A9BA8]/30 dark:text-[#B8C5D0]';
     default:
       return 'bg-l-bg-3 dark:bg-d-bg-3';
   }
