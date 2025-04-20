@@ -5,6 +5,7 @@ import GithubProfilePage from './pages/GithubProfilePage';
 import PublicProfilePage from './pages/PublicProfilePage';
 import GitHubBattlePage from './pages/GitHubBattlePage';
 import PersonasPage from './pages/PersonasPage';
+import BadgesPage from './pages/BadgesPage';
 
 function App() {
   return (
@@ -17,8 +18,8 @@ function App() {
             <Route path="/" element={<GithubProfilePage />} />
             {/* Place the specific route before the dynamic route */}
             <Route path="/battle" element={<GitHubBattlePage />} />
-
             <Route path="/personas" element={<PersonasPage />} />
+            <Route path="/badges" element={<BadgesPage />} />
             {/* This dynamic route should come last since it matches any string */}
             <Route path="/:username" element={<PublicProfilePage />} />
           </Routes>
