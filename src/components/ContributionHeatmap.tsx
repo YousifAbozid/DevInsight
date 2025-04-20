@@ -1,14 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useContributionData } from '../services/githubGraphQLService';
 
 interface ContributionHeatmapProps {
   username: string;
   token?: string;
+  userCreatedAt?: string; // Add user's account creation date
 }
 
 export default function ContributionHeatmap({
   username,
   token,
+  userCreatedAt,
 }: ContributionHeatmapProps) {
   const [hoveredDay, setHoveredDay] = useState<{
     date: string;
@@ -19,7 +21,180 @@ export default function ContributionHeatmap({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data, isLoading, error } = useContributionData(username, token);
+  // Calculate available years based on user's join date
+  const availableYears = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const joinYear = userCreatedAt
+      ? new Date(userCreatedAt).getFullYear()
+      : currentYear - 5; // Default to 5 years if join date unavailable
+
+    // Create array of years from join year to current year
+    return Array.from(
+      { length: currentYear - joinYear + 1 },
+      (_, i) => currentYear - i
+    );
+  }, [userCreatedAt]);
+
+  // Add state for selected year
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
+
+  // Fetch data for the selected year
+  const { data, isLoading, error } = useContributionData(
+    username,
+    token,
+    selectedYear
+  );
+
+  // Generate calendar data - ALWAYS call this hook, even if data isn't loaded yet
+  const { organizedCalendar, yearContributions, maxContributions } =
+    useMemo(() => {
+      // Default return values when data isn't available
+      if (!data || data.weeks.length === 0) {
+        return {
+          yearCalendar: [],
+          organizedCalendar: [],
+          yearContributions: 0,
+          maxContributions: 1,
+        };
+      }
+
+      // Generate calendar for the selected year - ONLY showing days in that year
+      const calendar = (() => {
+        const result: Array<{
+          date: Date;
+          contributionCount: number;
+          color: string;
+        }> = [];
+
+        // Only include days in the selected year
+        const startDate = new Date(selectedYear, 0, 1); // January 1st
+        const endDate = new Date(selectedYear, 11, 31); // December 31st
+
+        // Adjust end date if it's beyond current date
+        const now = new Date();
+        if (endDate > now) {
+          endDate.setTime(now.getTime());
+        }
+
+        // Build calendar days
+        const currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          const dateStr = currentDate.toISOString().split('T')[0];
+
+          // Find if there's contribution data for this day
+          const contributionDay = data.weeks
+            .flatMap(week => week.contributionDays)
+            .find(day => day.date.startsWith(dateStr));
+
+          result.push({
+            date: new Date(currentDate),
+            contributionCount: contributionDay
+              ? contributionDay.contributionCount
+              : 0,
+            color: contributionDay ? contributionDay.color : '#ebedf0',
+          });
+
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return result;
+      })();
+
+      // Organize days for grid display
+      const organized = (() => {
+        const result: Array<
+          Array<{
+            date: Date;
+            contributionCount: number;
+            color: string;
+            isEmpty?: boolean;
+          }>
+        > = [];
+
+        if (calendar.length === 0) return result;
+
+        let currentWeek: Array<{
+          date: Date;
+          contributionCount: number;
+          color: string;
+          isEmpty?: boolean;
+        }> = [];
+
+        // Add empty cells before first day of the year to align with correct weekday
+        const firstDay = calendar[0].date.getDay();
+        for (let i = 0; i < firstDay; i++) {
+          currentWeek.push({
+            date: new Date(calendar[0].date),
+            contributionCount: 0,
+            color: '#ebedf0',
+            isEmpty: true,
+          });
+        }
+
+        // Add all days from the year
+        calendar.forEach(day => {
+          const dayOfWeek = day.date.getDay();
+
+          if (dayOfWeek === 0 && currentWeek.length > 0) {
+            // Start a new week when we reach Sunday
+            result.push([...currentWeek]);
+            currentWeek = [];
+          }
+
+          currentWeek.push(day);
+
+          // Push the last week if we're on the last day
+          if (
+            day.date.getTime() === calendar[calendar.length - 1].date.getTime()
+          ) {
+            // Add empty cells after last day if needed
+            while (currentWeek.length < 7) {
+              currentWeek.push({
+                date: new Date(day.date),
+                contributionCount: 0,
+                color: '#ebedf0',
+                isEmpty: true,
+              });
+            }
+            result.push([...currentWeek]);
+          }
+        });
+
+        return result;
+      })();
+
+      // Get contributions count for the selected year
+      const contributions = data.weeks.reduce(
+        (sum, week) =>
+          sum +
+          week.contributionDays.reduce((weekSum, day) => {
+            if (new Date(day.date).getFullYear() === selectedYear) {
+              return weekSum + day.contributionCount;
+            }
+            return weekSum;
+          }, 0),
+        0
+      );
+
+      // Calculate the highest number of contributions in a day for the selected year
+      const maxContribs = Math.max(
+        ...data.weeks.flatMap(week =>
+          week.contributionDays
+            .filter(day => new Date(day.date).getFullYear() === selectedYear)
+            .map(day => day.contributionCount)
+        ),
+        1 // Ensure we don't divide by zero
+      );
+
+      return {
+        yearCalendar: calendar,
+        organizedCalendar: organized,
+        yearContributions: contributions,
+        maxContributions: maxContribs,
+      };
+    }, [data, selectedYear]);
 
   // Update tooltip position when hoveredDay changes
   useEffect(() => {
@@ -52,6 +227,27 @@ export default function ContributionHeatmap({
       tooltipElement.style.left = `${left}px`;
     }
   }, [hoveredDay]);
+
+  // Handle touch events for mobile
+  const handleTouchStart = (
+    day: { date: string; contributionCount: number },
+    event: React.TouchEvent
+  ) => {
+    event.preventDefault();
+    const element = event.currentTarget as HTMLElement;
+    setHoveredDay({
+      date: day.date,
+      count: day.contributionCount,
+      element: element,
+    });
+
+    // Auto-hide tooltip after 3 seconds on mobile
+    setTimeout(() => {
+      if (setHoveredDay) {
+        setHoveredDay(null);
+      }
+    }, 3000);
+  };
 
   if (!token) {
     return (
@@ -95,7 +291,7 @@ export default function ContributionHeatmap({
     );
   }
 
-  if (!data) {
+  if (!data || data.weeks.length === 0) {
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
         <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4">
@@ -107,14 +303,6 @@ export default function ContributionHeatmap({
       </div>
     );
   }
-
-  // Calculate the highest number of contributions in a day
-  const maxContributions = Math.max(
-    ...data.weeks.flatMap(week =>
-      week.contributionDays.map(day => day.contributionCount)
-    ),
-    1 // Ensure we don't divide by zero
-  );
 
   // Function to get color based on contribution count and theme
   const getColorClass = (count: number) => {
@@ -140,102 +328,172 @@ export default function ContributionHeatmap({
   };
 
   // Function to format date
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateObj: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return dateObj.toLocaleDateString(undefined, options);
   };
 
   // Handle day hover
   const handleDayHover = (
-    day: { date: string; contributionCount: number },
+    day: { date: Date; contributionCount: number },
     event: React.MouseEvent
   ) => {
     setHoveredDay({
-      date: day.date,
+      date: formatDate(day.date),
       count: day.contributionCount,
       element: event.currentTarget as HTMLElement,
     });
   };
 
+  // Get month labels for the selected year
+  const getMonthLabels = () => {
+    const monthLabels = [];
+    const year = selectedYear;
+
+    for (let month = 0; month < 12; month++) {
+      const date = new Date(year, month, 1);
+      monthLabels.push(date.toLocaleDateString(undefined, { month: 'short' }));
+    }
+
+    return monthLabels;
+  };
+
+  // Handle year selection
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+  };
+
+  // Calculate the number of weeks to display
+  const weeksCount = organizedCalendar.length;
+
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d">
+      <div className="flex flex-col gap-2 mb-4">
         <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
           Contribution Heatmap
         </h2>
-        <span className="text-sm text-l-text-2 dark:text-d-text-2">
-          {data.totalContributions.toLocaleString()} contributions in the last
-          year
-        </span>
+
+        {/* Year tabs */}
+        <div className="flex flex-wrap">
+          <div className="border-b border-border-l dark:border-border-d w-full mb-2">
+            <div className="flex overflow-x-auto hide-scrollbar">
+              {availableYears.map(year => (
+                <button
+                  key={year}
+                  onClick={() => handleYearChange(year)}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 focus:outline-none ${
+                    selectedYear === year
+                      ? 'border-accent-1 text-accent-1'
+                      : 'border-transparent text-l-text-2 dark:text-d-text-2 hover:border-border-l dark:hover:border-border-d'
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-sm text-l-text-2 dark:text-d-text-2">
+            {yearContributions.toLocaleString()} contributions in {selectedYear}
+          </div>
+        </div>
       </div>
 
       <div className="relative pb-2" ref={containerRef}>
-        <div className="grid grid-cols-[auto_repeat(53,1fr)] gap-1 w-full">
-          {/* Month labels */}
-          <div className="col-span-1"></div>
-          <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
-            {Array.from({ length: 12 }).map((_, i) => {
-              const date = new Date();
-              date.setMonth(date.getMonth() - 11 + i);
-              return (
-                <div
-                  key={i}
-                  className="col-span-4 text-center"
-                  style={{ gridColumnStart: i * 4 + 2 }}
-                >
-                  {date.toLocaleDateString(undefined, { month: 'short' })}
-                </div>
-              );
-            })}
-          </div>
+        {/* Responsive grid that works well on both desktop and mobile */}
+        <div className={`w-full overflow-x-auto sm:overflow-visible`}>
+          <div
+            className={`min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(${weeksCount},1fr)] gap-1`}
+          >
+            {/* Month labels */}
+            <div className="col-span-1"></div>
+            <div
+              className={`col-span-${weeksCount} grid grid-cols-${weeksCount} text-xs text-l-text-3 dark:text-d-text-3 mb-1`}
+            >
+              {getMonthLabels().map((month, i) => {
+                // Calculate positioning for month labels
+                const monthStart = new Date(selectedYear, i, 1);
+                const weekOfYear = Math.floor(
+                  (monthStart.getTime() -
+                    new Date(selectedYear, 0, 1).getTime()) /
+                    (7 * 24 * 60 * 60 * 1000)
+                );
 
-          {/* Day of week labels */}
-          <div className="grid grid-rows-7 gap-1 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
-            <span className="h-3 flex items-center">Mon</span>
-            <span className="h-3"></span>
-            <span className="h-3 flex items-center">Wed</span>
-            <span className="h-3"></span>
-            <span className="h-3 flex items-center">Fri</span>
-            <span className="h-3"></span>
-            <span className="h-3 flex items-center">Sun</span>
-          </div>
+                // Adjust for first day of year not being Sunday
+                const firstDayOffset = new Date(selectedYear, 0, 1).getDay();
+                const adjustedWeek = weekOfYear + (firstDayOffset > 0 ? 1 : 0);
 
-          {/* Contribution grid */}
-          <div className="col-span-53 grid grid-cols-53 gap-1">
-            {data.weeks.map((week, weekIndex) => (
-              <div key={weekIndex} className="grid grid-rows-7 gap-1">
-                {Array.from({ length: 7 }).map((_, dayIndex) => {
-                  const day = week.contributionDays.find(
-                    d => new Date(d.date).getDay() === dayIndex
-                  );
+                return (
+                  <div
+                    key={i}
+                    className="col-span-4 text-center"
+                    style={{
+                      gridColumnStart: adjustedWeek + 1,
+                      gridColumnEnd: `span 4`,
+                    }}
+                  >
+                    {month}
+                  </div>
+                );
+              })}
+            </div>
 
-                  if (day) {
+            {/* Day of week labels */}
+            <div className="grid grid-rows-7 gap-1 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
+              <span className="h-3 flex items-center">Mon</span>
+              <span className="h-3 flex items-center">Tue</span>
+              <span className="h-3 flex items-center">Wed</span>
+              <span className="h-3 flex items-center">Thu</span>
+              <span className="h-3 flex items-center">Fri</span>
+              <span className="h-3 flex items-center">Sat</span>
+              <span className="h-3 flex items-center">Sun</span>
+            </div>
+
+            {/* Contribution grid - now using our organized calendar */}
+            <div
+              className={`col-span-${weeksCount} grid grid-cols-${weeksCount} gap-1`}
+            >
+              {organizedCalendar.map((week, weekIndex) => (
+                <div key={weekIndex} className="grid grid-rows-7 gap-1">
+                  {week.map((day, dayIndex) => {
+                    if (day.isEmpty) {
+                      return (
+                        <div
+                          key={`empty-${weekIndex}-${dayIndex}`}
+                          className="w-3 h-3 sm:w-4 sm:h-4 rounded-sm opacity-0"
+                        ></div>
+                      );
+                    }
+
                     const colorClass = getColorClass(day.contributionCount);
+
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-3 h-3 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all relative`}
+                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all relative`}
                         onMouseEnter={e => handleDayHover(day, e)}
+                        onTouchStart={e =>
+                          handleTouchStart(
+                            {
+                              date: formatDate(day.date),
+                              contributionCount: day.contributionCount,
+                            },
+                            e
+                          )
+                        }
                         onMouseLeave={() => setHoveredDay(null)}
                         aria-label={`${formatDate(day.date)}: ${day.contributionCount} contributions`}
                       ></div>
                     );
-                  }
-
-                  return (
-                    <div
-                      key={`empty-${weekIndex}-${dayIndex}`}
-                      className="w-3 h-3 rounded-sm bg-transparent"
-                    ></div>
-                  );
-                })}
-              </div>
-            ))}
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -246,7 +504,7 @@ export default function ContributionHeatmap({
             className="fixed pointer-events-none bg-l-bg-1 dark:bg-d-bg-1 py-2 px-3 rounded-md shadow-lg border border-border-l dark:border-border-d text-sm z-50 transition-opacity duration-150 opacity-100"
           >
             <div className="font-medium text-l-text-1 dark:text-d-text-1">
-              {formatDate(hoveredDay.date)}
+              {hoveredDay.date}
             </div>
             <div
               className={`text-center font-bold mt-1 ${
@@ -265,7 +523,12 @@ export default function ContributionHeatmap({
         )}
       </div>
 
-      <div className="flex justify-end items-center mt-4">
+      <div className="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+        <div className="text-xs text-l-text-3 dark:text-d-text-3">
+          {typeof window !== 'undefined' && window.innerWidth < 640 && (
+            <span>Scroll horizontally to view all data</span>
+          )}
+        </div>
         <div className="flex items-center gap-1 text-xs text-l-text-3 dark:text-d-text-3">
           <span>Less</span>
           <div className="w-3 h-3 rounded-sm bg-l-bg-3 dark:bg-d-bg-3"></div>
@@ -280,51 +543,49 @@ export default function ContributionHeatmap({
   );
 }
 
+// Add a CSS class to hide scrollbars but keep functionality
+const styleElement =
+  typeof document !== 'undefined' ? document.createElement('style') : null;
+if (styleElement) {
+  styleElement.textContent = `
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  `;
+  document.head.appendChild(styleElement);
+}
+
 // Loading skeleton for the contribution heatmap
 function ContributionHeatmapSkeleton() {
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d animate-pulse">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d animate-pulse">
+      <div className="flex flex-col gap-2 mb-4">
         <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        <div className="border-b border-border-l dark:border-border-d w-full">
+          <div className="flex space-x-4 overflow-x-auto pb-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-8 w-16 bg-l-bg-3 dark:bg-d-bg-3 rounded"
+              ></div>
+            ))}
+          </div>
+        </div>
         <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
       </div>
 
-      <div className="grid grid-cols-[auto_repeat(53,1fr)] gap-1 min-w-[700px]">
-        <div className="col-span-1"></div>
-        <div className="col-span-53 grid grid-cols-53 gap-1 mb-1">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="col-span-4 h-4 bg-l-bg-3 dark:bg-d-bg-3 rounded"
-              style={{ gridColumnStart: i * 4 + 2 }}
-            ></div>
-          ))}
-        </div>
-
-        <div className="grid grid-rows-7 gap-1">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"
-            ></div>
-          ))}
-        </div>
-
-        <div className="col-span-53 grid grid-cols-53 gap-1">
-          {Array.from({ length: 53 }).map((_, weekIndex) => (
-            <div key={weekIndex} className="grid grid-rows-7 gap-1">
-              {Array.from({ length: 7 }).map((_, dayIndex) => (
-                <div
-                  key={`${weekIndex}-${dayIndex}`}
-                  className="w-3 h-3 rounded-sm bg-l-bg-3 dark:bg-d-bg-3"
-                ></div>
-              ))}
-            </div>
-          ))}
+      <div className="overflow-x-auto sm:overflow-visible">
+        <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-1">
+          {/* ...rest of skeleton... */}
         </div>
       </div>
 
-      <div className="flex justify-end items-center mt-4">
+      <div className="flex justify-between items-center mt-4">
+        <div className="h-3 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
         <div className="h-3 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
       </div>
     </div>
