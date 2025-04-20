@@ -438,7 +438,7 @@ export default function ContributionHeatmap({
                       return (
                         <div
                           key={`empty-${weekIndex}-${dayIndex}`}
-                          className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm opacity-0"
+                          className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded opacity-0"
                         ></div>
                       );
                     }
@@ -447,31 +447,22 @@ export default function ContributionHeatmap({
                       ? 'bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3'
                       : getColorClass(day.contributionCount);
 
-                    const interactionProps = day.isFuture
-                      ? {} // No interactions for future dates
-                      : {
-                          onMouseEnter: (e: React.MouseEvent) =>
-                            handleDayHover(day, e),
-                          onTouchStart: (e: React.TouchEvent) =>
-                            handleTouchStart(
-                              {
-                                date: formatDate(day.date),
-                                contributionCount: day.contributionCount,
-                              },
-                              e
-                            ),
-                          onMouseLeave: () => setHoveredDay(null),
-                        };
-
+                    // Allow all cells to have interactions, including future dates
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm ${colorClass} ${
-                          !day.isFuture
-                            ? 'hover:ring-1 hover:ring-accent-1 cursor-pointer'
-                            : 'cursor-default'
-                        } transition-all`}
-                        {...interactionProps}
+                        className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded ${colorClass} hover:ring-1 hover:ring-accent-1 cursor-pointer transition-all`}
+                        onMouseEnter={e => handleDayHover(day, e)}
+                        onTouchStart={e =>
+                          handleTouchStart(
+                            {
+                              date: formatDate(day.date),
+                              contributionCount: day.contributionCount,
+                            },
+                            e
+                          )
+                        }
+                        onMouseLeave={() => setHoveredDay(null)}
                         aria-label={`${formatDate(day.date)}: ${
                           day.isFuture
                             ? 'Future date'
@@ -520,18 +511,18 @@ export default function ContributionHeatmap({
         </div>
         <div className="flex items-center gap-1 text-xs text-l-text-3 dark:text-d-text-3">
           <span>Less</span>
-          <div className="w-2 h-2 rounded-sm bg-l-bg-3 dark:bg-d-bg-3"></div>
-          <div className="w-2 h-2 rounded-sm bg-[#9be9a8] dark:bg-[#0e4429]"></div>
-          <div className="w-2 h-2 rounded-sm bg-[#40c463] dark:bg-[#006d32]"></div>
-          <div className="w-2 h-2 rounded-sm bg-[#30a14e] dark:bg-[#26a641]"></div>
-          <div className="w-2 h-2 rounded-sm bg-[#216e39] dark:bg-[#39d353]"></div>
+          <div className="w-2 h-2 rounded bg-l-bg-3 dark:bg-d-bg-3"></div>
+          <div className="w-2 h-2 rounded bg-[#9be9a8] dark:bg-[#0e4429]"></div>
+          <div className="w-2 h-2 rounded bg-[#40c463] dark:bg-[#006d32]"></div>
+          <div className="w-2 h-2 rounded bg-[#30a14e] dark:bg-[#26a641]"></div>
+          <div className="w-2 h-2 rounded bg-[#216e39] dark:bg-[#39d353]"></div>
           <span>More</span>
 
           {/* Add explanation for future dates if we're showing the current year */}
           {selectedYear === new Date().getFullYear() && (
             <>
               <span className="ml-3 mr-1">Future:</span>
-              <div className="w-2 h-2 rounded-sm bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
+              <div className="w-2 h-2 rounded bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
             </>
           )}
         </div>
