@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface GithubProfileSearchProps {
   onSearch: (username: string, token?: string) => void;
@@ -17,6 +17,8 @@ export default function GithubProfileSearch({
   const [token, setToken] = useState(initialToken);
   const [showTokenInput, setShowTokenInput] = useState(!!initialToken);
   const [recentUsers, setRecentUsers] = useState<string[]>([]);
+  const [showTokenSaved, setShowTokenSaved] = useState(false);
+  const tokenTimeoutRef = useRef<number | null>(null);
 
   // Load saved values from localStorage on initial render
   useEffect(() => {
@@ -47,6 +49,36 @@ export default function GithubProfileSearch({
     }
   }, [onSearch]);
 
+  // Debounced token saving
+  useEffect(() => {
+    // Clear any existing timeout
+    if (tokenTimeoutRef.current) {
+      clearTimeout(tokenTimeoutRef.current);
+    }
+
+    // Only save if not empty and different from what's in localStorage
+    if (token.trim() && token !== localStorage.getItem('github_token')) {
+      tokenTimeoutRef.current = window.setTimeout(() => {
+        localStorage.setItem('github_token', token.trim());
+
+        // Show saved feedback
+        setShowTokenSaved(true);
+        setTimeout(() => setShowTokenSaved(false), 3000);
+
+        // If we already have a username, refresh the search with the new token
+        if (username.trim()) {
+          onSearch(username.trim(), token.trim());
+        }
+      }, 1000); // 1 second debounce
+    }
+
+    return () => {
+      if (tokenTimeoutRef.current) {
+        clearTimeout(tokenTimeoutRef.current);
+      }
+    };
+  }, [token, username, onSearch]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
@@ -64,17 +96,24 @@ export default function GithubProfileSearch({
       );
       setRecentUsers(updatedRecentUsers);
 
-      if (token.trim()) {
-        localStorage.setItem('github_token', token.trim());
-      }
-
       onSearch(username.trim(), token.trim() || undefined);
+    }
+  };
+
+  const handleTokenClear = () => {
+    localStorage.removeItem('github_token');
+    setToken('');
+    setShowTokenSaved(true);
+    setTimeout(() => setShowTokenSaved(false), 3000);
+
+    // Refresh search without token if we have a username
+    if (username.trim()) {
+      onSearch(username.trim(), undefined);
     }
   };
 
   const handleQuickFill = (selectedUsername: string) => {
     setUsername(selectedUsername);
-    // Optional: automatically trigger search when selecting a recent user
     localStorage.setItem('github_username', selectedUsername);
     onSearch(selectedUsername, token.trim() || undefined);
   };
@@ -82,6 +121,7 @@ export default function GithubProfileSearch({
   return (
     <form onSubmit={handleSubmit} className="w-full mb-6">
       <div className="flex flex-col gap-3">
+        {/* Main search bar */}
         <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
@@ -121,59 +161,66 @@ export default function GithubProfileSearch({
           </div>
         )}
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowTokenInput(!showTokenInput)}
-            className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1"
-          >
-            {showTokenInput ? 'Hide token input' : 'Show token input'}
-            <span className="text-xs">(for contribution heatmap)</span>
-          </button>
-          {token && !showTokenInput && (
-            <span className="text-xs text-accent-success">(Token saved)</span>
+        {/* Token section with improved UX */}
+        <div className="mt-1">
+          <div className="flex items-center gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setShowTokenInput(!showTokenInput)}
+              className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1"
+            >
+              {showTokenInput ? 'Hide token input' : 'Show token input'}
+              <span className="text-xs">(for contribution heatmap)</span>
+            </button>
+            {showTokenSaved && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success animate-fade-in">
+                {token ? 'Token saved!' : 'Token cleared!'}
+              </span>
+            )}
+            {token && !showTokenInput && !showTokenSaved && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success">
+                Token active
+              </span>
+            )}
+          </div>
+
+          {showTokenInput && (
+            <div className="bg-l-bg-3 dark:bg-d-bg-3 p-3 rounded-lg border border-border-l dark:border-border-d">
+              <div className="relative">
+                <input
+                  type="password"
+                  value={token}
+                  onChange={e => setToken(e.target.value)}
+                  placeholder="GitHub Personal Access Token (optional)"
+                  className="w-full px-4 py-2 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none pr-20"
+                  disabled={isLoading}
+                />
+                {token && (
+                  <button
+                    type="button"
+                    onClick={handleTokenClear}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
+                  >
+                    Clear token
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
+                The token is required to fetch contribution data. It&apos;s
+                stored only in your browser and never sent to our servers.
+                Create a token with the &apos;user&apos; scope at{' '}
+                <a
+                  href="https://github.com/settings/tokens"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-accent-1"
+                >
+                  github.com/settings/tokens
+                </a>
+              </p>
+            </div>
           )}
         </div>
-
-        {showTokenInput && (
-          <div className="flex flex-col gap-2">
-            <div className="relative">
-              <input
-                type="password"
-                value={token}
-                onChange={e => setToken(e.target.value)}
-                placeholder="GitHub Personal Access Token (optional)"
-                className="w-full px-4 py-2 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none pr-20"
-                disabled={isLoading}
-              />
-              {token && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    localStorage.removeItem('github_token');
-                    setToken('');
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
-                >
-                  Clear token
-                </button>
-              )}
-            </div>
-            <p className="text-xs text-l-text-3 dark:text-d-text-3">
-              The token is required to fetch contribution data. It&apos;s stored
-              only in your browser and never sent to our servers. Create a token
-              with the &apos;user&apos; scope at{' '}
-              <a
-                href="https://github.com/settings/tokens"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline text-accent-1"
-              >
-                github.com/settings/tokens
-              </a>
-            </p>
-          </div>
-        )}
       </div>
     </form>
   );
