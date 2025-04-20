@@ -2,19 +2,6 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icons } from '../components/shared/Icons';
 
-// // Use the same persona types as in CoderPersona
-// type PersonaType =
-//   | 'The Polyglot'
-//   | 'The Specialist'
-//   | 'The OSS Contributor'
-//   | 'The Solo Hacker'
-//   | 'The Framework Lord'
-//   | 'The Consistent Committer'
-//   | 'The Sprinter'
-//   | 'The Documentation Hero'
-//   | 'The Project Juggler'
-//   | 'The Community Pillar';
-
 export default function PersonasPage() {
   // Set page title
   useEffect(() => {
