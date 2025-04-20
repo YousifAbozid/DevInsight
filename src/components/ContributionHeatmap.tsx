@@ -66,21 +66,21 @@ export default function ContributionHeatmap({
           date: Date;
           contributionCount: number;
           color: string;
+          isFuture?: boolean; // Add flag for future dates
         }> = [];
 
         // Only include days in the selected year
         const startDate = new Date(selectedYear, 0, 1); // January 1st
         const endDate = new Date(selectedYear, 11, 31); // December 31st
-
-        // Adjust end date if it's beyond current date
         const now = new Date();
-        if (endDate > now) {
-          endDate.setTime(now.getTime());
-        }
 
-        // Build calendar days
+        // Flag to determine if this is the current year
+        // const isCurrentYear = selectedYear === now.getFullYear();
+
+        // Build calendar days for the entire year
         const currentDate = new Date(startDate);
         while (currentDate <= endDate) {
+          const isFutureDate = currentDate > now;
           const dateStr = currentDate.toISOString().split('T')[0];
 
           // Find if there's contribution data for this day
@@ -89,11 +89,12 @@ export default function ContributionHeatmap({
             .find(day => day.date.startsWith(dateStr));
 
           result.push({
-            date: new Date(currentDate.getTime()), // Create a new date object
+            date: new Date(currentDate.getTime()),
             contributionCount: contributionDay
               ? contributionDay.contributionCount
               : 0,
             color: contributionDay ? contributionDay.color : '#ebedf0',
+            isFuture: isFutureDate, // Mark if this is a future date
           });
 
           currentDate.setDate(currentDate.getDate() + 1);
@@ -115,6 +116,7 @@ export default function ContributionHeatmap({
                 contributionCount: 0,
                 color: '#ebedf0',
                 isEmpty: true,
+                isFuture: false, // Default to false for empty days
               }))
           );
 
@@ -140,6 +142,7 @@ export default function ContributionHeatmap({
               contributionCount: day.contributionCount,
               color: day.color,
               isEmpty: false,
+              isFuture: day.isFuture || false, // Ensure it's always a boolean
             };
           }
         });
@@ -356,23 +359,30 @@ export default function ContributionHeatmap({
           Contribution Heatmap
         </h2>
 
-        {/* Year tabs */}
+        {/* Updated year tabs - matching the MostStarredRepos style */}
         <div className="flex flex-wrap">
-          <div className="border-b border-border-l dark:border-border-d w-full mb-2">
+          <div className="w-full mb-2">
             <div className="flex overflow-x-auto hide-scrollbar">
-              {availableYears.map(year => (
-                <button
-                  key={year}
-                  onClick={() => handleYearChange(year)}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 focus:outline-none ${
-                    selectedYear === year
-                      ? 'border-accent-1 text-accent-1'
-                      : 'border-transparent text-l-text-2 dark:text-d-text-2 hover:border-border-l dark:hover:border-border-d'
-                  }`}
-                >
-                  {year}
-                </button>
-              ))}
+              <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-1 text-l-text-2 dark:text-d-text-2">
+                  <span>Year:</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availableYears.map(year => (
+                    <button
+                      key={year}
+                      onClick={() => handleYearChange(year)}
+                      className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
+                        selectedYear === year
+                          ? 'bg-accent-1 text-white'
+                          : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                      }`}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -383,12 +393,12 @@ export default function ContributionHeatmap({
       </div>
 
       <div className="relative pb-2" ref={containerRef}>
-        {/* Responsive grid that works well on both desktop and mobile */}
+        {/* Responsive grid with consistent spacing */}
         <div className="w-full overflow-x-auto sm:overflow-visible">
-          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-2">
-            {/* Month labels */}
+          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-2 gap-y-2">
+            {/* Month labels - spacing aligned with cells */}
             <div className="col-span-1"></div>
-            <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
+            <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-2">
               {getMonthLabels().map((month, i) => {
                 // Calculate month positions based on index
                 // Each month takes approximately 4.3 weeks
@@ -409,7 +419,7 @@ export default function ContributionHeatmap({
             </div>
 
             {/* Day of week labels */}
-            <div className="grid grid-rows-7 gap-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
+            <div className="grid grid-rows-7 gap-y-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
               <span className="h-4 flex items-center">Mon</span>
               <span className="h-4 flex items-center">Tue</span>
               <span className="h-4 flex items-center">Wed</span>
@@ -419,10 +429,10 @@ export default function ContributionHeatmap({
               <span className="h-4 flex items-center">Sun</span>
             </div>
 
-            {/* Contribution grid - using our fixed structure */}
-            <div className="col-span-53 grid grid-cols-53 gap-2">
+            {/* Contribution grid - with consistent spacing and future dates */}
+            <div className="col-span-53 grid grid-cols-53 gap-x-2 gap-y-2">
               {organizedCalendar.map((week, weekIndex) => (
-                <div key={weekIndex} className="grid grid-rows-7 gap-2">
+                <div key={weekIndex} className="grid grid-rows-7 gap-y-2">
                   {week.map((day, dayIndex) => {
                     if (day.isEmpty) {
                       return (
@@ -433,24 +443,40 @@ export default function ContributionHeatmap({
                       );
                     }
 
-                    const colorClass = getColorClass(day.contributionCount);
+                    const colorClass = day.isFuture
+                      ? 'bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3'
+                      : getColorClass(day.contributionCount);
+
+                    const interactionProps = day.isFuture
+                      ? {} // No interactions for future dates
+                      : {
+                          onMouseEnter: (e: React.MouseEvent) =>
+                            handleDayHover(day, e),
+                          onTouchStart: (e: React.TouchEvent) =>
+                            handleTouchStart(
+                              {
+                                date: formatDate(day.date),
+                                contributionCount: day.contributionCount,
+                              },
+                              e
+                            ),
+                          onMouseLeave: () => setHoveredDay(null),
+                        };
 
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all`}
-                        onMouseEnter={e => handleDayHover(day, e)}
-                        onTouchStart={e =>
-                          handleTouchStart(
-                            {
-                              date: formatDate(day.date),
-                              contributionCount: day.contributionCount,
-                            },
-                            e
-                          )
-                        }
-                        onMouseLeave={() => setHoveredDay(null)}
-                        aria-label={`${formatDate(day.date)}: ${day.contributionCount} contributions`}
+                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} ${
+                          !day.isFuture
+                            ? 'hover:ring-2 hover:ring-accent-1 cursor-pointer'
+                            : 'cursor-default'
+                        } transition-all`}
+                        {...interactionProps}
+                        aria-label={`${formatDate(day.date)}: ${
+                          day.isFuture
+                            ? 'Future date'
+                            : `${day.contributionCount} contributions`
+                        }`}
                       ></div>
                     );
                   })}
@@ -500,6 +526,14 @@ export default function ContributionHeatmap({
           <div className="w-3 h-3 rounded-sm bg-[#30a14e] dark:bg-[#26a641]"></div>
           <div className="w-3 h-3 rounded-sm bg-[#216e39] dark:bg-[#39d353]"></div>
           <span>More</span>
+
+          {/* Add explanation for future dates if we're showing the current year */}
+          {selectedYear === new Date().getFullYear() && (
+            <>
+              <span className="ml-3 mr-1">Future:</span>
+              <div className="w-3 h-3 rounded-sm bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
+            </>
+          )}
         </div>
       </div>
     </div>
