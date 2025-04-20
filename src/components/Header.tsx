@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { Trophy } from 'lucide-react';
+import { Trophy, Users } from 'lucide-react';
 
 export default function Header() {
   return (
@@ -22,6 +22,22 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="flex items-center gap-4">
+            {/* Personas Link with Users Icon - Fill Background Effect */}
+            <Link
+              to="/personas"
+              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              aria-label="Coder Personas"
+            >
+              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <Users
+                className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
+                size={16}
+              />
+              <span className="font-medium text-md z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+                Personas
+              </span>
+            </Link>
+
             {/* Battle Mode with Trophy Icon - Fill Background Effect */}
             <Link
               to="/battle"
