@@ -24,10 +24,11 @@ export default function GithubProfileSearch({
 }: GithubProfileSearchProps) {
   const [username, setUsername] = useState(initialUsername);
   const [token, setToken] = useState(initialToken);
-  const [showTokenInput, setShowTokenInput] = useState(!!initialToken);
+  const [showTokenInput, setShowTokenInput] = useState(false); // Closed by default
   const [recentUsers, setRecentUsers] = useState<string[]>([]);
   const [showTokenSaved, setShowTokenSaved] = useState(false);
   const tokenTimeoutRef = useRef<number | null>(null);
+  const usernameTimeoutRef = useRef<number | null>(null);
 
   // Load saved values from localStorage on initial render
   useEffect(() => {
@@ -88,6 +89,28 @@ export default function GithubProfileSearch({
     };
   }, [token, username, onSearch]);
 
+  // Debounced username saving/removing
+  useEffect(() => {
+    // Clear any existing timeout
+    if (usernameTimeoutRef.current) {
+      clearTimeout(usernameTimeoutRef.current);
+    }
+
+    usernameTimeoutRef.current = window.setTimeout(() => {
+      if (username.trim()) {
+        localStorage.setItem('github_username', username.trim());
+      } else {
+        localStorage.removeItem('github_username');
+      }
+    }, 500); // 500ms debounce
+
+    return () => {
+      if (usernameTimeoutRef.current) {
+        clearTimeout(usernameTimeoutRef.current);
+      }
+    };
+  }, [username]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim()) {
@@ -133,6 +156,23 @@ export default function GithubProfileSearch({
     localStorage.removeItem('github_username');
   };
 
+  // Handle removing specific user from recent searches
+  const handleRemoveRecentUser = (
+    userToRemove: string,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation(); // Prevent triggering parent button
+
+    const updatedRecentUsers = recentUsers.filter(
+      user => user !== userToRemove
+    );
+    setRecentUsers(updatedRecentUsers);
+    localStorage.setItem(
+      'recent_github_users',
+      JSON.stringify(updatedRecentUsers)
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full mb-6">
       <div className="flex flex-col gap-4">
@@ -154,7 +194,7 @@ export default function GithubProfileSearch({
               <button
                 type="button"
                 onClick={handleUsernameClear}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger cursor-pointer"
                 aria-label="Clear username"
               >
                 <X size={16} />
@@ -189,14 +229,23 @@ export default function GithubProfileSearch({
             </div>
             <div className="flex flex-wrap gap-2">
               {recentUsers.map(user => (
-                <button
-                  key={user}
-                  type="button"
-                  onClick={() => handleQuickFill(user)}
-                  className="px-3 py-1.5 text-sm rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-colors"
-                >
-                  {user}
-                </button>
+                <div key={user} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill(user)}
+                    className="pl-3 pr-8 py-1.5 text-sm rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-colors cursor-pointer"
+                  >
+                    {user}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={e => handleRemoveRecentUser(user, e)}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label={`Remove ${user} from recent searches`}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
               ))}
               <button
                 type="button"
@@ -204,7 +253,7 @@ export default function GithubProfileSearch({
                   localStorage.removeItem('recent_github_users');
                   setRecentUsers([]);
                 }}
-                className="px-3 py-1.5 text-sm rounded-full bg-accent-danger/10 text-accent-danger hover:bg-accent-danger/20 transition-colors"
+                className="px-3 py-1.5 text-sm rounded-full bg-accent-danger/10 text-accent-danger hover:bg-accent-danger/20 transition-colors cursor-pointer"
               >
                 Clear history
               </button>
@@ -217,7 +266,7 @@ export default function GithubProfileSearch({
           <button
             type="button"
             onClick={() => setShowTokenInput(!showTokenInput)}
-            className="flex items-center gap-2 text-accent-1 hover:text-accent-2 transition-colors mb-2"
+            className="flex items-center gap-2 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer"
           >
             <Key className="text-lg" />
             <div>
