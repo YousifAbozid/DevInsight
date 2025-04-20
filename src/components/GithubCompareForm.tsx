@@ -24,10 +24,23 @@ export default function GithubCompareForm({
   const [user1, setUser1] = useState('');
   const [user2, setUser2] = useState('');
   const [token, setToken] = useState(initialToken);
-  const [showTokenInput, setShowTokenInput] = useState(false); // Always closed by default
+  const [showTokenInput, setShowTokenInput] = useState(false);
   const [recentUsers, setRecentUsers] = useState<string[]>([]);
   const [showTokenSaved, setShowTokenSaved] = useState(false);
   const tokenTimeoutRef = useRef<number | null>(null);
+
+  // Track current comparison state to detect changes
+  const [currentComparison, setCurrentComparison] = useState({
+    user1: '',
+    user2: '',
+    token: initialToken || '',
+  });
+
+  // Check if current inputs differ from what's currently being compared
+  const hasChanges =
+    user1.trim() !== currentComparison.user1 ||
+    user2.trim() !== currentComparison.user2 ||
+    token !== currentComparison.token;
 
   useEffect(() => {
     // Load recent users from localStorage
@@ -57,10 +70,17 @@ export default function GithubCompareForm({
       clearTimeout(tokenTimeoutRef.current);
     }
 
-    // Only save if not empty and different from what's in localStorage
-    if (token.trim() && token !== localStorage.getItem('github_token')) {
+    const storedToken = localStorage.getItem('github_token') || '';
+
+    // Handle both token changes and token clearing
+    if (token !== storedToken) {
       tokenTimeoutRef.current = window.setTimeout(() => {
-        localStorage.setItem('github_token', token.trim());
+        // Update localStorage (set or remove token)
+        if (token.trim()) {
+          localStorage.setItem('github_token', token.trim());
+        } else {
+          localStorage.removeItem('github_token');
+        }
 
         // Show saved feedback
         setShowTokenSaved(true);
@@ -68,7 +88,13 @@ export default function GithubCompareForm({
 
         // Auto-trigger comparison if both usernames are filled
         if (user1.trim() && user2.trim()) {
-          onCompare(user1.trim(), user2.trim(), token.trim());
+          onCompare(user1.trim(), user2.trim(), token.trim() || undefined);
+          // Update current comparison state after comparison is triggered
+          setCurrentComparison({
+            user1: user1.trim(),
+            user2: user2.trim(),
+            token: token.trim(),
+          });
         }
       }, 1000); // 1 second debounce
     }
@@ -96,6 +122,13 @@ export default function GithubCompareForm({
       setRecentUsers(updatedRecentUsers);
 
       onCompare(user1.trim(), user2.trim(), token.trim() || undefined);
+
+      // Update current comparison state
+      setCurrentComparison({
+        user1: user1.trim(),
+        user2: user2.trim(),
+        token: token.trim() || '',
+      });
     }
   };
 
@@ -116,14 +149,22 @@ export default function GithubCompareForm({
   };
 
   const handleTokenClear = () => {
+    // Instead of directly calling onCompare here, we'll rely on the effect above
     localStorage.removeItem('github_token');
     setToken('');
     setShowTokenSaved(true);
     setTimeout(() => setShowTokenSaved(false), 3000);
 
-    // Auto-trigger comparison without token if both usernames are filled
+    // Immediately update current comparison state to reflect token clearing
+    // This helps properly calculate hasChanges
     if (user1.trim() && user2.trim()) {
+      // Force immediate compare instead of waiting for the effect
       onCompare(user1.trim(), user2.trim(), undefined);
+      setCurrentComparison({
+        user1: user1.trim(),
+        user2: user2.trim(),
+        token: '',
+      });
     }
   };
 
@@ -347,7 +388,12 @@ export default function GithubCompareForm({
 
         <button
           type="submit"
-          disabled={isLoading || !user1.trim() || !user2.trim()}
+          disabled={
+            isLoading ||
+            !user1.trim() ||
+            !user2.trim() ||
+            (!hasChanges && currentComparison.user1 !== '')
+          }
           className="w-full px-6 py-3 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-colors cursor-pointer font-medium flex items-center justify-center gap-2"
         >
           {isLoading ? (
