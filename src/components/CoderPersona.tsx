@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ContributionData } from '../services/githubGraphQLService';
 import PersonaStrengthBars from './PersonaStrengthBars';
 
@@ -269,12 +270,12 @@ export default function CoderPersona({
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowPersonasModal(true)}
+          <Link
+            to="/personas"
             className="text-xs px-3 py-1 text-accent-1 hover:underline"
           >
             See all personas
-          </button>
+          </Link>
           <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
             {persona.type}
           </span>
