@@ -20,19 +20,25 @@ const CONTRIBUTION_QUERY = `
   }
 `;
 
-// Function to fetch contribution data
+// Function to fetch contribution data for a specific year
 export const fetchContributionData = async (
   username: string,
-  token?: string
+  token?: string,
+  year: number = new Date().getFullYear()
 ): Promise<ContributionData> => {
   if (!username.trim()) {
     throw new Error('Username cannot be empty');
   }
 
-  // Calculate dates for past year
-  const to = new Date();
-  const from = new Date();
-  from.setFullYear(from.getFullYear() - 1);
+  // Calculate dates for the specific year
+  const from = new Date(year, 0, 1); // January 1st of the specified year
+  const to = new Date(year, 11, 31); // December 31st of the specified year
+
+  // Ensure we don't exceed current date
+  const now = new Date();
+  if (to > now) {
+    to.setTime(now.getTime());
+  }
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -75,10 +81,17 @@ export const fetchContributionData = async (
   return result.data.user.contributionsCollection.contributionCalendar;
 };
 
-export const useContributionData = (username: string, token?: string) => {
+// Updated hook to fetch data for the selected year
+export const useContributionData = (
+  username: string,
+  token?: string,
+  year?: number
+) => {
+  const selectedYear = year || new Date().getFullYear();
+
   return useQuery({
-    queryKey: ['contributionData', username],
-    queryFn: () => fetchContributionData(username, token),
+    queryKey: ['contributionData', username, selectedYear],
+    queryFn: () => fetchContributionData(username, token, selectedYear),
     enabled: !!username.trim() && !!token,
     staleTime: 60 * 60 * 1000, // 1 hour
     retry: 1,
