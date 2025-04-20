@@ -20,6 +20,15 @@ import {
   Globe,
   User,
   X,
+
+  // Developer Badges Icons
+  Activity,
+  Trophy,
+  Filter,
+  Medal,
+  Package,
+  GitCommit,
+  Shield,
 } from 'lucide-react';
 
 // Icon wrapper to maintain the same interface but use Lucide icons
@@ -80,5 +89,28 @@ export const Icons = {
   ),
   Close: ({ className }: { className?: string }) => (
     <X className={className} /> // Added for modal close button
+  ),
+
+  // Developer Badges Icons
+  Repository: ({ className }: { className?: string }) => (
+    <Package className={className} />
+  ),
+  Commit: ({ className }: { className?: string }) => (
+    <GitCommit className={className} />
+  ),
+  Activity: ({ className }: { className?: string }) => (
+    <Activity className={className} />
+  ),
+  Specialty: ({ className }: { className?: string }) => (
+    <Shield className={className} />
+  ),
+  Trophy: ({ className }: { className?: string }) => (
+    <Trophy className={className} />
+  ),
+  Filter: ({ className }: { className?: string }) => (
+    <Filter className={className} />
+  ),
+  Medal: ({ className }: { className?: string }) => (
+    <Medal className={className} />
   ),
 };
