@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
+import { Link } from 'react-router-dom';
 
 interface DeveloperBadgesProps {
   user: GithubUser;
@@ -441,12 +442,25 @@ export default function DeveloperBadges({
               <Icons.Info className="w-4 h-4" />
             </button>
           </div>
-          <div className="text-sm text-l-text-2 dark:text-d-text-2 flex items-center gap-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1 rounded-full">
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent-1"></span>
-              <span className="font-medium">{earnedBadges.length}</span>
-            </span>
-            badge{earnedBadges.length !== 1 ? 's' : ''} earned
+          <div className="flex items-center gap-2">
+            <Link
+              to="/badges"
+              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              aria-label="View all badges"
+            >
+              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <Icons.Medal className="w-4 h-4 text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200" />
+              <span className="text-xs font-medium z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200">
+                See all badges
+              </span>
+            </Link>
+            <div className="text-sm text-l-text-2 dark:text-d-text-2 flex items-center gap-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1 rounded-full">
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent-1"></span>
+                <span className="font-medium">{earnedBadges.length}</span>
+              </span>
+              badge{earnedBadges.length !== 1 ? 's' : ''} earned
+            </div>
           </div>
         </div>
 
