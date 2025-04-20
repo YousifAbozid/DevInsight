@@ -378,6 +378,7 @@ export default function PublicProfilePage() {
             <ContributionHeatmap
               username={username}
               token={savedToken || undefined}
+              userCreatedAt={user?.created_at}
             />
           )}
         </div>
