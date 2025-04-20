@@ -217,6 +217,7 @@ export default function CoderPersona({
   loading,
 }: CoderPersonaProps) {
   const [showInfo, setShowInfo] = useState(false);
+  const [showPersonasModal, setShowPersonasModal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Calculate the metrics and determine the persona once, memoize the result
@@ -267,9 +268,17 @@ export default function CoderPersona({
             <Icons.Info className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
           </button>
         </div>
-        <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
-          {persona.type}
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPersonasModal(true)}
+            className="text-xs px-3 py-1 text-accent-1 hover:underline"
+          >
+            See all personas
+          </button>
+          <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
+            {persona.type}
+          </span>
+        </div>
       </div>
 
       {showInfo && (
@@ -323,6 +332,217 @@ export default function CoderPersona({
 
         <div className="mt-4 pt-3 border-t border-border-l dark:border-border-d text-xs text-l-text-3 dark:text-d-text-3 text-center">
           Generated with DevInsight • github.com/YousifAbozid/DevInsight
+        </div>
+      </div>
+
+      {/* Personas Explanation Modal */}
+      {showPersonasModal && (
+        <PersonasExplanationModal onClose={() => setShowPersonasModal(false)} />
+      )}
+    </div>
+  );
+}
+
+// Personas Explanation Modal Component
+function PersonasExplanationModal({ onClose }: { onClose: () => void }) {
+  // All possible personas with their selection criteria
+  const allPersonas = [
+    {
+      type: 'The Polyglot',
+      description:
+        'You thrive in diverse technological environments, able to adapt to different programming languages and paradigms.',
+      criteria:
+        'Assigned when you have 5+ programming languages and language diversity score > 70.',
+      color:
+        'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300',
+      icon: Icons.CodeBranches,
+    },
+    {
+      type: 'The Specialist',
+      description:
+        'You focus deeply on mastering specific technologies, becoming an expert in your chosen domain.',
+      criteria:
+        'Assigned when you have ≤ 2 programming languages across 5+ repositories.',
+      color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300',
+      icon: Icons.Microscope,
+    },
+    {
+      type: 'The Consistent Committer',
+      description:
+        'Your steady approach to coding creates reliable progress and demonstrates exceptional discipline.',
+      criteria: 'Assigned when your contribution consistency score is > 75.',
+      color:
+        'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300',
+      icon: Icons.Calendar,
+    },
+    {
+      type: 'The OSS Contributor',
+      description:
+        'You actively collaborate with the broader developer community, strengthening the open-source ecosystem.',
+      criteria: 'Assigned when more than half of your repositories are forks.',
+      color:
+        'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
+      icon: Icons.Network,
+    },
+    {
+      type: 'The Solo Hacker',
+      description:
+        'You excel in independent development, building your own vision with focus and determination.',
+      criteria:
+        'Assigned when collaboration score < 30 and you have > 5 repositories.',
+      color: 'bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-300',
+      icon: Icons.Lightbulb,
+    },
+    {
+      type: 'The Project Juggler',
+      description:
+        'Your diverse portfolio of projects showcases versatility and a passion for exploring new ideas.',
+      criteria: 'Assigned when you have > 10 repositories.',
+      color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300',
+      icon: Icons.Cubes,
+    },
+    {
+      type: 'The Community Pillar',
+      description:
+        'Your work resonates with the developer community, creating impact through widely-used projects.',
+      criteria:
+        'Assigned when total stars > 100 or project popularity score > 70.',
+      color:
+        'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300',
+      icon: Icons.Star,
+    },
+    {
+      type: 'The Documentation Hero',
+      description:
+        'Your attention to detail and clear communication makes your code accessible and maintainable.',
+      criteria: 'Assigned when code quality score > 70.',
+      color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300',
+      icon: Icons.Document,
+    },
+    {
+      type: 'The Framework Lord',
+      description:
+        'You build on solid foundations, leveraging frameworks and libraries to create robust applications.',
+      criteria: "Default persona when others don't match.",
+      color:
+        'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300',
+      icon: Icons.Template,
+    },
+    {
+      type: 'The Sprinter',
+      description:
+        'You have a knack for rapid development and shipping features quickly when needed.',
+      criteria: 'Currently inactive in the system.',
+      color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-300',
+      icon: Icons.Download,
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-l-bg-1 dark:bg-d-bg-1 p-4 border-b border-border-l dark:border-border-d flex justify-between items-center z-10">
+          <h3 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
+            Understanding Coder Personas
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-l-bg-3/50 dark:hover:bg-d-bg-3/50 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-l-text-2 dark:text-d-text-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
+              How Your Persona Is Determined
+            </h4>
+            <p className="text-l-text-2 dark:text-d-text-2 mb-4">
+              Your Coder Persona is determined by analyzing your GitHub activity
+              across six dimensions: language diversity, contribution
+              consistency, collaboration, project popularity, code quality, and
+              community impact. The system evaluates your repositories,
+              languages, stars, followers, and contribution patterns to assign
+              the most fitting persona.
+            </p>
+
+            <div className="mb-6 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg p-4">
+              <h5 className="font-medium text-l-text-1 dark:text-d-text-1 mb-2">
+                Scoring Metrics
+              </h5>
+              <ul className="list-disc list-inside space-y-2 text-sm text-l-text-2 dark:text-d-text-2">
+                <li>
+                  <span className="font-medium">Language Diversity:</span> Based
+                  on the unique programming languages across your repositories
+                </li>
+                <li>
+                  <span className="font-medium">Contribution Consistency:</span>{' '}
+                  Calculated from your contribution calendar data
+                </li>
+                <li>
+                  <span className="font-medium">Collaboration:</span> Determined
+                  by forked repositories and followers
+                </li>
+                <li>
+                  <span className="font-medium">Project Popularity:</span> Based
+                  on star count across repositories
+                </li>
+                <li>
+                  <span className="font-medium">Code Quality:</span> Evaluated
+                  from repository descriptions and organization
+                </li>
+                <li>
+                  <span className="font-medium">Community Impact:</span>{' '}
+                  Calculated from repository forks and followers
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-4">
+            All Possible Personas
+          </h4>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {allPersonas.map(persona => (
+              <div
+                key={persona.type}
+                className="border border-border-l dark:border-border-d rounded-lg p-4 flex flex-col"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-3 rounded-full ${persona.color}`}>
+                    <persona.icon className="w-5 h-5" />
+                  </div>
+                  <h5 className="font-bold text-l-text-1 dark:text-d-text-1">
+                    {persona.type}
+                  </h5>
+                </div>
+                <p className="text-sm text-l-text-2 dark:text-d-text-2 mb-3">
+                  {persona.description}
+                </p>
+                <div className="mt-auto">
+                  <h6 className="text-xs font-semibold text-l-text-1 dark:text-d-text-1 uppercase tracking-wider mb-1">
+                    Selection Criteria
+                  </h6>
+                  <p className="text-xs text-l-text-3 dark:text-d-text-3">
+                    {persona.criteria}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
