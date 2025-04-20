@@ -16,11 +16,13 @@ export default function GithubProfileSearch({
   const [username, setUsername] = useState(initialUsername);
   const [token, setToken] = useState(initialToken);
   const [showTokenInput, setShowTokenInput] = useState(!!initialToken);
+  const [recentUsers, setRecentUsers] = useState<string[]>([]);
 
   // Load saved values from localStorage on initial render
   useEffect(() => {
     const savedUsername = localStorage.getItem('github_username');
     const savedToken = localStorage.getItem('github_token');
+    const savedRecentUsers = localStorage.getItem('recent_github_users');
 
     if (savedUsername) {
       setUsername(savedUsername);
@@ -29,6 +31,14 @@ export default function GithubProfileSearch({
     if (savedToken) {
       setToken(savedToken);
       setShowTokenInput(true);
+    }
+
+    if (savedRecentUsers) {
+      try {
+        setRecentUsers(JSON.parse(savedRecentUsers));
+      } catch (e) {
+        console.error('Failed to parse recent users from localStorage', e);
+      }
     }
 
     // Auto-search with saved credentials
@@ -42,12 +52,31 @@ export default function GithubProfileSearch({
     if (username.trim()) {
       // Save to localStorage
       localStorage.setItem('github_username', username.trim());
+
+      // Save to recent users list
+      const updatedRecentUsers = [
+        ...new Set([username.trim(), ...recentUsers]),
+      ].slice(0, 5); // Keep only the 5 most recent
+
+      localStorage.setItem(
+        'recent_github_users',
+        JSON.stringify(updatedRecentUsers)
+      );
+      setRecentUsers(updatedRecentUsers);
+
       if (token.trim()) {
         localStorage.setItem('github_token', token.trim());
       }
 
       onSearch(username.trim(), token.trim() || undefined);
     }
+  };
+
+  const handleQuickFill = (selectedUsername: string) => {
+    setUsername(selectedUsername);
+    // Optional: automatically trigger search when selecting a recent user
+    localStorage.setItem('github_username', selectedUsername);
+    onSearch(selectedUsername, token.trim() || undefined);
   };
 
   return (
@@ -70,6 +99,27 @@ export default function GithubProfileSearch({
             {isLoading ? 'Searching...' : 'Search'}
           </button>
         </div>
+
+        {/* Recent users section */}
+        {recentUsers.length > 0 && (
+          <div className="mt-2">
+            <p className="text-sm text-l-text-2 dark:text-d-text-2 mb-1">
+              Recent searches:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {recentUsers.map(user => (
+                <button
+                  key={user}
+                  type="button"
+                  onClick={() => handleQuickFill(user)}
+                  className="px-2 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-l-bg-3 dark:hover:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50"
+                >
+                  {user}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <button
