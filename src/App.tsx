@@ -12,7 +12,7 @@ function App() {
       <div className="min-h-screen bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1">
         <Header />
 
-        <main className="container mx-auto py-8 px-4 md:px-8">
+        <main className="container mx-auto p-4 md:px-8">
           <Routes>
             <Route path="/" element={<GithubProfilePage />} />
             {/* Place the specific route before the dynamic route */}

@@ -53,7 +53,7 @@ export default function GithubProfilePage() {
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
           GitHub Profile Explorer
