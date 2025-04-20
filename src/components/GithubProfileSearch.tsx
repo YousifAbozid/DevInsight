@@ -41,6 +41,12 @@ const GithubProfileSearch = forwardRef(
     const tokenTimeoutRef = useRef<number | null>(null);
     const usernameTimeoutRef = useRef<number | null>(null);
 
+    // Track the last searched username to detect changes
+    const [lastSearchedUsername, setLastSearchedUsername] = useState('');
+
+    // Check if there are changes to search
+    const hasUsernameChanges = username.trim() !== lastSearchedUsername;
+
     // Expose methods for parent component to use
     useImperativeHandle(ref, () => ({
       setUsername,
@@ -57,6 +63,8 @@ const GithubProfileSearch = forwardRef(
 
       if (savedUsername) {
         setUsername(savedUsername);
+        // Also set as last searched username since we're auto-searching with it
+        setLastSearchedUsername(savedUsername);
       }
 
       if (savedToken) {
@@ -148,6 +156,9 @@ const GithubProfileSearch = forwardRef(
         setRecentUsers(updatedRecentUsers);
 
         onSearch(username.trim(), token.trim() || undefined);
+
+        // Update the last searched username
+        setLastSearchedUsername(username.trim());
       }
     };
 
@@ -167,12 +178,16 @@ const GithubProfileSearch = forwardRef(
       setUsername(selectedUsername);
       localStorage.setItem('github_username', selectedUsername);
       onSearch(selectedUsername, token.trim() || undefined);
+
+      // Update the last searched username
+      setLastSearchedUsername(selectedUsername);
     };
 
     // Handle clearing username input
     const handleUsernameClear = () => {
       setUsername('');
       localStorage.removeItem('github_username');
+      // Don't reset lastSearchedUsername here - we want to detect the change
     };
 
     // Handle removing specific user from recent searches
@@ -222,7 +237,7 @@ const GithubProfileSearch = forwardRef(
             </div>
             <button
               type="submit"
-              disabled={isLoading || !username.trim()}
+              disabled={isLoading || !username.trim() || !hasUsernameChanges}
               className="px-6 py-3 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-colors cursor-pointer flex items-center justify-center gap-2 min-w-[120px]"
             >
               {isLoading ? (
