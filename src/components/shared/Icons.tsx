@@ -1,55 +1,59 @@
 import {
-  ArrowLeft,
+  // Updated persona icons for better representation
+  Code,
   Microscope,
   Calendar,
-  Monitor,
+  GitFork,
   Lightbulb,
-  Package,
+  Layers,
   Star,
-  FileText,
-  LayoutGrid,
-  Download,
+  FileCheck,
+  Library,
+  Zap,
   Copy,
   Info,
-  Code,
+
+  // Additional icons for PersonasPage
+  TerminalSquare,
   Users,
   CheckCircle,
   Globe,
   User,
+  X,
 } from 'lucide-react';
 
 // Icon wrapper to maintain the same interface but use Lucide icons
 export const Icons = {
-  // Persona icons
+  // Persona icons with more semantically meaningful choices
   CodeBranches: ({ className }: { className?: string }) => (
-    <ArrowLeft className={className} />
+    <Code className={className} /> // Changed from ArrowLeft to Code for The Polyglot
   ),
   Microscope: ({ className }: { className?: string }) => (
-    <Microscope className={className} />
+    <Microscope className={className} /> // Kept as is - good fit for The Specialist
   ),
   Calendar: ({ className }: { className?: string }) => (
-    <Calendar className={className} />
+    <Calendar className={className} /> // Kept as is - good fit for The Consistent Committer
   ),
   Network: ({ className }: { className?: string }) => (
-    <Monitor className={className} />
+    <GitFork className={className} /> // Changed from Monitor to GitFork for The OSS Contributor
   ),
   Lightbulb: ({ className }: { className?: string }) => (
-    <Lightbulb className={className} />
+    <Lightbulb className={className} /> // Kept as is - good fit for The Solo Hacker
   ),
   Cubes: ({ className }: { className?: string }) => (
-    <Package className={className} />
+    <Layers className={className} /> // Changed from Package to Layers for The Project Juggler
   ),
   Star: ({ className }: { className?: string }) => (
-    <Star className={className} />
+    <Star className={className} /> // Kept as is - good fit for The Community Pillar
   ),
   Document: ({ className }: { className?: string }) => (
-    <FileText className={className} />
+    <FileCheck className={className} /> // Changed from FileText to FileCheck for The Documentation Hero
   ),
   Template: ({ className }: { className?: string }) => (
-    <LayoutGrid className={className} />
+    <Library className={className} /> // Changed from LayoutGrid to Library for The Framework Lord
   ),
   Download: ({ className }: { className?: string }) => (
-    <Download className={className} />
+    <Zap className={className} /> // Changed from Download to Zap for The Sprinter
   ),
   Copy: ({ className }: { className?: string }) => (
     <Copy className={className} />
@@ -60,7 +64,7 @@ export const Icons = {
 
   // Additional icons for PersonasPage
   Code: ({ className }: { className?: string }) => (
-    <Code className={className} />
+    <TerminalSquare className={className} /> // Changed to TerminalSquare for consistency
   ),
   Users: ({ className }: { className?: string }) => (
     <Users className={className} />
@@ -73,5 +77,8 @@ export const Icons = {
   ),
   User: ({ className }: { className?: string }) => (
     <User className={className} />
+  ),
+  Close: ({ className }: { className?: string }) => (
+    <X className={className} /> // Added for modal close button
   ),
 };
