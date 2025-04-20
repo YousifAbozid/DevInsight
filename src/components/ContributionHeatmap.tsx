@@ -7,6 +7,91 @@ interface ContributionHeatmapProps {
   userCreatedAt?: string; // Add user's account creation date
 }
 
+// Grid-only loading skeleton for better UX when switching years
+function ContributionGridSkeleton() {
+  return (
+    <div className="w-full overflow-x-auto sm:overflow-visible animate-pulse">
+      <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
+        {/* Month labels skeleton */}
+        <div className="col-span-1"></div>
+        <div className="col-span-53 grid grid-cols-53 text-xs mb-2">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-3 w-14 bg-l-bg-3 dark:bg-d-bg-3 rounded"
+              style={{
+                gridColumn: `${Math.floor(i * 4.3) + 1} / span 4`,
+              }}
+            ></div>
+          ))}
+        </div>
+
+        {/* Day of week labels */}
+        <div className="grid grid-rows-7 gap-y-2 text-xs pr-2">
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          <div className="h-3 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        </div>
+
+        {/* Contribution grid skeleton */}
+        <div className="col-span-53 grid grid-cols-53 gap-x-3 gap-y-2">
+          {Array.from({ length: 53 }).map((_, weekIndex) => (
+            <div key={weekIndex} className="grid grid-rows-7 gap-y-2">
+              {Array.from({ length: 7 }).map((_, dayIndex) => (
+                <div
+                  key={`${weekIndex}-${dayIndex}`}
+                  className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded bg-l-bg-3 dark:bg-d-bg-3"
+                ></div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Complete skeleton for initial load
+function ContributionHeatmapSkeleton() {
+  return (
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d animate-pulse">
+      <div className="flex flex-col gap-2 mb-4">
+        <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        <div className="w-full mb-2">
+          <div className="flex space-x-2 overflow-x-auto pb-2">
+            <div className="h-5 w-10 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-5 w-14 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"
+              ></div>
+            ))}
+          </div>
+        </div>
+        <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+      </div>
+
+      <ContributionGridSkeleton />
+
+      <div className="mt-4 flex justify-between items-center">
+        <div className="h-3 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        <div className="flex items-center gap-1">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-2 w-14 bg-l-bg-3 dark:bg-d-bg-3 rounded"
+            ></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ContributionHeatmap({
   username,
   token,
@@ -73,9 +158,6 @@ export default function ContributionHeatmap({
         const startDate = new Date(selectedYear, 0, 1); // January 1st
         const endDate = new Date(selectedYear, 11, 31); // December 31st
         const now = new Date();
-
-        // Flag to determine if this is the current year
-        // const isCurrentYear = selectedYear === now.getFullYear();
 
         // Build calendar days for the entire year
         const currentDate = new Date(startDate);
@@ -254,7 +336,7 @@ export default function ContributionHeatmap({
     );
   }
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <ContributionHeatmapSkeleton />;
   }
 
@@ -377,6 +459,7 @@ export default function ContributionHeatmap({
                           ? 'bg-accent-1 text-white'
                           : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
                       }`}
+                      disabled={isLoading} // Disable buttons during loading
                     >
                       {year}
                     </button>
@@ -387,95 +470,104 @@ export default function ContributionHeatmap({
           </div>
 
           <div className="text-sm text-l-text-2 dark:text-d-text-2">
-            {yearContributions.toLocaleString()} contributions in {selectedYear}
+            {isLoading ? (
+              <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded animate-pulse"></div>
+            ) : (
+              `${yearContributions.toLocaleString()} contributions in ${selectedYear}`
+            )}
           </div>
         </div>
       </div>
 
       <div className="relative pb-2" ref={containerRef}>
-        {/* Responsive grid with consistent spacing */}
-        <div className="w-full overflow-x-auto sm:overflow-visible">
-          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
-            {/* Month labels - spacing aligned with cells */}
-            <div className="col-span-1"></div>
-            <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-2">
-              {getMonthLabels().map((month, i) => {
-                // Calculate month positions based on index
-                // Each month takes approximately 4.3 weeks
-                const position = Math.floor(i * 4.3);
+        {/* Show grid skeleton when loading after initial load */}
+        {isLoading ? (
+          <ContributionGridSkeleton />
+        ) : (
+          /* Regular contribution grid when data is loaded */
+          <div className="w-full overflow-x-auto sm:overflow-visible">
+            <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
+              {/* Month labels */}
+              <div className="col-span-1"></div>
+              <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-2">
+                {getMonthLabels().map((month, i) => {
+                  // Calculate month positions based on index
+                  // Each month takes approximately 4.3 weeks
+                  const position = Math.floor(i * 4.3);
 
-                return (
-                  <div
-                    key={i}
-                    className="text-center"
-                    style={{
-                      gridColumn: `${position + 1} / span 4`,
-                    }}
-                  >
-                    {month}
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div
+                      key={i}
+                      className="text-center"
+                      style={{
+                        gridColumn: `${position + 1} / span 4`,
+                      }}
+                    >
+                      {month}
+                    </div>
+                  );
+                })}
+              </div>
 
-            {/* Day of week labels */}
-            <div className="grid grid-rows-7 gap-y-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
-              <span className="h-3 flex items-center">Mon</span>
-              <span className="h-3 flex items-center">Tue</span>
-              <span className="h-3 flex items-center">Wed</span>
-              <span className="h-3 flex items-center">Thu</span>
-              <span className="h-3 flex items-center">Fri</span>
-              <span className="h-3 flex items-center">Sat</span>
-              <span className="h-3 flex items-center">Sun</span>
-            </div>
+              {/* Day of week labels */}
+              <div className="grid grid-rows-7 gap-y-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
+                <span className="h-3 flex items-center">Mon</span>
+                <span className="h-3 flex items-center">Tue</span>
+                <span className="h-3 flex items-center">Wed</span>
+                <span className="h-3 flex items-center">Thu</span>
+                <span className="h-3 flex items-center">Fri</span>
+                <span className="h-3 flex items-center">Sat</span>
+                <span className="h-3 flex items-center">Sun</span>
+              </div>
 
-            {/* Contribution grid - with improved spacing and smaller squares */}
-            <div className="col-span-53 grid grid-cols-53 gap-x-3 gap-y-2">
-              {organizedCalendar.map((week, weekIndex) => (
-                <div key={weekIndex} className="grid grid-rows-7 gap-y-2">
-                  {week.map((day, dayIndex) => {
-                    if (day.isEmpty) {
+              {/* Contribution grid */}
+              <div className="col-span-53 grid grid-cols-53 gap-x-3 gap-y-2">
+                {organizedCalendar.map((week, weekIndex) => (
+                  <div key={weekIndex} className="grid grid-rows-7 gap-y-2">
+                    {week.map((day, dayIndex) => {
+                      if (day.isEmpty) {
+                        return (
+                          <div
+                            key={`empty-${weekIndex}-${dayIndex}`}
+                            className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded opacity-0"
+                          ></div>
+                        );
+                      }
+
+                      const colorClass = day.isFuture
+                        ? 'bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3'
+                        : getColorClass(day.contributionCount);
+
+                      // Allow all cells to have interactions, including future dates
                       return (
                         <div
-                          key={`empty-${weekIndex}-${dayIndex}`}
-                          className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded opacity-0"
+                          key={`${weekIndex}-${dayIndex}`}
+                          className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded ${colorClass} hover:ring-1 hover:ring-accent-1 cursor-pointer transition-all`}
+                          onMouseEnter={e => handleDayHover(day, e)}
+                          onTouchStart={e =>
+                            handleTouchStart(
+                              {
+                                date: formatDate(day.date),
+                                contributionCount: day.contributionCount,
+                              },
+                              e
+                            )
+                          }
+                          onMouseLeave={() => setHoveredDay(null)}
+                          aria-label={`${formatDate(day.date)}: ${
+                            day.isFuture
+                              ? 'Future date'
+                              : `${day.contributionCount} contributions`
+                          }`}
                         ></div>
                       );
-                    }
-
-                    const colorClass = day.isFuture
-                      ? 'bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3'
-                      : getColorClass(day.contributionCount);
-
-                    // Allow all cells to have interactions, including future dates
-                    return (
-                      <div
-                        key={`${weekIndex}-${dayIndex}`}
-                        className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded ${colorClass} hover:ring-1 hover:ring-accent-1 cursor-pointer transition-all`}
-                        onMouseEnter={e => handleDayHover(day, e)}
-                        onTouchStart={e =>
-                          handleTouchStart(
-                            {
-                              date: formatDate(day.date),
-                              contributionCount: day.contributionCount,
-                            },
-                            e
-                          )
-                        }
-                        onMouseLeave={() => setHoveredDay(null)}
-                        aria-label={`${formatDate(day.date)}: ${
-                          day.isFuture
-                            ? 'Future date'
-                            : `${day.contributionCount} contributions`
-                        }`}
-                      ></div>
-                    );
-                  })}
-                </div>
-              ))}
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Enhanced Tooltip */}
         {hoveredDay && (
@@ -545,37 +637,4 @@ if (styleElement) {
     }
   `;
   document.head.appendChild(styleElement);
-}
-
-// Loading skeleton for the contribution heatmap
-function ContributionHeatmapSkeleton() {
-  return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d animate-pulse">
-      <div className="flex flex-col gap-2 mb-4">
-        <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="border-b border-border-l dark:border-border-d w-full">
-          <div className="flex space-x-4 overflow-x-auto pb-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-8 w-16 bg-l-bg-3 dark:bg-d-bg-3 rounded"
-              ></div>
-            ))}
-          </div>
-        </div>
-        <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-      </div>
-
-      <div className="overflow-x-auto sm:overflow-visible">
-        <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-1">
-          {/* ...rest of skeleton... */}
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mt-4">
-        <div className="h-3 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="h-3 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-      </div>
-    </div>
-  );
 }
