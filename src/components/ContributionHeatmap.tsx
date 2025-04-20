@@ -28,10 +28,10 @@ export default function ContributionHeatmap({
       ? new Date(userCreatedAt).getFullYear()
       : currentYear - 5; // Default to 5 years if join date unavailable
 
-    // Create array of years from join year to current year
+    // Create array of years from join year to current year (oldest to newest)
     return Array.from(
       { length: currentYear - joinYear + 1 },
-      (_, i) => currentYear - i
+      (_, i) => joinYear + i
     );
   }, [userCreatedAt]);
 
