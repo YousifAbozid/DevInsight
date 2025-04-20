@@ -99,9 +99,14 @@ export default function CoderPersona({
         <div className="flex items-center gap-2">
           <Link
             to="/personas"
-            className="text-xs px-3 py-1 text-accent-1 hover:underline"
+            className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+            aria-label="View all coder personas"
           >
-            See all personas
+            <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+            <Icons.Users className="w-4 h-4 text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200" />
+            <span className="text-xs font-medium z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200">
+              See all personas
+            </span>
           </Link>
           <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
             {persona.type}
