@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ContributionData } from '../services/githubGraphQLService';
 import PersonaStrengthBars from './PersonaStrengthBars';
 import { Icons } from '../components/shared/Icons';
+import * as htmlToImage from 'html-to-image';
 
 interface CoderPersonaProps {
   user: GithubUser;
@@ -48,6 +49,11 @@ export default function CoderPersona({
   const [showPersonasModal, setShowPersonasModal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // New state variables for export functionality
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
+  const [copiedSnippet] = useState(false);
+
   // Calculate the metrics and determine the persona once, memoize the result
   const { persona, personalityText } = useMemo(() => {
     if (!repositories.length) {
@@ -72,6 +78,96 @@ export default function CoderPersona({
       personalityText: generatedText,
     };
   }, [user, repositories, contributionData]);
+
+  // Generate the image using html-to-image
+  const generateImage = async (format: 'png' | 'svg') => {
+    if (!cardRef.current || !user) {
+      console.error('Card reference not available');
+      return;
+    }
+
+    setIsExporting(true);
+
+    try {
+      // Add a small delay to ensure all styles are properly applied
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      let dataUrl: string;
+
+      if (format === 'png') {
+        dataUrl = await htmlToImage.toPng(cardRef.current, {
+          quality: 1,
+          pixelRatio: 2, // Better quality for retina displays
+          cacheBust: true,
+          style: {
+            // Force visible overflow for screenshot
+            overflow: 'visible',
+            borderRadius: '8px',
+          },
+        });
+
+        // Create and trigger download link
+        const link = document.createElement('a');
+        link.download = `${user.login}-coder-persona.png`;
+        link.href = dataUrl;
+        link.click();
+      } else {
+        // For SVG format
+        dataUrl = await htmlToImage.toSvg(cardRef.current, {
+          cacheBust: true,
+          style: {
+            overflow: 'visible',
+            borderRadius: '8px',
+          },
+        });
+
+        // Create and trigger download link
+        const link = document.createElement('a');
+        link.download = `${user.login}-coder-persona.svg`;
+        link.href = dataUrl;
+        link.click();
+      }
+
+      setExportSuccess(true);
+      setTimeout(() => setExportSuccess(false), 3000);
+    } catch (error) {
+      console.error(`Error generating ${format} image:`, error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Generate a markdown snippet for embedding
+  //   const generateMarkdownSnippet = () => {
+  //     const baseUrl = window.location.origin;
+  //     // In a real app, you would generate an actual image URL here
+  //     const imageUrl = `${baseUrl}/api/persona/${user.login}`;
+  //
+  //     const markdown = `[![${user.login}'s Coder Persona - ${persona.type}](${imageUrl})](${baseUrl}/personas/${user.login})`;
+  //
+  //     navigator.clipboard.writeText(markdown);
+  //     setCopiedSnippet(true);
+  //     setTimeout(() => setCopiedSnippet(false), 3000);
+  //   };
+  //
+  //   // Download markdown snippet as .md file
+  //   const downloadMarkdown = () => {
+  //     if (!user) return;
+  //
+  //     const baseUrl = window.location.origin;
+  //     const imageUrl = `${baseUrl}/api/persona/${user.login}`;
+  //     const markdown = `[![${user.login}'s Coder Persona - ${persona.type}](${imageUrl})](${baseUrl}/personas/${user.login})`;
+  //
+  //     // Create blob and download link
+  //     const blob = new Blob([markdown], { type: 'text/markdown' });
+  //     const link = document.createElement('a');
+  //     link.download = `${user.login}-coder-persona.md`;
+  //     link.href = URL.createObjectURL(blob);
+  //     link.click();
+  //
+  //     setExportSuccess(true);
+  //     setTimeout(() => setExportSuccess(false), 3000);
+  //   };
 
   if (loading) {
     return <CoderPersonaSkeleton />;
@@ -165,6 +261,94 @@ export default function CoderPersona({
 
         <div className="mt-4 pt-3 border-t border-border-l dark:border-border-d text-xs text-l-text-3 dark:text-d-text-3 text-center">
           Generated with DevInsight • github.com/YousifAbozid/DevInsight
+        </div>
+      </div>
+
+      {/* Export Options */}
+      <div className="mt-6 border-t border-border-l dark:border-border-d pt-4">
+        <div className="flex flex-wrap items-center justify-between">
+          <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-2 md:mb-0">
+            Share Your Persona
+          </h3>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => generateImage('png')}
+              disabled={isExporting}
+              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+            >
+              <Icons.Download className="w-4 h-4" />
+              PNG
+            </button>
+
+            <button
+              onClick={() => generateImage('svg')}
+              disabled={isExporting}
+              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+            >
+              <Icons.Code className="w-4 h-4" />
+              SVG
+            </button>
+
+            {/* <button
+              onClick={generateMarkdownSnippet}
+              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+            >
+              <Icons.Copy className="w-4 h-4" />
+              Copy MD
+            </button>
+
+            <button
+              onClick={downloadMarkdown}
+              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+            >
+              <Icons.Document className="w-4 h-4" />
+              .MD
+            </button> */}
+          </div>
+        </div>
+
+        {/* Status messages */}
+        <div className="mt-2 min-h-6">
+          {isExporting && (
+            <div className="text-l-text-2 dark:text-d-text-2 text-xs flex items-center gap-1.5 justify-end">
+              <svg
+                className="animate-spin h-3 w-3"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Generating image...
+            </div>
+          )}
+
+          {exportSuccess && (
+            <div className="text-accent-success text-xs flex items-center gap-1.5 justify-end">
+              <Icons.Check className="w-3 h-3" />
+              Successfully exported!
+            </div>
+          )}
+
+          {copiedSnippet && (
+            <div className="text-accent-success text-xs flex items-center gap-1.5 justify-end">
+              <Icons.Check className="w-3 h-3" />
+              Copied to clipboard!
+            </div>
+          )}
         </div>
       </div>
 
