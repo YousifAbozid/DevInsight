@@ -31,86 +31,65 @@ import {
   Shield,
 } from 'lucide-react';
 
+// Define interface for icon props
+interface IconProps {
+  className?: string;
+}
+
 // Icon wrapper to maintain the same interface but use Lucide icons
 export const Icons = {
   // Persona icons with more semantically meaningful choices
-  CodeBranches: ({ className }: { className?: string }) => (
+  CodeBranches: ({ className }: IconProps) => (
     <Code className={className} /> // Changed from ArrowLeft to Code for The Polyglot
   ),
-  Microscope: ({ className }: { className?: string }) => (
+  Microscope: ({ className }: IconProps) => (
     <Microscope className={className} /> // Kept as is - good fit for The Specialist
   ),
-  Calendar: ({ className }: { className?: string }) => (
+  Calendar: ({ className }: IconProps) => (
     <Calendar className={className} /> // Kept as is - good fit for The Consistent Committer
   ),
-  Network: ({ className }: { className?: string }) => (
+  Network: ({ className }: IconProps) => (
     <GitFork className={className} /> // Changed from Monitor to GitFork for The OSS Contributor
   ),
-  Lightbulb: ({ className }: { className?: string }) => (
+  Lightbulb: ({ className }: IconProps) => (
     <Lightbulb className={className} /> // Kept as is - good fit for The Solo Hacker
   ),
-  Cubes: ({ className }: { className?: string }) => (
+  Cubes: ({ className }: IconProps) => (
     <Layers className={className} /> // Changed from Package to Layers for The Project Juggler
   ),
-  Star: ({ className }: { className?: string }) => (
+  Star: ({ className }: IconProps) => (
     <Star className={className} /> // Kept as is - good fit for The Community Pillar
   ),
-  Document: ({ className }: { className?: string }) => (
+  Document: ({ className }: IconProps) => (
     <FileCheck className={className} /> // Changed from FileText to FileCheck for The Documentation Hero
   ),
-  Template: ({ className }: { className?: string }) => (
+  Template: ({ className }: IconProps) => (
     <Library className={className} /> // Changed from LayoutGrid to Library for The Framework Lord
   ),
-  Download: ({ className }: { className?: string }) => (
+  Download: ({ className }: IconProps) => (
     <Zap className={className} /> // Changed from Download to Zap for The Sprinter
   ),
-  Copy: ({ className }: { className?: string }) => (
-    <Copy className={className} />
-  ),
-  Info: ({ className }: { className?: string }) => (
-    <Info className={className} />
-  ),
+  Copy: ({ className }: IconProps) => <Copy className={className} />,
+  Info: ({ className }: IconProps) => <Info className={className} />,
 
   // Additional icons for PersonasPage
-  Code: ({ className }: { className?: string }) => (
+  Code: ({ className }: IconProps) => (
     <TerminalSquare className={className} /> // Changed to TerminalSquare for consistency
   ),
-  Users: ({ className }: { className?: string }) => (
-    <Users className={className} />
-  ),
-  Check: ({ className }: { className?: string }) => (
-    <CheckCircle className={className} />
-  ),
-  Globe: ({ className }: { className?: string }) => (
-    <Globe className={className} />
-  ),
-  User: ({ className }: { className?: string }) => (
-    <User className={className} />
-  ),
-  Close: ({ className }: { className?: string }) => (
+  Users: ({ className }: IconProps) => <Users className={className} />,
+  Check: ({ className }: IconProps) => <CheckCircle className={className} />,
+  Globe: ({ className }: IconProps) => <Globe className={className} />,
+  User: ({ className }: IconProps) => <User className={className} />,
+  Close: ({ className }: IconProps) => (
     <X className={className} /> // Added for modal close button
   ),
 
   // Developer Badges Icons
-  Repository: ({ className }: { className?: string }) => (
-    <Package className={className} />
-  ),
-  Commit: ({ className }: { className?: string }) => (
-    <GitCommit className={className} />
-  ),
-  Activity: ({ className }: { className?: string }) => (
-    <Activity className={className} />
-  ),
-  Specialty: ({ className }: { className?: string }) => (
-    <Shield className={className} />
-  ),
-  Trophy: ({ className }: { className?: string }) => (
-    <Trophy className={className} />
-  ),
-  Filter: ({ className }: { className?: string }) => (
-    <Filter className={className} />
-  ),
-  Medal: ({ className }: { className?: string }) => (
-    <Medal className={className} />
-  ),
+  Repository: ({ className }: IconProps) => <Package className={className} />,
+  Commit: ({ className }: IconProps) => <GitCommit className={className} />,
+  Activity: ({ className }: IconProps) => <Activity className={className} />,
+  Specialty: ({ className }: IconProps) => <Shield className={className} />,
+  Trophy: ({ className }: IconProps) => <Trophy className={className} />,
+  Filter: ({ className }: IconProps) => <Filter className={className} />,
+  Medal: ({ className }: IconProps) => <Medal className={className} />,
 };
