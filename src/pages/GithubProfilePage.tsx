@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   useGithubUser,
   useUserRepositories,
@@ -25,6 +25,9 @@ import RepoRecommender from '../components/RepoRecommender';
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
   const [token, setToken] = useState<string | undefined>();
+  const searchRef = useRef<{
+    setRecentUsers: (users: string[]) => void;
+  } | null>(null);
 
   const {
     data: user,
@@ -42,6 +45,47 @@ export default function GithubProfilePage() {
   const handleSearch = (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
     setToken(accessToken);
+  };
+
+  // New function to handle suggestion clicks
+  const handleSuggestionClick = (suggestion: string) => {
+    // Update username for component state
+    setUsername(suggestion);
+
+    // Save to localStorage and recent searches
+    localStorage.setItem('github_username', suggestion);
+
+    // Update the recent users list in localStorage
+    const savedRecentUsers = localStorage.getItem('recent_github_users');
+    let recentUsers: string[] = [];
+
+    if (savedRecentUsers) {
+      try {
+        recentUsers = JSON.parse(savedRecentUsers);
+      } catch (e) {
+        console.error('Failed to parse recent users', e);
+      }
+    }
+
+    // Add the suggestion to recent users if not already there
+    const updatedRecentUsers = [...new Set([suggestion, ...recentUsers])].slice(
+      0,
+      5
+    ); // Keep only 5 most recent
+
+    // Save updated recent users
+    localStorage.setItem(
+      'recent_github_users',
+      JSON.stringify(updatedRecentUsers)
+    );
+
+    // Use existing search handler to perform the search
+    handleSearch(suggestion, token);
+
+    // If searchRef exists, manually update its internal state
+    if (searchRef.current?.setRecentUsers) {
+      searchRef.current.setRecentUsers(updatedRecentUsers);
+    }
   };
 
   const errorMessage = isUserError
@@ -63,7 +107,11 @@ export default function GithubProfilePage() {
         </p>
       </div>
 
-      <GithubProfileSearch onSearch={handleSearch} isLoading={isUserLoading} />
+      <GithubProfileSearch
+        onSearch={handleSearch}
+        isLoading={isUserLoading}
+        ref={searchRef}
+      />
 
       {isUserLoading ? (
         <ProfileSkeleton />
@@ -208,7 +256,7 @@ export default function GithubProfilePage() {
                   ].map(suggestion => (
                     <button
                       key={suggestion}
-                      onClick={() => handleSearch(suggestion, token)}
+                      onClick={() => handleSuggestionClick(suggestion)}
                       className="px-2 py-1 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-colors cursor-pointer"
                     >
                       {suggestion}
