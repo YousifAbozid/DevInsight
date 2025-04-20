@@ -435,7 +435,7 @@ export default function DeveloperBadges({
             </h2>
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="text-l-text-3 dark:text-d-text-3 hover:text-accent-1 transition-colors ml-1"
+              className="text-l-text-3 dark:text-d-text-3 hover:text-accent-1 transition-colors ml-1 cursor-pointer"
               aria-label="Show badge information"
             >
               <Icons.Info className="w-4 h-4" />
@@ -476,7 +476,7 @@ export default function DeveloperBadges({
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setActiveCategory(null)}
-              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors ${
+              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
                 activeCategory === null
                   ? 'bg-accent-1 text-white'
                   : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
@@ -497,7 +497,7 @@ export default function DeveloperBadges({
                   <button
                     key={category}
                     onClick={() => setActiveCategory(category)}
-                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors ${
+                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
                       activeCategory === category
                         ? 'bg-accent-1 text-white'
                         : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
