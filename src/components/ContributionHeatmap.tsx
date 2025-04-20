@@ -395,7 +395,7 @@ export default function ContributionHeatmap({
       <div className="relative pb-2" ref={containerRef}>
         {/* Responsive grid with consistent spacing */}
         <div className="w-full overflow-x-auto sm:overflow-visible">
-          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-2 gap-y-2">
+          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
             {/* Month labels - spacing aligned with cells */}
             <div className="col-span-1"></div>
             <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-2">
@@ -420,17 +420,17 @@ export default function ContributionHeatmap({
 
             {/* Day of week labels */}
             <div className="grid grid-rows-7 gap-y-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
-              <span className="h-4 flex items-center">Mon</span>
-              <span className="h-4 flex items-center">Tue</span>
-              <span className="h-4 flex items-center">Wed</span>
-              <span className="h-4 flex items-center">Thu</span>
-              <span className="h-4 flex items-center">Fri</span>
-              <span className="h-4 flex items-center">Sat</span>
-              <span className="h-4 flex items-center">Sun</span>
+              <span className="h-3 flex items-center">Mon</span>
+              <span className="h-3 flex items-center">Tue</span>
+              <span className="h-3 flex items-center">Wed</span>
+              <span className="h-3 flex items-center">Thu</span>
+              <span className="h-3 flex items-center">Fri</span>
+              <span className="h-3 flex items-center">Sat</span>
+              <span className="h-3 flex items-center">Sun</span>
             </div>
 
-            {/* Contribution grid - with consistent spacing and future dates */}
-            <div className="col-span-53 grid grid-cols-53 gap-x-2 gap-y-2">
+            {/* Contribution grid - with improved spacing and smaller squares */}
+            <div className="col-span-53 grid grid-cols-53 gap-x-3 gap-y-2">
               {organizedCalendar.map((week, weekIndex) => (
                 <div key={weekIndex} className="grid grid-rows-7 gap-y-2">
                   {week.map((day, dayIndex) => {
@@ -438,7 +438,7 @@ export default function ContributionHeatmap({
                       return (
                         <div
                           key={`empty-${weekIndex}-${dayIndex}`}
-                          className="w-3 h-3 sm:w-4 sm:h-4 rounded-sm opacity-0"
+                          className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm opacity-0"
                         ></div>
                       );
                     }
@@ -466,9 +466,9 @@ export default function ContributionHeatmap({
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} ${
+                        className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm ${colorClass} ${
                           !day.isFuture
-                            ? 'hover:ring-2 hover:ring-accent-1 cursor-pointer'
+                            ? 'hover:ring-1 hover:ring-accent-1 cursor-pointer'
                             : 'cursor-default'
                         } transition-all`}
                         {...interactionProps}
@@ -520,18 +520,18 @@ export default function ContributionHeatmap({
         </div>
         <div className="flex items-center gap-1 text-xs text-l-text-3 dark:text-d-text-3">
           <span>Less</span>
-          <div className="w-3 h-3 rounded-sm bg-l-bg-3 dark:bg-d-bg-3"></div>
-          <div className="w-3 h-3 rounded-sm bg-[#9be9a8] dark:bg-[#0e4429]"></div>
-          <div className="w-3 h-3 rounded-sm bg-[#40c463] dark:bg-[#006d32]"></div>
-          <div className="w-3 h-3 rounded-sm bg-[#30a14e] dark:bg-[#26a641]"></div>
-          <div className="w-3 h-3 rounded-sm bg-[#216e39] dark:bg-[#39d353]"></div>
+          <div className="w-2 h-2 rounded-sm bg-l-bg-3 dark:bg-d-bg-3"></div>
+          <div className="w-2 h-2 rounded-sm bg-[#9be9a8] dark:bg-[#0e4429]"></div>
+          <div className="w-2 h-2 rounded-sm bg-[#40c463] dark:bg-[#006d32]"></div>
+          <div className="w-2 h-2 rounded-sm bg-[#30a14e] dark:bg-[#26a641]"></div>
+          <div className="w-2 h-2 rounded-sm bg-[#216e39] dark:bg-[#39d353]"></div>
           <span>More</span>
 
           {/* Add explanation for future dates if we're showing the current year */}
           {selectedYear === new Date().getFullYear() && (
             <>
               <span className="ml-3 mr-1">Future:</span>
-              <div className="w-3 h-3 rounded-sm bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
+              <div className="w-2 h-2 rounded-sm bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
             </>
           )}
         </div>
