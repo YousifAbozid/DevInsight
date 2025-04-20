@@ -89,7 +89,7 @@ export default function ContributionHeatmap({
             .find(day => day.date.startsWith(dateStr));
 
           result.push({
-            date: new Date(currentDate),
+            date: new Date(currentDate.getTime()), // Create a new date object
             contributionCount: contributionDay
               ? contributionDay.contributionCount
               : 0,
@@ -104,65 +104,47 @@ export default function ContributionHeatmap({
 
       // Organize days for grid display
       const organized = (() => {
-        const result: Array<
-          Array<{
-            date: Date;
-            contributionCount: number;
-            color: string;
-            isEmpty?: boolean;
-          }>
-        > = [];
-
-        if (calendar.length === 0) return result;
-
-        let currentWeek: Array<{
-          date: Date;
-          contributionCount: number;
-          color: string;
-          isEmpty?: boolean;
-        }> = [];
-
-        // Add empty cells before first day of the year to align with correct weekday
-        const firstDay = calendar[0].date.getDay();
-        for (let i = 0; i < firstDay; i++) {
-          currentWeek.push({
-            date: new Date(calendar[0].date),
-            contributionCount: 0,
-            color: '#ebedf0',
-            isEmpty: true,
-          });
-        }
-
-        // Add all days from the year
-        calendar.forEach(day => {
-          const dayOfWeek = day.date.getDay();
-
-          if (dayOfWeek === 0 && currentWeek.length > 0) {
-            // Start a new week when we reach Sunday
-            result.push([...currentWeek]);
-            currentWeek = [];
-          }
-
-          currentWeek.push(day);
-
-          // Push the last week if we're on the last day
-          if (
-            day.date.getTime() === calendar[calendar.length - 1].date.getTime()
-          ) {
-            // Add empty cells after last day if needed
-            while (currentWeek.length < 7) {
-              currentWeek.push({
-                date: new Date(day.date),
+        // Create a fixed structure of 53 weeks (maximum possible in a year)
+        const fixedWeeks = Array(53)
+          .fill(null)
+          .map(() =>
+            Array(7)
+              .fill(null)
+              .map(() => ({
+                date: new Date(),
                 contributionCount: 0,
                 color: '#ebedf0',
                 isEmpty: true,
-              });
-            }
-            result.push([...currentWeek]);
+              }))
+          );
+
+        if (calendar.length === 0) return fixedWeeks;
+
+        // Start with the first day of the year
+        const firstDate = calendar[0].date;
+        const firstDay = firstDate.getDay();
+
+        // Fill in the actual days data
+        calendar.forEach(day => {
+          // Calculate which week and day this date belongs to
+          const dayOfYear = Math.floor(
+            (day.date.getTime() - firstDate.getTime()) / (24 * 60 * 60 * 1000)
+          );
+          const weekIndex = Math.floor((dayOfYear + firstDay) / 7);
+          const dayIndex = day.date.getDay();
+
+          // Make sure we don't exceed array bounds
+          if (weekIndex < 53) {
+            fixedWeeks[weekIndex][dayIndex] = {
+              date: day.date,
+              contributionCount: day.contributionCount,
+              color: day.color,
+              isEmpty: false,
+            };
           }
         });
 
-        return result;
+        return fixedWeeks;
       })();
 
       // Get contributions count for the selected year
@@ -189,7 +171,6 @@ export default function ContributionHeatmap({
       );
 
       return {
-        yearCalendar: calendar,
         organizedCalendar: organized,
         yearContributions: contributions,
         maxContributions: maxContribs,
@@ -368,9 +349,6 @@ export default function ContributionHeatmap({
     setSelectedYear(year);
   };
 
-  // Calculate the number of weeks to display
-  const weeksCount = organizedCalendar.length;
-
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d">
       <div className="flex flex-col gap-2 mb-4">
@@ -406,35 +384,22 @@ export default function ContributionHeatmap({
 
       <div className="relative pb-2" ref={containerRef}>
         {/* Responsive grid that works well on both desktop and mobile */}
-        <div className={`w-full overflow-x-auto sm:overflow-visible`}>
-          <div
-            className={`min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(${weeksCount},1fr)] gap-1`}
-          >
+        <div className="w-full overflow-x-auto sm:overflow-visible">
+          <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-2">
             {/* Month labels */}
             <div className="col-span-1"></div>
-            <div
-              className={`col-span-${weeksCount} grid grid-cols-${weeksCount} text-xs text-l-text-3 dark:text-d-text-3 mb-1`}
-            >
+            <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
               {getMonthLabels().map((month, i) => {
-                // Calculate positioning for month labels
-                const monthStart = new Date(selectedYear, i, 1);
-                const weekOfYear = Math.floor(
-                  (monthStart.getTime() -
-                    new Date(selectedYear, 0, 1).getTime()) /
-                    (7 * 24 * 60 * 60 * 1000)
-                );
-
-                // Adjust for first day of year not being Sunday
-                const firstDayOffset = new Date(selectedYear, 0, 1).getDay();
-                const adjustedWeek = weekOfYear + (firstDayOffset > 0 ? 1 : 0);
+                // Calculate month positions based on index
+                // Each month takes approximately 4.3 weeks
+                const position = Math.floor(i * 4.3);
 
                 return (
                   <div
                     key={i}
-                    className="col-span-4 text-center"
+                    className="text-center"
                     style={{
-                      gridColumnStart: adjustedWeek + 1,
-                      gridColumnEnd: `span 4`,
+                      gridColumn: `${position + 1} / span 4`,
                     }}
                   >
                     {month}
@@ -444,22 +409,20 @@ export default function ContributionHeatmap({
             </div>
 
             {/* Day of week labels */}
-            <div className="grid grid-rows-7 gap-1 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
-              <span className="h-3 flex items-center">Mon</span>
-              <span className="h-3 flex items-center">Tue</span>
-              <span className="h-3 flex items-center">Wed</span>
-              <span className="h-3 flex items-center">Thu</span>
-              <span className="h-3 flex items-center">Fri</span>
-              <span className="h-3 flex items-center">Sat</span>
-              <span className="h-3 flex items-center">Sun</span>
+            <div className="grid grid-rows-7 gap-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
+              <span className="h-4 flex items-center">Mon</span>
+              <span className="h-4 flex items-center">Tue</span>
+              <span className="h-4 flex items-center">Wed</span>
+              <span className="h-4 flex items-center">Thu</span>
+              <span className="h-4 flex items-center">Fri</span>
+              <span className="h-4 flex items-center">Sat</span>
+              <span className="h-4 flex items-center">Sun</span>
             </div>
 
-            {/* Contribution grid - now using our organized calendar */}
-            <div
-              className={`col-span-${weeksCount} grid grid-cols-${weeksCount} gap-1`}
-            >
+            {/* Contribution grid - using our fixed structure */}
+            <div className="col-span-53 grid grid-cols-53 gap-2">
               {organizedCalendar.map((week, weekIndex) => (
-                <div key={weekIndex} className="grid grid-rows-7 gap-1">
+                <div key={weekIndex} className="grid grid-rows-7 gap-2">
                   {week.map((day, dayIndex) => {
                     if (day.isEmpty) {
                       return (
@@ -475,7 +438,7 @@ export default function ContributionHeatmap({
                     return (
                       <div
                         key={`${weekIndex}-${dayIndex}`}
-                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all relative`}
+                        className={`w-3 h-3 sm:w-4 sm:h-4 rounded-sm ${colorClass} hover:ring-2 hover:ring-accent-1 cursor-pointer transition-all`}
                         onMouseEnter={e => handleDayHover(day, e)}
                         onTouchStart={e =>
                           handleTouchStart(
