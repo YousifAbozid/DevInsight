@@ -50,7 +50,7 @@ export default function GithubCompareForm({
     }
   }, []);
 
-  // Debounced token saving
+  // Debounced token saving with auto-comparison
   useEffect(() => {
     // Clear any existing timeout
     if (tokenTimeoutRef.current) {
@@ -65,6 +65,11 @@ export default function GithubCompareForm({
         // Show saved feedback
         setShowTokenSaved(true);
         setTimeout(() => setShowTokenSaved(false), 3000);
+
+        // Auto-trigger comparison if both usernames are filled
+        if (user1.trim() && user2.trim()) {
+          onCompare(user1.trim(), user2.trim(), token.trim());
+        }
       }, 1000); // 1 second debounce
     }
 
@@ -73,7 +78,7 @@ export default function GithubCompareForm({
         clearTimeout(tokenTimeoutRef.current);
       }
     };
-  }, [token]);
+  }, [token, user1, user2, onCompare]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,6 +120,11 @@ export default function GithubCompareForm({
     setToken('');
     setShowTokenSaved(true);
     setTimeout(() => setShowTokenSaved(false), 3000);
+
+    // Auto-trigger comparison without token if both usernames are filled
+    if (user1.trim() && user2.trim()) {
+      onCompare(user1.trim(), user2.trim(), undefined);
+    }
   };
 
   // Handle removing specific user from recent searches
