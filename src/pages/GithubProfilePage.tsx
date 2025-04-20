@@ -145,7 +145,11 @@ export default function GithubProfilePage() {
 
           {/* Contribution heatmap */}
           {username && (
-            <ContributionHeatmap username={username} token={token} />
+            <ContributionHeatmap
+              username={username}
+              token={token}
+              userCreatedAt={user?.created_at}
+            />
           )}
         </div>
       ) : (
