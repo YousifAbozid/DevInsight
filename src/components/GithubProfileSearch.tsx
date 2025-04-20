@@ -24,7 +24,7 @@ export default function GithubProfileSearch({
 }: GithubProfileSearchProps) {
   const [username, setUsername] = useState(initialUsername);
   const [token, setToken] = useState(initialToken);
-  const [showTokenInput, setShowTokenInput] = useState(false); // Closed by default
+  const [showTokenInput, setShowTokenInput] = useState(false); // Always closed by default
   const [recentUsers, setRecentUsers] = useState<string[]>([]);
   const [showTokenSaved, setShowTokenSaved] = useState(false);
   const tokenTimeoutRef = useRef<number | null>(null);
@@ -42,7 +42,7 @@ export default function GithubProfileSearch({
 
     if (savedToken) {
       setToken(savedToken);
-      setShowTokenInput(true);
+      // Don't set showTokenInput to true here to keep it closed by default
     }
 
     if (savedRecentUsers) {
