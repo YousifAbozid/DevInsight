@@ -521,19 +521,24 @@ function UserBattleCard({
 
         {/* Earned Badges */}
         <div>
-          <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center gap-1.5">
-            <Icons.Medal className="w-4 h-4 text-accent-1" />
-            Developer Achievements
+          <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Icons.Medal className="w-4 h-4 text-accent-1" />
+              Developer Achievements
+            </span>
+            <span className="text-xs text-l-text-3 dark:text-d-text-3">
+              {badges.filter(b => b.earned).length} earned
+            </span>
           </h4>
           <div className="flex flex-wrap gap-2">
             {badges
               .filter(b => b.earned)
-              .slice(0, 3)
               .map(badge => (
                 <div
                   key={badge.id}
                   className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 
                   ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)} shadow-sm hover:shadow-md transition-shadow`}
+                  title={badge.description}
                 >
                   <span className="w-4 h-4 flex items-center justify-center">
                     {React.createElement(badge.icon, {
@@ -543,12 +548,6 @@ function UserBattleCard({
                   {badge.name}
                 </div>
               ))}
-            {badges.filter(b => b.earned).length > 3 && (
-              <div className="px-3 py-1.5 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover cursor-pointer transition-colors flex items-center gap-1">
-                <Icons.MoreVertical className="w-3 h-3" />+
-                {Math.max(0, badges.filter(b => b.earned).length - 3)} more
-              </div>
-            )}
             {badges.filter(b => b.earned).length === 0 && (
               <div className="text-sm text-l-text-3 dark:text-d-text-3 italic">
                 No badges earned yet
