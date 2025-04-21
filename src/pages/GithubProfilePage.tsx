@@ -123,7 +123,11 @@ export default function GithubProfilePage() {
         <div className="space-y-8">
           <GithubProfileCard
             user={user}
-            publicProfileUrl={`/${user.login}`}
+            publicProfileUrl={
+              user.type === 'Organization'
+                ? `/org/${user.login}`
+                : `/user/${user.login}`
+            }
             onSaveUserData={() => saveUserData(user)}
             onSaveReposData={() =>
               repositories && saveRepositoriesData(user.login, repositories)
@@ -131,7 +135,7 @@ export default function GithubProfilePage() {
             hasRepositories={!!repositories && repositories.length > 0}
           />
 
-          {/* Personalized Summary */}
+          {/* Personalized Summary - For both users and organizations */}
           <PersonalizedSummary
             user={user}
             repositories={repositories}
@@ -139,37 +143,45 @@ export default function GithubProfilePage() {
             loading={isReposLoading || isContributionLoading}
           />
 
-          {/* Dev Journey Timeline - NEW COMPONENT */}
-          <DevJourneyTimeline
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Dev Journey Timeline - Only for users */}
+          {user.type !== 'Organization' && (
+            <DevJourneyTimeline
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
-          {/* Coder Persona */}
-          <CoderPersona
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Coder Persona - Only for users */}
+          {user.type !== 'Organization' && (
+            <CoderPersona
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
-          {/* Dev Card Generator */}
-          <DevCardGenerator
-            user={user}
-            repositories={repositories}
-            languageData={languageData}
-            badges={[]}
-          />
+          {/* Dev Card Generator - Only for users */}
+          {user.type !== 'Organization' && (
+            <DevCardGenerator
+              user={user}
+              repositories={repositories}
+              languageData={languageData}
+              badges={[]}
+            />
+          )}
 
-          {/* Developer badges */}
-          <DeveloperBadges
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Developer badges - Only for users */}
+          {user.type !== 'Organization' && (
+            <DeveloperBadges
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
           {/* Most starred repositories */}
           <MostStarredRepos
@@ -184,15 +196,15 @@ export default function GithubProfilePage() {
             token={token}
           />
 
-          {/* Language pie chart */}
+          {/* Language pie chart - For both users and organizations */}
           {isReposLoading ? (
             <LanguageChartSkeleton />
           ) : (
             <LanguagePieChart data={languageData} loading={isReposLoading} />
           )}
 
-          {/* Contribution heatmap */}
-          {username && (
+          {/* Contribution heatmap - Only for user profiles */}
+          {username && user.type !== 'Organization' && (
             <ContributionHeatmap
               username={username}
               token={token}
