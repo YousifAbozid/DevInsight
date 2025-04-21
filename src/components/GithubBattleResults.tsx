@@ -24,6 +24,10 @@ interface ScoreDetails {
     commits: number;
     followers: number;
     experience: number;
+    forks: number;
+    languages: number;
+    quality: number;
+    prs: number;
   };
 }
 
@@ -159,7 +163,7 @@ export default function GithubBattleResults({
           languages={user1Languages}
           isWinner={winner === 1 && !isDraw}
           isDraw={isDraw}
-          opponent={user2}
+          opponent={{ ...user2, score: user2Score }}
           formatDate={formatDate}
           calculateAccountAge={calculateAccountAge}
           variants={itemVariants}
@@ -173,7 +177,7 @@ export default function GithubBattleResults({
           languages={user2Languages}
           isWinner={winner === 2 && !isDraw}
           isDraw={isDraw}
-          opponent={user1}
+          opponent={{ ...user1, score: user1Score }}
           formatDate={formatDate}
           calculateAccountAge={calculateAccountAge}
           variants={itemVariants}
@@ -190,7 +194,7 @@ export default function GithubBattleResults({
           Score Breakdown
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <ScoreBreakdownItem
             label="Repositories"
             user1Score={user1Score.metrics.repos}
@@ -231,6 +235,38 @@ export default function GithubBattleResults({
             user2Name={user2.user.login}
             icon={<Icons.Calendar className="w-4 h-4 text-accent-1" />}
           />
+          <ScoreBreakdownItem
+            label="Forks"
+            user1Score={user1Score.metrics.forks}
+            user2Score={user2Score.metrics.forks}
+            user1Name={user1.user.login}
+            user2Name={user2.user.login}
+            icon={<Icons.GitBranch className="w-4 h-4 text-accent-1" />}
+          />
+          <ScoreBreakdownItem
+            label="Languages"
+            user1Score={user1Score.metrics.languages}
+            user2Score={user2Score.metrics.languages}
+            user1Name={user1.user.login}
+            user2Name={user2.user.login}
+            icon={<Icons.Languages className="w-4 h-4 text-accent-1" />}
+          />
+          <ScoreBreakdownItem
+            label="Quality"
+            user1Score={user1Score.metrics.quality}
+            user2Score={user2Score.metrics.quality}
+            user1Name={user1.user.login}
+            user2Name={user2.user.login}
+            icon={<Icons.BadgeCheck className="w-4 h-4 text-accent-1" />}
+          />
+          <ScoreBreakdownItem
+            label="PRs"
+            user1Score={user1Score.metrics.prs}
+            user2Score={user2Score.metrics.prs}
+            user1Name={user1.user.login}
+            user2Name={user2.user.login}
+            icon={<Icons.GitPullRequest className="w-4 h-4 text-accent-1" />}
+          />
         </div>
       </motion.div>
     </motion.div>
@@ -256,7 +292,12 @@ interface UserBattleCardProps {
   }[];
   isWinner: boolean;
   isDraw: boolean;
-  opponent: BattleUserData;
+  opponent: {
+    user: GithubUser;
+    repositories: Repository[];
+    contributionData?: ContributionData;
+    score: ScoreDetails;
+  };
   formatDate: (dateString: string) => string;
   calculateAccountAge: (createdAt: string) => string;
   variants: {
@@ -469,6 +510,113 @@ function UserBattleCard({
           </div>
         </div>
 
+        {/* Additional Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.GitBranch className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Forks
+                </span>
+              </div>
+              {score.metrics.forks > opponent.score.metrics.forks && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {score.metrics.forks - opponent.score.metrics.forks}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {repositories
+                .reduce((sum, repo) => sum + repo.forks_count, 0)
+                .toLocaleString()}
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.forks} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.Languages className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Languages
+                </span>
+              </div>
+              {score.metrics.languages > opponent.score.metrics.languages && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {score.metrics.languages - opponent.score.metrics.languages}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {
+                new Set(repositories.map(repo => repo.language).filter(Boolean))
+                  .size
+              }
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.languages} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.BadgeCheck className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Quality Projects
+                </span>
+              </div>
+              {score.metrics.quality > opponent.score.metrics.quality && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {score.metrics.quality - opponent.score.metrics.quality}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {
+                repositories.filter(
+                  repo => !repo.fork && repo.stargazers_count > 0
+                ).length
+              }
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.quality} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.GitPullRequest className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Pull Requests
+                </span>
+              </div>
+              {score.metrics.prs > opponent.score.metrics.prs && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {score.metrics.prs - opponent.score.metrics.prs}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {Math.round(totalCommits * 0.1).toLocaleString()}
+              <span className="text-xs text-l-text-3 dark:text-d-text-3 ml-1">
+                (est.)
+              </span>
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.prs} points
+            </div>
+          </div>
+        </div>
+
         {/* GitHub Details */}
         <div className="bg-l-bg-1/50 dark:bg-d-bg-1/50 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 mb-6">
           <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center gap-1.5">
@@ -665,9 +813,40 @@ function calculateScore(userData: BattleUserData): ScoreDetails {
   const totalCommits = contributionData?.totalContributions || 0;
   const commitPoints = Math.min(Math.floor(totalCommits * 0.5), 300);
 
+  // Calculate forks (4 points per fork, max 200)
+  const totalForks = repositories.reduce(
+    (sum, repo) => sum + repo.forks_count,
+    0
+  );
+  const forkPoints = Math.min(totalForks * 4, 200);
+
+  // Calculate language diversity (10 points per language, max 100)
+  const languages = new Set(
+    repositories.map(repo => repo.language).filter(Boolean)
+  );
+  const languagePoints = Math.min(languages.size * 10, 100);
+
+  // Calculate project quality (non-forked repos with stars > 0, 15 points each, max 150)
+  const qualityProjects = repositories.filter(
+    repo => !repo.fork && repo.stargazers_count > 0
+  ).length;
+  const qualityPoints = Math.min(qualityProjects * 15, 150);
+
+  // Calculate contribution quality (PRs and issues can be estimated from contribution data)
+  // Since we don't have direct PR data, we'll estimate based on commits (10% of commit points)
+  const prPoints = Math.floor(commitPoints * 0.1);
+
   // Calculate total score
   const totalScore =
-    starPoints + repoPoints + followerPoints + commitPoints + experiencePoints;
+    starPoints +
+    repoPoints +
+    followerPoints +
+    commitPoints +
+    experiencePoints +
+    forkPoints +
+    languagePoints +
+    qualityPoints +
+    prPoints;
 
   return {
     totalScore,
@@ -677,6 +856,10 @@ function calculateScore(userData: BattleUserData): ScoreDetails {
       commits: commitPoints,
       followers: followerPoints,
       experience: experiencePoints,
+      forks: forkPoints,
+      languages: languagePoints,
+      quality: qualityPoints,
+      prs: prPoints,
     },
   };
 }

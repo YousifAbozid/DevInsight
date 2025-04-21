@@ -66,6 +66,15 @@ import {
   Search,
   Key,
   StretchHorizontal,
+
+  // Additional icons for score system
+  GitBranch,
+  Languages,
+  Database,
+  ArrowUpRight,
+  Gauge,
+  BarChart,
+  BadgeCheck,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -185,5 +194,18 @@ export const Icons = {
   Key: ({ className }: IconProps) => <Key className={className} />,
   SwitchHorizontal: ({ className }: IconProps) => (
     <StretchHorizontal className={className} />
+  ),
+
+  // Additional icons for score system
+  GitBranch: ({ className }: IconProps) => <GitBranch className={className} />,
+  Languages: ({ className }: IconProps) => <Languages className={className} />,
+  Database: ({ className }: IconProps) => <Database className={className} />,
+  ArrowUpRight: ({ className }: IconProps) => (
+    <ArrowUpRight className={className} />
+  ),
+  Gauge: ({ className }: IconProps) => <Gauge className={className} />,
+  BarChart: ({ className }: IconProps) => <BarChart className={className} />,
+  BadgeCheck: ({ className }: IconProps) => (
+    <BadgeCheck className={className} />
   ),
 };
