@@ -75,6 +75,7 @@ import {
   Gauge,
   BarChart,
   BadgeCheck,
+  Calculator, // Added Calculator icon for GithubBattleResults
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -207,5 +208,10 @@ export const Icons = {
   BarChart: ({ className }: IconProps) => <BarChart className={className} />,
   BadgeCheck: ({ className }: IconProps) => (
     <BadgeCheck className={className} />
+  ),
+
+  // Add missing Calculator icon
+  Calculator: ({ className }: IconProps) => (
+    <Calculator className={className} />
   ),
 };

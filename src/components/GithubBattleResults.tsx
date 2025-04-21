@@ -1,4 +1,4 @@
-import React, { JSX, useMemo } from 'react';
+import React, { JSX, useMemo, useState } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { calculateBadges } from './DeveloperBadges';
 import { aggregateLanguageData } from '../services/githubService';
@@ -57,6 +57,9 @@ export default function GithubBattleResults({
   // Get top 3 languages for both users
   const user1Languages = aggregateLanguageData(user1.repositories).slice(0, 3);
   const user2Languages = aggregateLanguageData(user2.repositories).slice(0, 3);
+
+  // Track if scoring explanation is expanded
+  const [isExplanationExpanded, setIsExplanationExpanded] = useState(false);
 
   // Format date helper
   const formatDate = (dateString: string) => {
@@ -268,6 +271,153 @@ export default function GithubBattleResults({
             icon={<Icons.GitPullRequest className="w-4 h-4 text-accent-1" />}
           />
         </div>
+      </motion.div>
+
+      {/* Scoring Methodology Explanation - Expandable/collapsible section */}
+      <motion.div
+        className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border border-border-l dark:border-border-d shadow-md overflow-hidden"
+        variants={itemVariants}
+      >
+        <div
+          className="p-5 sm:p-6 flex items-center justify-between cursor-pointer"
+          onClick={() => setIsExplanationExpanded(!isExplanationExpanded)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setIsExplanationExpanded(!isExplanationExpanded);
+            }
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <Icons.Calculator className="w-5 h-5 text-accent-1" />
+            <h3 className="text-lg font-bold text-l-text-1 dark:text-d-text-1">
+              How Scores Are Calculated
+            </h3>
+          </div>
+          <Icons.ChevronDown
+            className={`w-5 h-5 text-l-text-2 dark:text-d-text-2 transition-transform ${
+              isExplanationExpanded ? 'transform rotate-180' : ''
+            }`}
+          />
+        </div>
+
+        <motion.div
+          className="px-5 sm:px-6 overflow-hidden"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{
+            height: isExplanationExpanded ? 'auto' : 0,
+            opacity: isExplanationExpanded ? 1 : 0,
+          }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="pb-6 pt-2 border-t border-border-l dark:border-border-d">
+            <p className="text-l-text-2 dark:text-d-text-2 mb-4">
+              DevInsight calculates GitHub Battle scores based on a
+              comprehensive evaluation of developer profiles. Each metric
+              contributes to the total score with specific point values and
+              maximum limits:
+            </p>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <ScoringMethodItem
+                  icon={<Icons.Repository className="w-4 h-4" />}
+                  title="Repositories"
+                  formula="5 points per repository"
+                  maxPoints={250}
+                  description="Public repositories demonstrate a developer's ability to create and manage code projects."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.Star className="w-4 h-4" />}
+                  title="Stars"
+                  formula="3 points per star"
+                  maxPoints={300}
+                  description="Stars represent community recognition and the value of a developer's contributions."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.Commit className="w-4 h-4" />}
+                  title="Commits"
+                  formula="0.5 points per commit"
+                  maxPoints={300}
+                  description="Commits reflect active contribution frequency and ongoing development activity."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.Users className="w-4 h-4" />}
+                  title="Followers"
+                  formula="2 points per follower"
+                  maxPoints={200}
+                  description="Followers indicate a developer's influence and reputation in the GitHub community."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.Calendar className="w-4 h-4" />}
+                  title="Experience"
+                  formula="1 point per month"
+                  maxPoints={60}
+                  description="Account age reflects a developer's experience and longevity in the development community."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.GitBranch className="w-4 h-4" />}
+                  title="Forks"
+                  formula="4 points per fork"
+                  maxPoints={200}
+                  description="Repository forks demonstrate the usefulness and reusability of a developer's code."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.Languages className="w-4 h-4" />}
+                  title="Languages"
+                  formula="10 points per language"
+                  maxPoints={100}
+                  description="Language diversity showcases versatility and technical breadth across different programming languages."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.BadgeCheck className="w-4 h-4" />}
+                  title="Quality"
+                  formula="15 points per quality project"
+                  maxPoints={150}
+                  description="Quality projects (non-forked repositories with at least one star) demonstrate recognized original work."
+                />
+
+                <ScoringMethodItem
+                  icon={<Icons.GitPullRequest className="w-4 h-4" />}
+                  title="Pull Requests"
+                  formula="Estimated as 10% of commit points"
+                  maxPoints={30}
+                  description="Pull requests demonstrate collaborative coding and contributions to other projects."
+                />
+              </div>
+
+              <div className="pt-2">
+                <h4 className="font-medium text-l-text-1 dark:text-d-text-1 mb-2 flex items-center gap-2">
+                  <Icons.Calculator className="w-4 h-4 text-accent-1" />
+                  Final Score Calculation
+                </h4>
+                <p className="text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30">
+                  The final score is the sum of points earned across all
+                  metrics, with each metric subject to its maximum limit.
+                  Maximum possible total score is 1,590 points.
+                </p>
+              </div>
+
+              <div className="bg-accent-1/10 dark:bg-accent-1/20 p-4 rounded-lg">
+                <p className="text-sm text-accent-1">
+                  <span className="font-medium">Note:</span> The scoring system
+                  is designed to provide a balanced evaluation of a
+                  developer&apos;s GitHub profile. Each metric has a maximum
+                  point value to ensure that profiles are assessed across
+                  multiple dimensions rather than excelling in just one area.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </motion.div>
     </motion.div>
   );
@@ -802,6 +952,43 @@ function ScoreBreakdownItem({
         ></div>
       </div>
     </motion.div>
+  );
+}
+
+// Scoring Method Item Component for the explanation section
+function ScoringMethodItem({
+  icon,
+  title,
+  formula,
+  maxPoints,
+  description,
+}: {
+  icon: JSX.Element;
+  title: string;
+  formula: string;
+  maxPoints: number;
+  description: string;
+}) {
+  return (
+    <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="bg-accent-1/10 p-1.5 rounded-full text-accent-1">
+          {icon}
+        </div>
+        <h4 className="font-medium text-l-text-1 dark:text-d-text-1">
+          {title}
+        </h4>
+      </div>
+      <p className="text-sm text-l-text-2 dark:text-d-text-2 mb-2">
+        {description}
+      </p>
+      <div className="flex justify-between text-xs mt-2 pt-2 border-t border-border-l/20 dark:border-border-d/20">
+        <span className="text-l-text-3 dark:text-d-text-3">{formula}</span>
+        <span className="bg-accent-1/10 text-accent-1 px-2 py-0.5 rounded-full font-medium">
+          Max: {maxPoints} pts
+        </span>
+      </div>
+    </div>
   );
 }
 
