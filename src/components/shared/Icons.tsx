@@ -39,6 +39,9 @@ import {
   // Missing icons for expand/collapse functionality
   ChevronUp,
   ChevronDown,
+
+  // Additional icons needed for DevJourneyTimeline
+  Cake,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -106,6 +109,9 @@ export const Icons = {
   // Add direct Shield mapping
   Shield: ({ className }: IconProps) => <Shield className={className} />,
 
+  // Add missing Repo icon (alias for Repository)
+  Repo: ({ className }: IconProps) => <Package className={className} />,
+
   // Additional icons for PersonalizedSummary
   Fire: ({ className }: IconProps) => <Flame className={className} />,
   Folder: ({ className }: IconProps) => <FolderClosed className={className} />,
@@ -117,4 +123,7 @@ export const Icons = {
   ChevronDown: ({ className }: IconProps) => (
     <ChevronDown className={className} />
   ),
+
+  // Additional icons for DevJourneyTimeline
+  Cake: ({ className }: IconProps) => <Cake className={className} />,
 };
