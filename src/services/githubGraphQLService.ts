@@ -93,7 +93,7 @@ export const useContributionData = (
     queryKey: ['contributionData', username, selectedYear],
     queryFn: () => fetchContributionData(username, token, selectedYear),
     enabled: !!username.trim() && !!token,
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 24 * 60 * 60 * 1000, // Increased from 1 hour to 24 hours
     retry: 1,
   });
 };
