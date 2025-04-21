@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import {
   useGithubUser,
@@ -34,9 +34,16 @@ interface StructuredData {
   };
 }
 
-export default function PublicProfilePage() {
+interface PublicProfilePageProps {
+  profileType?: 'user' | 'organization';
+}
+
+export default function PublicProfilePage({
+  profileType,
+}: PublicProfilePageProps) {
   // Get username from URL params
   const { username = '' } = useParams<{ username: string }>();
+  const navigate = useNavigate();
 
   // Add token state and UI controls
   const [token, setToken] = useState<string>('');
@@ -44,6 +51,11 @@ export default function PublicProfilePage() {
   const [savedToken, setSavedToken] = useState<string | null>(null);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const tokenTimeoutRef = useRef<number | null>(null);
+
+  // Add state for detected profile type
+  const [detectedProfileType, setDetectedProfileType] = useState<
+    'user' | 'organization' | null
+  >(profileType || null);
 
   // Load token from localStorage on component mount
   useEffect(() => {
@@ -98,12 +110,34 @@ export default function PublicProfilePage() {
   const { data: contributionData, isLoading: isContributionLoading } =
     useContributionData(username, savedToken || undefined);
 
+  // Detect if the profile is a user or organization based on the API response
+  useEffect(() => {
+    if (user) {
+      const isOrg = user.type === 'Organization';
+      setDetectedProfileType(isOrg ? 'organization' : 'user');
+
+      // If we're on the legacy route and now know the type, redirect to the appropriate route
+      if (!profileType && window.location.pathname === `/${username}`) {
+        navigate(isOrg ? `/org/${username}` : `/user/${username}`, {
+          replace: true,
+        });
+      }
+    }
+  }, [user, username, profileType, navigate]);
+
   // Generate page URL and description
-  const pageUrl = `${window.location.origin}/profile/${username}`;
+  const profilePath = detectedProfileType
+    ? `/${detectedProfileType}/${username}`
+    : `/${username}`;
+  const pageUrl = `${window.location.origin}${profilePath}`;
+
   const pageTitle = username
-    ? `${username}'s GitHub Profile | DevInsight`
+    ? `${username}'s GitHub ${detectedProfileType === 'organization' ? 'Organization' : 'Profile'} | DevInsight`
     : 'DevInsight';
-  const pageDescription = `View ${username}'s GitHub profile data, repositories, contributions, and programming language analytics on DevInsight`;
+
+  const pageDescription = `View ${username}'s GitHub ${
+    detectedProfileType === 'organization' ? 'organization' : 'profile'
+  } data, repositories, ${detectedProfileType === 'user' ? 'contributions, ' : ''}and programming language analytics on DevInsight`;
 
   // Create JSON-LD structured data
   const structuredData: StructuredData | null = user
@@ -113,7 +147,8 @@ export default function PublicProfilePage() {
         name: pageTitle,
         description: pageDescription,
         mainEntity: {
-          '@type': 'Person',
+          '@type':
+            detectedProfileType === 'organization' ? 'Organization' : 'Person',
           name: user.name || username,
           alternateName: username,
           url: user.html_url,
@@ -197,7 +232,10 @@ export default function PublicProfilePage() {
     // Open Graph tags
     updateOgMetaTag('title', pageTitle);
     updateOgMetaTag('description', pageDescription);
-    updateOgMetaTag('type', 'profile');
+    updateOgMetaTag(
+      'type',
+      detectedProfileType === 'organization' ? 'profile.business' : 'profile'
+    );
     updateOgMetaTag('url', pageUrl);
 
     // Add user avatar as og:image if available
@@ -230,7 +268,15 @@ export default function PublicProfilePage() {
         script.remove();
       }
     };
-  }, [username, user, pageTitle, pageDescription, pageUrl, structuredData]);
+  }, [
+    username,
+    user,
+    pageTitle,
+    pageDescription,
+    pageUrl,
+    structuredData,
+    detectedProfileType,
+  ]);
 
   const errorMessage = isUserError
     ? userError instanceof Error
@@ -249,66 +295,80 @@ export default function PublicProfilePage() {
     setTimeout(() => setShowSaveMessage(false), 3000);
   };
 
+  // If we're on the legacy route and have detected the profile type, redirect
+  if (
+    !profileType &&
+    detectedProfileType &&
+    window.location.pathname === `/${username}`
+  ) {
+    return <Navigate to={`/${detectedProfileType}/${username}`} replace />;
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
-          {username}&apos;s GitHub Profile
+          {username}&apos;s GitHub{' '}
+          {detectedProfileType === 'organization' ? 'Organization' : 'Profile'}
         </h1>
         <p className="text-l-text-2 dark:text-d-text-2 text-base md:text-lg">
-          View public profile information and stats
+          View public{' '}
+          {detectedProfileType === 'organization' ? 'organization' : 'profile'}{' '}
+          information and stats
         </p>
       </div>
 
-      {/* Enhanced Token Input Section */}
-      <div className="mb-6">
-        <button
-          type="button"
-          onClick={() => setShowTokenInput(!showTokenInput)}
-          className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1 mb-2"
-        >
-          {showTokenInput ? 'Hide token input' : 'Show token input'}
-          <span className="text-xs">(for enhanced data access)</span>
-          {!showTokenInput && savedToken && (
-            <span className="ml-1 text-xs px-2 py-0.5 bg-accent-success/10 text-accent-success rounded-full">
-              Token active
-            </span>
-          )}
-        </button>
-
-        {showTokenInput && (
-          <div className="relative bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 border border-border-l dark:border-border-d">
-            {showSaveMessage && (
-              <div className="absolute -top-2 right-4 px-3 py-1 bg-accent-success/10 text-accent-success text-xs rounded-full transform translate-y-0 animate-fade-in-down">
-                {token ? 'Token saved!' : 'Token cleared!'}
-              </div>
+      {/* Enhanced Token Input Section - Only show for user profiles where contribution data is relevant */}
+      {(detectedProfileType === 'user' || !detectedProfileType) && (
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => setShowTokenInput(!showTokenInput)}
+            className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1 mb-2"
+          >
+            {showTokenInput ? 'Hide token input' : 'Show token input'}
+            <span className="text-xs">(for enhanced data access)</span>
+            {!showTokenInput && savedToken && (
+              <span className="ml-1 text-xs px-2 py-0.5 bg-accent-success/10 text-accent-success rounded-full">
+                Token active
+              </span>
             )}
-            <div className="relative">
-              <input
-                type="password"
-                value={token}
-                onChange={e => setToken(e.target.value)}
-                placeholder="GitHub Personal Access Token"
-                className="w-full px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
-              />
-              {token && (
-                <button
-                  type="button"
-                  onClick={handleClearToken}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
-                >
-                  Clear
-                </button>
+          </button>
+
+          {showTokenInput && (
+            <div className="relative bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 border border-border-l dark:border-border-d">
+              {showSaveMessage && (
+                <div className="absolute -top-2 right-4 px-3 py-1 bg-accent-success/10 text-accent-success text-xs rounded-full transform translate-y-0 animate-fade-in-down">
+                  {token ? 'Token saved!' : 'Token cleared!'}
+                </div>
               )}
+              <div className="relative">
+                <input
+                  type="password"
+                  value={token}
+                  onChange={e => setToken(e.target.value)}
+                  placeholder="GitHub Personal Access Token"
+                  className="w-full px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+                />
+                {token && (
+                  <button
+                    type="button"
+                    onClick={handleClearToken}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
+                The token enables fetching contribution data. Changes are
+                automatically saved after typing. Your token is stored only in
+                your browser.
+              </p>
             </div>
-            <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
-              The token enables fetching contribution data. Changes are
-              automatically saved after typing. Your token is stored only in
-              your browser.
-            </p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {isUserLoading ? (
         <ProfileSkeleton />
@@ -328,53 +388,61 @@ export default function PublicProfilePage() {
             loading={isReposLoading || isContributionLoading}
           />
 
-          {/* Dev Journey Timeline - NEW COMPONENT */}
-          <DevJourneyTimeline
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Dev Journey Timeline - Only for user profiles */}
+          {detectedProfileType === 'user' && (
+            <DevJourneyTimeline
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
-          {/* Coder Persona */}
-          <CoderPersona
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Coder Persona - Only for user profiles */}
+          {detectedProfileType === 'user' && (
+            <CoderPersona
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
-          {/* Dev Card Generator */}
-          <DevCardGenerator
-            user={user}
-            repositories={repositories}
-            languageData={languageData}
-            badges={[]}
-          />
+          {/* Dev Card Generator - Only for user profiles */}
+          {detectedProfileType === 'user' && (
+            <DevCardGenerator
+              user={user}
+              repositories={repositories}
+              languageData={languageData}
+              badges={[]}
+            />
+          )}
 
-          {/* Developer badges */}
-          <DeveloperBadges
-            user={user}
-            repositories={repositories}
-            contributionData={contributionData}
-            loading={isReposLoading || isContributionLoading}
-          />
+          {/* Developer badges - Only for user profiles */}
+          {detectedProfileType === 'user' && (
+            <DeveloperBadges
+              user={user}
+              repositories={repositories}
+              contributionData={contributionData}
+              loading={isReposLoading || isContributionLoading}
+            />
+          )}
 
-          {/* Most starred repositories */}
+          {/* Most starred repositories - For both users and organizations */}
           <MostStarredRepos
             repositories={repositories}
             loading={isReposLoading}
           />
 
-          {/* Language pie chart */}
+          {/* Language pie chart - For both users and organizations */}
           {isReposLoading ? (
             <LanguageChartSkeleton />
           ) : (
             <LanguagePieChart data={languageData} loading={isReposLoading} />
           )}
 
-          {/* Contribution heatmap */}
-          {username && (
+          {/* Contribution heatmap - Only for user profiles */}
+          {detectedProfileType === 'user' && username && (
             <ContributionHeatmap
               username={username}
               token={savedToken || undefined}
