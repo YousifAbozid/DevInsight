@@ -1,8 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { Trophy, Users, Medal } from 'lucide-react';
 
 export default function Header() {
+  // Get current location to determine active route
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  // Helper function to check if a route is active
+  const isActive = (path: string) => {
+    // For battle route, check if current path starts with /battle
+    if (path === '/battle' && currentPath.startsWith('/battle')) {
+      return true;
+    }
+    // For other routes, do exact match
+    return currentPath === path;
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 shadow-lg">
       <div className="container mx-auto">
@@ -25,15 +39,19 @@ export default function Header() {
             {/* Personas Link with Users Icon - Fill Background Effect */}
             <Link
               to="/personas"
-              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/personas') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
               aria-label="Coder Personas"
             >
-              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <span
+                className={`absolute inset-0 bg-accent-1 ${isActive('/personas') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+              ></span>
               <Users
-                className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
+                className={`${isActive('/personas') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/personas') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
               />
-              <span className="font-medium text-md z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+              <span
+                className={`font-medium text-md z-10 ${isActive('/personas') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+              >
                 Personas
               </span>
             </Link>
@@ -41,15 +59,19 @@ export default function Header() {
             {/* Badges Link with Medal Icon - Fill Background Effect */}
             <Link
               to="/badges"
-              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/badges') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
               aria-label="Developer Badges"
             >
-              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <span
+                className={`absolute inset-0 bg-accent-1 ${isActive('/badges') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+              ></span>
               <Medal
-                className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
+                className={`${isActive('/badges') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/badges') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
               />
-              <span className="font-medium text-md z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+              <span
+                className={`font-medium text-md z-10 ${isActive('/badges') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+              >
                 Badges
               </span>
             </Link>
@@ -57,15 +79,19 @@ export default function Header() {
             {/* Battle Mode with Trophy Icon - Fill Background Effect */}
             <Link
               to="/battle"
-              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/battle') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
               aria-label="Battle Mode"
             >
-              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <span
+                className={`absolute inset-0 bg-accent-1 ${isActive('/battle') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+              ></span>
               <Trophy
-                className="text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200"
+                className={`${isActive('/battle') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/battle') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
               />
-              <span className="font-medium text-md z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200 hidden sm:block">
+              <span
+                className={`font-medium text-md z-10 ${isActive('/battle') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+              >
                 Battle Mode
               </span>
             </Link>
