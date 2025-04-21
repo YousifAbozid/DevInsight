@@ -1,0 +1,208 @@
+import { useEffect, useState } from 'react';
+import {
+  useRateLimitStatus,
+  checkRateLimitWarning,
+  formatRateLimitReset,
+} from '../services/githubRateLimitService';
+
+interface RateLimitIndicatorProps {
+  token?: string;
+  alwaysShow?: boolean; // New prop to control visibility
+}
+
+export default function RateLimitIndicator({
+  token,
+  alwaysShow = false,
+}: RateLimitIndicatorProps) {
+  const [visible, setVisible] = useState(alwaysShow);
+  const { data: rateLimitData, isLoading, error } = useRateLimitStatus(token);
+  const [expanded, setExpanded] = useState(false);
+
+  const warning = checkRateLimitWarning(rateLimitData);
+
+  useEffect(() => {
+    // Show the indicator when we're close to limits or there's an error or alwaysShow is true
+    if (warning || error || alwaysShow) {
+      setVisible(true);
+    }
+  }, [warning, error, alwaysShow]);
+
+  // Don't render if not visible or if data is still loading and we're not set to always show
+  if (!visible || (isLoading && !alwaysShow)) return null;
+
+  // Show a loading state if we're set to always show but data is still loading
+  if (isLoading && alwaysShow) {
+    return (
+      <div className="mb-4 rounded-lg border border-border-l dark:border-border-d p-3 bg-l-bg-2 dark:bg-d-bg-2">
+        <div className="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            className="animate-spin text-accent-1"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="8" cy="8" r="7" opacity="0.25" />
+            <path d="M8 1a7 7 0 0 1 7 7" />
+          </svg>
+          <span className="font-medium text-sm">
+            Loading API rate limit status...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!rateLimitData) return null;
+
+  const coreData = rateLimitData.resources.core;
+  const searchData = rateLimitData.resources.search;
+  const graphqlData = rateLimitData.resources.graphql;
+
+  const corePercentage = Math.round(
+    (coreData.remaining / coreData.limit) * 100
+  );
+  const searchPercentage = Math.round(
+    (searchData.remaining / searchData.limit) * 100
+  );
+  const graphqlPercentage = Math.round(
+    (graphqlData.remaining / graphqlData.limit) * 100
+  );
+
+  // Color class for progress bars
+  const getColorClass = (percentage: number) => {
+    if (percentage > 50) return 'bg-accent-success';
+    if (percentage > 20) return 'bg-accent-warning';
+    return 'bg-accent-danger';
+  };
+
+  return (
+    <div className="mb-4 rounded-lg border border-border-l dark:border-border-d overflow-hidden">
+      <div
+        className={`p-3 ${warning ? 'bg-accent-warning/10' : 'bg-l-bg-2 dark:bg-d-bg-2'} flex justify-between items-center cursor-pointer`}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div className="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            className="text-accent-1"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          >
+            <circle cx="8" cy="8" r="7" />
+            <path d="M8 5v3l3 3" />
+          </svg>
+          <span className="font-medium text-sm">
+            {warning || 'GitHub API Rate Limit Status'}
+          </span>
+        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          className={`transition-transform ${expanded ? 'transform rotate-180' : ''}`}
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </div>
+
+      {expanded && (
+        <div className="p-4 bg-l-bg-1 dark:bg-d-bg-1">
+          <div className="space-y-3">
+            {/* Core API */}
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-l-text-1 dark:text-d-text-1">
+                  Core API
+                </span>
+                <span className="text-l-text-2 dark:text-d-text-2">
+                  {coreData.remaining} / {coreData.limit} remaining
+                </span>
+              </div>
+              <div className="w-full h-2 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${getColorClass(corePercentage)}`}
+                  style={{ width: `${corePercentage}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-l-text-3 dark:text-d-text-3 mt-1">
+                Resets in {formatRateLimitReset(coreData.reset)}
+              </div>
+            </div>
+
+            {/* Search API */}
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-l-text-1 dark:text-d-text-1">
+                  Search API
+                </span>
+                <span className="text-l-text-2 dark:text-d-text-2">
+                  {searchData.remaining} / {searchData.limit} remaining
+                </span>
+              </div>
+              <div className="w-full h-2 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${getColorClass(searchPercentage)}`}
+                  style={{ width: `${searchPercentage}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-l-text-3 dark:text-d-text-3 mt-1">
+                Resets in {formatRateLimitReset(searchData.reset)}
+              </div>
+            </div>
+
+            {/* GraphQL API */}
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-l-text-1 dark:text-d-text-1">
+                  GraphQL API
+                </span>
+                <span className="text-l-text-2 dark:text-d-text-2">
+                  {graphqlData.remaining} / {graphqlData.limit} remaining
+                </span>
+              </div>
+              <div className="w-full h-2 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${getColorClass(graphqlPercentage)}`}
+                  style={{ width: `${graphqlPercentage}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-l-text-3 dark:text-d-text-3 mt-1">
+                Resets in {formatRateLimitReset(graphqlData.reset)}
+              </div>
+            </div>
+
+            <div className="text-xs text-l-text-3 dark:text-d-text-3 mt-2 pt-2 border-t border-border-l dark:border-border-d">
+              {token ? (
+                <p>
+                  You&apos;re using an authenticated session with higher rate
+                  limits.
+                </p>
+              ) : (
+                <p>
+                  Add a GitHub token to increase your rate limits from 60 to
+                  5,000 requests per hour.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
