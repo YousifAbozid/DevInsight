@@ -1,11 +1,9 @@
 import { useState, useRef } from 'react';
 import {
-  useGithubUser,
-  useUserRepositories,
   aggregateLanguageData,
-  // saveAllGithubData,
   saveUserData,
   saveRepositoriesData,
+  useBatchUserData, // Added batch data hook
 } from '../services/githubService';
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
@@ -29,15 +27,21 @@ export default function GithubProfilePage() {
     setRecentUsers: (users: string[]) => void;
   } | null>(null);
 
+  // Use batch data fetching instead of separate requests
   const {
-    data: user,
-    isLoading: isUserLoading,
-    error: userError,
-    isError: isUserError,
-  } = useGithubUser(username);
+    data: batchData,
+    isLoading: isBatchLoading,
+    error: batchError,
+    isError: isBatchError,
+  } = useBatchUserData(username, token);
 
-  const { data: repositories, isLoading: isReposLoading } =
-    useUserRepositories(username);
+  // For backwards compatibility, keep these variables but derive them from batch data
+  const user = batchData?.userData;
+  const repositories = batchData?.repositories;
+  const isUserLoading = isBatchLoading;
+  const isReposLoading = isBatchLoading;
+  const userError = batchError;
+  const isUserError = isBatchError;
 
   const { data: contributionData, isLoading: isContributionLoading } =
     useContributionData(username, token);
