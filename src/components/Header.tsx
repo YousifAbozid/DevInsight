@@ -38,7 +38,7 @@ export default function Header() {
 
             {/* Logo with subtle pulse animation when active */}
             <div
-              className={`relative z-10 ${isActive('/') ? 'animate-pulse-subtle' : ''}`}
+              className={`relative z-10 ${isActive('/') ? 'animate-pulse' : ''}`}
             >
               <img
                 src="/favicon.svg"
