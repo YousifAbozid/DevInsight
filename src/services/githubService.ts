@@ -28,7 +28,7 @@ export const useGithubUser = (username: string) => {
     queryKey: ['githubUser', username],
     queryFn: () => fetchGithubUser(username),
     enabled: !!username.trim(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 60 * 1000, // Increased from 5 minutes to 60 minutes
     retry: 1,
   });
 };
@@ -63,7 +63,7 @@ export const useUserRepositories = (username: string) => {
     queryKey: ['userRepos', username],
     queryFn: () => fetchUserRepositories(username),
     enabled: !!username.trim(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 60 * 1000, // Increased from 5 minutes to 60 minutes
     retry: 1,
   });
 };
@@ -380,7 +380,7 @@ export const useUserPullRequests = (username: string, token?: string) => {
     queryKey: ['userPRs', username, token],
     queryFn: () => fetchUserPullRequests(username, token),
     enabled: !!username.trim(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 60 * 1000, // Increased from 5 minutes to 60 minutes
     retry: 1,
   });
 };
@@ -393,7 +393,74 @@ export const useUserIssues = (username: string, token?: string) => {
     queryKey: ['userIssues', username, token],
     queryFn: () => fetchUserIssues(username, token),
     enabled: !!username.trim(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 60 * 1000, // Increased from 5 minutes to 60 minutes
+    retry: 1,
+  });
+};
+
+/**
+ * Batches multiple GitHub API requests into a single call to reduce rate limit usage
+ * Returns basic user data, repositories, and contribution data in a single batch
+ */
+export const batchFetchUserData = async (
+  username: string,
+  token?: string
+): Promise<{
+  userData: GithubUser;
+  repositories: Repository[];
+  prCount?: number;
+  issueCount?: number;
+}> => {
+  if (!username.trim()) {
+    throw new Error('Username cannot be empty');
+  }
+
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.github.v3+json',
+  };
+
+  if (token) {
+    headers['Authorization'] = `token ${token}`;
+  }
+
+  try {
+    // Fetch user data and repositories in parallel
+    const [userData, repositories] = await Promise.all([
+      fetchGithubUser(username),
+      fetchUserRepositories(username),
+    ]);
+
+    let prCount, issueCount;
+
+    // Only fetch PR and issue counts if a token is provided (to save rate limit)
+    if (token) {
+      [prCount, issueCount] = await Promise.all([
+        fetchUserPullRequests(username, token),
+        fetchUserIssues(username, token),
+      ]);
+    }
+
+    return {
+      userData,
+      repositories,
+      prCount,
+      issueCount,
+    };
+  } catch (error) {
+    console.error('Error in batch fetch:', error);
+    throw error;
+  }
+};
+
+/**
+ * React Query hook for batch fetching user data
+ */
+export const useBatchUserData = (username: string, token?: string) => {
+  return useQuery({
+    queryKey: ['batchUserData', username, !!token],
+    queryFn: () => batchFetchUserData(username, token),
+    enabled: !!username.trim(),
+    staleTime: 60 * 60 * 1000, // 60 minutes
     retry: 1,
   });
 };
