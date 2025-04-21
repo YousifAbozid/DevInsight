@@ -40,7 +40,7 @@ import {
   ChevronUp,
   ChevronDown,
 
-  // Additional icons needed for DevJourneyTimeline
+  // Additional icons for DevJourneyTimeline
   Cake,
 
   // Additional icons for GithubProfileCard
@@ -76,6 +76,10 @@ import {
   BarChart,
   BadgeCheck,
   Calculator, // Added Calculator icon for GithubBattleResults
+
+  // New file type icons - fixed the name from FileCsv to Files
+  FileJson,
+  Files,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -214,4 +218,8 @@ export const Icons = {
   Calculator: ({ className }: IconProps) => (
     <Calculator className={className} />
   ),
+
+  // Add new file type icons
+  FileJson: ({ className }: IconProps) => <FileJson className={className} />,
+  FileCsv: ({ className }: IconProps) => <Files className={className} />,
 };
