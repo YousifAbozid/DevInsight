@@ -16,11 +16,22 @@ function App() {
         <main className="container mx-auto p-4 md:px-8">
           <Routes>
             <Route path="/" element={<GithubProfilePage />} />
-            {/* Place the specific route before the dynamic route */}
+            {/* Place the specific routes before the dynamic routes */}
             <Route path="/battle" element={<GitHubBattlePage />} />
             <Route path="/personas" element={<PersonasPage />} />
             <Route path="/badges" element={<BadgesPage />} />
-            {/* This dynamic route should come last since it matches any string */}
+
+            {/* New separate routes for users and organizations */}
+            <Route
+              path="/user/:username"
+              element={<PublicProfilePage profileType="user" />}
+            />
+            <Route
+              path="/org/:username"
+              element={<PublicProfilePage profileType="organization" />}
+            />
+
+            {/* Legacy route - will redirect to the appropriate route */}
             <Route path="/:username" element={<PublicProfilePage />} />
           </Routes>
         </main>
