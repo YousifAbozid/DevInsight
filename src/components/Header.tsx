@@ -25,35 +25,49 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 shadow-lg">
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
-          {/* Logo and Brand Name - Hidden on extra small screens */}
+          {/* Logo and Brand Name - More visible styling */}
           <Link
             to="/"
-            className="hidden xs:flex items-center gap-2 group relative rounded-md px-2 py-1 overflow-hidden"
+            className="flex items-center gap-1.5 md:gap-2.5 relative rounded-md px-2 py-1.5 overflow-hidden group"
             aria-label="DevInsight Home"
           >
-            {/* Fill effect for home */}
+            {/* Background fill effect */}
             <span
               className={`absolute inset-0 bg-accent-1/10 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : '-translate-y-full group-hover:translate-y-0'}`}
             ></span>
 
-            <img
-              src="/favicon.svg"
-              alt="DevInsight Logo"
-              className="w-7 h-7 z-10"
-            />
-            <span
-              className={`text-lg md:text-xl font-bold z-10 transition-colors duration-300 ${isActive('/') ? 'text-accent-1' : 'text-l-text-1 dark:text-d-text-1 group-hover:text-accent-1'}`}
+            {/* Logo with subtle pulse animation when active */}
+            <div
+              className={`relative z-10 ${isActive('/') ? 'animate-pulse-subtle' : ''}`}
             >
-              DevInsight
-            </span>
+              <img
+                src="/favicon.svg"
+                alt="DevInsight Logo"
+                className="w-6 h-6 md:w-7 md:h-7"
+              />
+            </div>
+
+            {/* Stylized brand name */}
+            <div className="flex z-10">
+              <span
+                className={`text-base md:text-lg font-bold transition-colors duration-300 ${isActive('/') ? 'text-l-text-1 dark:text-d-text-1' : 'text-l-text-1 dark:text-d-text-1 group-hover:text-l-text-1 dark:group-hover:text-d-text-1'}`}
+              >
+                Dev
+              </span>
+              <span
+                className={`text-base md:text-lg font-bold transition-colors duration-300 ${isActive('/') ? 'text-accent-1' : 'text-accent-1'}`}
+              >
+                Insight
+              </span>
+            </div>
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-2 md:gap-3 mx-auto xs:mx-0">
+          <nav className="flex items-center gap-2 md:gap-3">
             {/* Home Link - Shown on all screen sizes, styled like other nav items */}
             <Link
               to="/"
-              className={`p-2 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
+              className={`p-2 md:px-3 md:py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
               aria-label="Home"
             >
               <span

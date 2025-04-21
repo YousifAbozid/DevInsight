@@ -101,6 +101,24 @@
 	}
 }
 
+@keyframes pulseSlight {
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.25;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
 .animate-fade-in-down {
 	animation: fadeInDown 0.3s ease-out;
+}
+
+.animate-pulse-subtle {
+	animation: pulseSlight 2s ease-in-out infinite;
 }
