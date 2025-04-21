@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Icons } from './shared/Icons';
 
 // Interface for the ProfileErrorState component props
@@ -20,6 +20,8 @@ export default function ProfileErrorState({
   errorMessage,
 }: ProfileErrorStateProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   // Popular and verified GitHub profiles to suggest
   const popularProfiles = [
@@ -186,19 +188,21 @@ export default function ProfileErrorState({
           {!isNotFound && (
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
             >
               <Icons.RefreshCw className="w-4 h-4" />
               Try Again
             </button>
           )}
-          <a
-            href="/"
-            className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center gap-2"
-          >
-            <Icons.Home className="w-4 h-4" />
-            Return Home
-          </a>
+          {!isHomePage && (
+            <button
+              onClick={() => navigate('/')}
+              className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center gap-2 cursor-pointer"
+            >
+              <Icons.Home className="w-4 h-4" />
+              Return Home
+            </button>
+          )}
         </div>
       </div>
     </div>
