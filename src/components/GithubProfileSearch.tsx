@@ -209,36 +209,36 @@ const GithubProfileSearch = forwardRef(
 
     return (
       <form onSubmit={handleSubmit} className="w-full mb-6">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {/* Main search bar with improved UI and clear button */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-grow">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
-                <User size={18} />
+              <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
+                <User size={16} />
               </div>
               <input
                 type="text"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 placeholder="Enter GitHub username"
-                className="w-full pl-10 pr-12 py-3 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+                className="w-full pl-8 pr-10 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
                 disabled={isLoading}
               />
               {username && (
                 <button
                   type="button"
                   onClick={handleUsernameClear}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger cursor-pointer transition-colors duration-200"
                   aria-label="Clear username"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               )}
             </div>
             <button
               type="submit"
               disabled={isLoading || !username.trim() || !hasUsernameChanges}
-              className="px-6 py-3 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-colors cursor-pointer flex items-center justify-center gap-2 min-w-[120px]"
+              className="px-4 py-2.5 rounded-lg bg-accent-1 hover:bg-accent-2 disabled:opacity-50 text-l-text-inv dark:text-d-text-inv transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 min-w-[100px] text-sm"
             >
               {isLoading ? (
                 <>
@@ -247,7 +247,7 @@ const GithubProfileSearch = forwardRef(
                 </>
               ) : (
                 <>
-                  <Search size={18} />
+                  <Search size={16} />
                   <span>Search</span>
                 </>
               )}
@@ -256,25 +256,25 @@ const GithubProfileSearch = forwardRef(
 
           {/* Recent users section with improved UI */}
           {recentUsers.length > 0 && (
-            <div className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-3 rounded-lg">
-              <div className="flex items-center gap-2 mb-2 text-sm text-l-text-2 dark:text-d-text-2">
-                <Clock size={16} />
+            <div className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-2.5 rounded-lg">
+              <div className="flex items-center gap-2 mb-1.5 text-xs text-l-text-2 dark:text-d-text-2">
+                <Clock size={14} />
                 <span>Recent searches:</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {recentUsers.map(user => (
                   <div key={user} className="relative group">
                     <button
                       type="button"
                       onClick={() => handleQuickFill(user)}
-                      className="pl-3 pr-8 py-1.5 text-sm rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-colors cursor-pointer"
+                      className="pl-2.5 pr-7 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-all duration-200 cursor-pointer"
                     >
                       {user}
                     </button>
                     <button
                       type="button"
                       onClick={e => handleRemoveRecentUser(user, e)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-40 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200"
                       aria-label={`Remove ${user} from recent searches`}
                     >
                       <X size={12} />
@@ -287,7 +287,7 @@ const GithubProfileSearch = forwardRef(
                     localStorage.removeItem('recent_github_users');
                     setRecentUsers([]);
                   }}
-                  className="px-3 py-1.5 text-sm rounded-full bg-accent-danger/10 text-accent-danger hover:bg-accent-danger/20 transition-colors cursor-pointer"
+                  className="px-2.5 py-1 text-xs rounded-full bg-accent-danger/10 text-accent-danger hover:bg-accent-danger/20 transition-colors duration-200 cursor-pointer"
                 >
                   Clear history
                 </button>
@@ -300,59 +300,59 @@ const GithubProfileSearch = forwardRef(
             <button
               type="button"
               onClick={() => setShowTokenInput(!showTokenInput)}
-              className="flex items-center gap-2 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer"
+              className="flex items-center gap-1.5 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer text-sm"
             >
-              <Key className="text-lg" />
+              <Key size={16} />
               <div>
                 <span className="font-medium">
                   {showTokenInput ? 'Hide token input' : 'GitHub Access Token'}
                 </span>
-                <span className="text-xs ml-2 text-l-text-3 dark:text-d-text-3">
+                <span className="text-xs ml-1.5 text-l-text-3 dark:text-d-text-3">
                   (required for contribution data)
                 </span>
               </div>
               {token && !showTokenInput && !showTokenSaved && (
-                <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1">
-                  <CheckCircle size={14} />
+                <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1">
+                  <CheckCircle size={12} />
                   <span>Token active</span>
                 </span>
               )}
               {showTokenSaved && (
-                <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-accent-success/10 text-accent-success animate-fade-in flex items-center gap-1">
-                  <CheckCircle size={14} />
+                <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 animate-pulse">
+                  <CheckCircle size={12} />
                   <span>{token ? 'Token saved!' : 'Token cleared!'}</span>
                 </span>
               )}
             </button>
 
             {showTokenInput && (
-              <div className="bg-l-bg-3 dark:bg-d-bg-3 p-4 rounded-lg border border-border-l dark:border-border-d">
+              <div className="bg-l-bg-3 dark:bg-d-bg-3 p-3 rounded-lg border border-border-l dark:border-border-d animate-fade-in-down">
                 <div className="relative">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
-                    <Key size={18} />
+                  <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
+                    <Key size={16} />
                   </div>
                   <input
                     type="password"
                     value={token}
                     onChange={e => setToken(e.target.value)}
                     placeholder="GitHub Personal Access Token (optional)"
-                    className="w-full pl-10 pr-20 py-3 rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+                    className="w-full pl-8 pr-16 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
                     disabled={isLoading}
                   />
                   {token && (
                     <button
                       type="button"
                       onClick={handleTokenClear}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20 flex items-center gap-1"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-0.5 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20 flex items-center gap-1 transition-colors duration-200"
                     >
-                      <X size={14} />
+                      <X size={12} />
                       <span>Clear</span>
                     </button>
                   )}
                 </div>
-                <div className="flex items-start gap-2 mt-3 text-xs text-l-text-3 dark:text-d-text-3">
-                  <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
-                  <p>
+                <div className="flex items-start gap-1.5 mt-2 text-xs text-l-text-3 dark:text-d-text-3">
+                  <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                  <p className="text-xs">
                     The token is required to fetch contribution data. It&apos;s
                     stored only in your browser and never sent to our servers.
                     Create a token with the &apos;user&apos; scope at{' '}
@@ -360,7 +360,7 @@ const GithubProfileSearch = forwardRef(
                       href="https://github.com/settings/tokens"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline text-accent-1 hover:text-accent-2"
+                      className="underline text-accent-1 hover:text-accent-2 transition-colors duration-200"
                     >
                       github.com/settings/tokens
                     </a>
