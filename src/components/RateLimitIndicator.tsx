@@ -4,6 +4,7 @@ import {
   checkRateLimitWarning,
   formatRateLimitReset,
 } from '../services/githubRateLimitService';
+import { Icons } from './shared/Icons';
 
 interface RateLimitIndicatorProps {
   token?: string;
@@ -35,19 +36,7 @@ export default function RateLimitIndicator({
     return (
       <div className="mb-4 rounded-lg border border-border-l dark:border-border-d p-3 bg-l-bg-2 dark:bg-d-bg-2">
         <div className="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            className="animate-spin text-accent-1"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="8" cy="8" r="7" opacity="0.25" />
-            <path d="M8 1a7 7 0 0 1 7 7" />
-          </svg>
+          <Icons.RefreshCw className="w-4 h-4 animate-spin text-accent-1" />
           <span className="font-medium text-sm">
             Loading API rate limit status...
           </span>
@@ -86,39 +75,16 @@ export default function RateLimitIndicator({
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            className="text-accent-1"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          >
-            <circle cx="8" cy="8" r="7" />
-            <path d="M8 5v3l3 3" />
-          </svg>
+          <Icons.Timer className="w-4 h-4 text-accent-1" />
           <span className="font-medium text-sm">
             {warning || 'GitHub API Rate Limit Status'}
           </span>
         </div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          className={`transition-transform ${expanded ? 'transform rotate-180' : ''}`}
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        {expanded ? (
+          <Icons.ChevronUp className="w-4 h-4 transition-transform" />
+        ) : (
+          <Icons.ChevronDown className="w-4 h-4 transition-transform" />
+        )}
       </div>
 
       {expanded && (
