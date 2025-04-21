@@ -58,6 +58,14 @@ import {
   FileText,
   UserPlus,
   Timer,
+
+  // New icons for error states
+  AlertTriangle,
+  RefreshCw,
+  Home,
+  Search,
+  Key,
+  StretchHorizontal,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -166,4 +174,16 @@ export const Icons = {
   FileText: ({ className }: IconProps) => <FileText className={className} />,
   UserPlus: ({ className }: IconProps) => <UserPlus className={className} />,
   Timer: ({ className }: IconProps) => <Timer className={className} />,
+
+  // New icons for error handling and UI enhancements
+  AlertTriangle: ({ className }: IconProps) => (
+    <AlertTriangle className={className} />
+  ),
+  RefreshCw: ({ className }: IconProps) => <RefreshCw className={className} />,
+  Home: ({ className }: IconProps) => <Home className={className} />,
+  Search: ({ className }: IconProps) => <Search className={className} />,
+  Key: ({ className }: IconProps) => <Key className={className} />,
+  SwitchHorizontal: ({ className }: IconProps) => (
+    <StretchHorizontal className={className} />
+  ),
 };

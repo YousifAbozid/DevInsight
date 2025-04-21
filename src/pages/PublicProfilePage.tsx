@@ -17,6 +17,7 @@ import { useContributionData } from '../services/githubGraphQLService';
 import DevCardGenerator from '../components/DevCardGenerator';
 import CoderPersona from '../components/CoderPersona';
 import DevJourneyTimeline from '../components/DevJourneyTimeline';
+import { Icons } from '../components/shared/Icons';
 
 // Define interface for JSON-LD structured data
 interface StructuredData {
@@ -57,9 +58,9 @@ function ProfileErrorState({
 
   // Popular and verified GitHub profiles to suggest
   const popularProfiles = [
-    { username: 'github', type: 'organization' },
-    { username: 'microsoft', type: 'organization' },
-    { username: 'google', type: 'organization' },
+    { username: 'github', type: 'org' },
+    { username: 'microsoft', type: 'org' },
+    { username: 'google', type: 'org' },
     { username: 'torvalds', type: 'user' },
     { username: 'sindresorhus', type: 'user' },
   ];
@@ -69,34 +70,15 @@ function ProfileErrorState({
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d">
       <div className="flex flex-col items-center justify-center text-center space-y-6">
-        {/* Error icon */}
+        {/* Error icon - replaced with Lucide icons */}
         <div
           className={`p-4 ${isNotFound ? 'bg-accent-danger/10' : 'bg-accent-warning/10'} rounded-full`}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className={`w-16 h-16 ${isNotFound ? 'text-accent-danger' : 'text-accent-warning'}`}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {isNotFound ? (
-              <>
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </>
-            ) : (
-              <>
-                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </>
-            )}
-          </svg>
+          {isNotFound ? (
+            <Icons.AlertCircle className="w-16 h-16 text-accent-danger" />
+          ) : (
+            <Icons.AlertTriangle className="w-16 h-16 text-accent-warning" />
+          )}
         </div>
 
         {/* Error heading */}
@@ -127,27 +109,23 @@ function ProfileErrorState({
           </h3>
           <ul className="text-left text-l-text-2 dark:text-d-text-2 space-y-2">
             <li className="flex items-start gap-2">
-              <span
-                className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
-              >
-                •
-              </span>
+              <Icons.AlertCircle
+                className={`w-4 h-4 ${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-0.5 flex-shrink-0`}
+              />
               <span>The username is misspelled or doesn&apos;t exist</span>
             </li>
 
             {isNotFound && (
               <li className="flex items-start gap-2">
-                <span className="text-accent-danger mt-1">•</span>
+                <Icons.AlertCircle className="w-4 h-4 text-accent-danger mt-0.5 flex-shrink-0" />
                 <span>The profile may have been deleted or renamed</span>
               </li>
             )}
 
             <li className="flex items-start gap-2">
-              <span
-                className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
-              >
-                •
-              </span>
+              <Icons.AlertCircle
+                className={`w-4 h-4 ${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-0.5 flex-shrink-0`}
+              />
               <span>GitHub API might be experiencing issues</span>
             </li>
 
@@ -155,7 +133,7 @@ function ProfileErrorState({
               errorMessage &&
               errorMessage.includes('rate limit') && (
                 <li className="flex items-start gap-2">
-                  <span className="text-accent-warning mt-1">•</span>
+                  <Icons.Clock className="w-4 h-4 text-accent-warning mt-0.5 flex-shrink-0" />
                   <span>
                     GitHub API rate limit has been exceeded - wait a few minutes
                     and try again
@@ -165,7 +143,7 @@ function ProfileErrorState({
 
             {!isNotFound && errorMessage && errorMessage.includes('token') && (
               <li className="flex items-start gap-2">
-                <span className="text-accent-warning mt-1">•</span>
+                <Icons.Key className="w-4 h-4 text-accent-warning mt-0.5 flex-shrink-0" />
                 <span>
                   Your GitHub access token may be invalid or doesn&apos;t have
                   the necessary permissions
@@ -175,11 +153,9 @@ function ProfileErrorState({
 
             {profileType && (
               <li className="flex items-start gap-2">
-                <span
-                  className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
-                >
-                  •
-                </span>
+                <Icons.SwitchHorizontal
+                  className={`w-4 h-4 ${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-0.5 flex-shrink-0`}
+                />
                 <span>
                   It might be a{' '}
                   {profileType === 'organization' ? 'user' : 'organization'}{' '}
@@ -231,8 +207,9 @@ function ProfileErrorState({
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors flex items-center gap-2"
             >
+              <Icons.Search className="w-4 h-4" />
               Search
             </button>
           </form>
@@ -252,9 +229,14 @@ function ProfileErrorState({
               >
                 {profile.username}
                 <span
-                  className={`text-xs ${profile.type === 'organization' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300'} px-1.5 py-0.5 rounded-full`}
+                  className={`text-xs ${profile.type === 'org' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300'} px-1.5 py-0.5 rounded-full flex items-center gap-0.5`}
                 >
-                  {profile.type === 'organization' ? 'org' : 'user'}
+                  {profile.type === 'org' ? (
+                    <Icons.Building className="w-3 h-3" />
+                  ) : (
+                    <Icons.User className="w-3 h-3" />
+                  )}
+                  {profile.type}
                 </span>
               </button>
             ))}
@@ -266,15 +248,17 @@ function ProfileErrorState({
           {!isNotFound && (
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
+              className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors flex items-center gap-2"
             >
+              <Icons.RefreshCw className="w-4 h-4" />
               Try Again
             </button>
           )}
           <a
             href="/"
-            className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center"
+            className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center gap-2"
           >
+            <Icons.Home className="w-4 h-4" />
             Return Home
           </a>
         </div>
