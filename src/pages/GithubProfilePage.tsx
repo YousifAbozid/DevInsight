@@ -103,11 +103,21 @@ export default function GithubProfilePage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
-          GitHub Profile Explorer
-        </h1>
-        <p className="text-l-text-2 dark:text-d-text-2">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 bg-accent-1/10 rounded-lg">
+            <img src="/favicon.svg" alt="DevInsight Logo" className="w-8 h-8" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold">
+            <span className="text-l-text-1 dark:text-d-text-1">Dev</span>
+            <span className="text-accent-1">Insight</span>
+            <span className="text-l-text-2 dark:text-d-text-2 font-normal text-xl md:text-2xl">
+              {' '}
+              - GitHub Profile Explorer
+            </span>
+          </h1>
+        </div>
+        <p className="text-l-text-2 dark:text-d-text-2 pl-1">
           Enter a GitHub username to view their profile information
         </p>
       </div>
