@@ -24,45 +24,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 shadow-lg">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center">
-          {/* Logo and Brand Name - More visible styling */}
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 md:gap-2.5 relative rounded-md px-2 py-1.5 overflow-hidden group"
-            aria-label="DevInsight Home"
-          >
-            {/* Background fill effect */}
-            <span
-              className={`absolute inset-0 bg-accent-1/10 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : '-translate-y-full group-hover:translate-y-0'}`}
-            ></span>
-
-            {/* Logo with subtle pulse animation when active */}
-            <div
-              className={`relative z-10 ${isActive('/') ? 'animate-pulse' : ''}`}
-            >
-              <img
-                src="/favicon.svg"
-                alt="DevInsight Logo"
-                className="w-6 h-6 md:w-7 md:h-7"
-              />
-            </div>
-
-            {/* Stylized brand name */}
-            <div className="flex z-10">
-              <span
-                className={`text-base md:text-lg font-bold transition-colors duration-300 ${isActive('/') ? 'text-l-text-1 dark:text-d-text-1' : 'text-l-text-1 dark:text-d-text-1 group-hover:text-l-text-1 dark:group-hover:text-d-text-1'}`}
-              >
-                Dev
-              </span>
-              <span
-                className={`text-base md:text-lg font-bold transition-colors duration-300 ${isActive('/') ? 'text-accent-1' : 'text-accent-1'}`}
-              >
-                Insight
-              </span>
-            </div>
-          </Link>
-
-          {/* Navigation */}
+        <div className="flex justify-center items-center">
+          {/* Navigation - Centered */}
           <nav className="flex items-center gap-2 md:gap-3">
             {/* Home Link - Shown on all screen sizes, styled like other nav items */}
             <Link
