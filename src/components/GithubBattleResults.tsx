@@ -1,4 +1,4 @@
-import { JSX, useMemo } from 'react';
+import React, { JSX, useMemo } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { calculateBadges } from './DeveloperBadges';
 import { aggregateLanguageData } from '../services/githubService';
@@ -38,15 +38,14 @@ export default function GithubBattleResults({
   const winner = user1Score.totalScore > user2Score.totalScore ? 1 : 2;
 
   // Calculate badges for both users
-  const user1Badges = calculateBadges(
-    user1.user,
-    user1.repositories,
-    user1.contributionData
+  const user1Badges = useMemo(
+    () => calculateBadges(user1.repositories, user1.contributionData),
+    [user1.repositories, user1.contributionData]
   );
-  const user2Badges = calculateBadges(
-    user2.user,
-    user2.repositories,
-    user2.contributionData
+
+  const user2Badges = useMemo(
+    () => calculateBadges(user2.repositories, user2.contributionData),
+    [user2.repositories, user2.contributionData]
   );
 
   // Get top 3 languages for both users
@@ -223,14 +222,20 @@ export default function GithubBattleResults({
                       className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 
                       ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)}`}
                     >
-                      <span className="w-3 h-3">{badge.icon}</span>
+                      <span className="w-3 h-3">
+                        {React.createElement(badge.icon, {
+                          className: 'w-full h-full',
+                        })}
+                      </span>
                       {badge.name}
                     </div>
                   ))}
-                <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
-                  +{Math.max(0, user1Badges.filter(b => b.earned).length - 3)}{' '}
-                  more
-                </div>
+                {user1Badges.filter(b => b.earned).length > 3 && (
+                  <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
+                    +{Math.max(0, user1Badges.filter(b => b.earned).length - 3)}{' '}
+                    more
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -364,14 +369,20 @@ export default function GithubBattleResults({
                       className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 
                       ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)}`}
                     >
-                      <span className="w-3 h-3">{badge.icon}</span>
+                      <span className="w-3 h-3">
+                        {React.createElement(badge.icon, {
+                          className: 'w-full h-full',
+                        })}
+                      </span>
                       {badge.name}
                     </div>
                   ))}
-                <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
-                  +{Math.max(0, user2Badges.filter(b => b.earned).length - 3)}{' '}
-                  more
-                </div>
+                {user2Badges.filter(b => b.earned).length > 3 && (
+                  <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
+                    +{Math.max(0, user2Badges.filter(b => b.earned).length - 3)}{' '}
+                    more
+                  </div>
+                )}
               </div>
             </div>
           </div>
