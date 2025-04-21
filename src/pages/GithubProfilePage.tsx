@@ -19,6 +19,7 @@ import DevCardGenerator from '../components/DevCardGenerator';
 import CoderPersona from '../components/CoderPersona';
 import DevJourneyTimeline from '../components/DevJourneyTimeline';
 import RepoRecommender from '../components/RepoRecommender';
+import ProfileErrorState from '../components/ProfileErrorState';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -120,9 +121,11 @@ export default function GithubProfilePage() {
       {isUserLoading ? (
         <ProfileSkeleton />
       ) : errorMessage ? (
-        <div className="bg-accent-danger/10 border-l-4 border-accent-danger p-4 rounded">
-          <p className="text-accent-danger">{errorMessage}</p>
-        </div>
+        <ProfileErrorState
+          username={username}
+          errorType="error"
+          errorMessage={errorMessage}
+        />
       ) : user ? (
         <div className="space-y-8">
           <GithubProfileCard
