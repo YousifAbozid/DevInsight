@@ -42,6 +42,22 @@ import {
 
   // Additional icons needed for DevJourneyTimeline
   Cake,
+
+  // Additional icons for GithubProfileCard
+  MoreVertical,
+  Download,
+  MapPin,
+  Building2,
+  Link,
+  AtSign,
+  Mail,
+  ExternalLink,
+  Eye,
+  GitPullRequest,
+  AlertCircle,
+  FileText,
+  UserPlus,
+  Timer,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -79,7 +95,7 @@ export const Icons = {
   Template: ({ className }: IconProps) => (
     <Library className={className} /> // Changed from LayoutGrid to Library for The Framework Lord
   ),
-  Download: ({ className }: IconProps) => (
+  Zap: ({ className }: IconProps) => (
     <Zap className={className} /> // Changed from Download to Zap for The Sprinter
   ),
   Copy: ({ className }: IconProps) => <Copy className={className} />,
@@ -126,4 +142,28 @@ export const Icons = {
 
   // Additional icons for DevJourneyTimeline
   Cake: ({ className }: IconProps) => <Cake className={className} />,
+
+  // Additional icons for GithubProfileCard
+  MoreVertical: ({ className }: IconProps) => (
+    <MoreVertical className={className} />
+  ),
+  Download: ({ className }: IconProps) => <Download className={className} />,
+  MapPin: ({ className }: IconProps) => <MapPin className={className} />,
+  Building: ({ className }: IconProps) => <Building2 className={className} />,
+  Link: ({ className }: IconProps) => <Link className={className} />,
+  AtSign: ({ className }: IconProps) => <AtSign className={className} />,
+  Mail: ({ className }: IconProps) => <Mail className={className} />,
+  ExternalLink: ({ className }: IconProps) => (
+    <ExternalLink className={className} />
+  ),
+  Eye: ({ className }: IconProps) => <Eye className={className} />,
+  GitPullRequest: ({ className }: IconProps) => (
+    <GitPullRequest className={className} />
+  ),
+  AlertCircle: ({ className }: IconProps) => (
+    <AlertCircle className={className} />
+  ),
+  FileText: ({ className }: IconProps) => <FileText className={className} />,
+  UserPlus: ({ className }: IconProps) => <UserPlus className={className} />,
+  Timer: ({ className }: IconProps) => <Timer className={className} />,
 };

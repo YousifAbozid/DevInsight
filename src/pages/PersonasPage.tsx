@@ -112,7 +112,7 @@ export default function PersonasPage() {
       criteria: 'Currently inactive in the system.',
       color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-300',
       borderColor: 'border-red-300 dark:border-red-800',
-      icon: Icons.Download,
+      icon: Icons.Zap,
     },
   ];
 
