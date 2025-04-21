@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { Trophy, Users, Medal } from 'lucide-react';
+import { Trophy, Users, Medal, Home } from 'lucide-react';
 
 export default function Header() {
   // Get current location to determine active route
@@ -9,6 +9,10 @@ export default function Header() {
 
   // Helper function to check if a route is active
   const isActive = (path: string) => {
+    // For home route
+    if (path === '/' && currentPath === '/') {
+      return true;
+    }
     // For battle route, check if current path starts with /battle
     if (path === '/battle' && currentPath.startsWith('/battle')) {
       return true;
@@ -24,80 +28,107 @@ export default function Header() {
           {/* Logo and Brand Name */}
           <Link
             to="/"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2 group relative rounded-md px-2 py-1 overflow-hidden"
             aria-label="DevInsight Home"
           >
-            {/* Using the favicon as logo with simpler styling */}
-            <img src="/favicon.svg" alt="DevInsight Logo" className="w-8 h-8" />
-            <span className="text-xl font-bold text-l-text-1 dark:text-d-text-1 group-hover:text-accent-1 transition-colors duration-200">
+            {/* Fill effect for home */}
+            <span
+              className={`absolute inset-0 bg-accent-1/10 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : '-translate-y-full group-hover:translate-y-0'}`}
+            ></span>
+
+            <img
+              src="/favicon.svg"
+              alt="DevInsight Logo"
+              className="w-7 h-7 z-10"
+            />
+            <span
+              className={`text-lg md:text-xl font-bold z-10 transition-colors duration-300 ${isActive('/') ? 'text-accent-1' : 'text-l-text-1 dark:text-d-text-1 group-hover:text-accent-1'}`}
+            >
               DevInsight
             </span>
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-4">
-            {/* Personas Link with Users Icon - Fill Background Effect */}
+          <nav className="flex items-center gap-2 md:gap-3">
+            {/* Home Link on Mobile */}
+            <Link
+              to="/"
+              className={`md:hidden p-2 flex items-center justify-center rounded-md relative overflow-hidden ${isActive('/') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
+              aria-label="Home"
+            >
+              <span
+                className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
+              ></span>
+              <Home
+                size={16}
+                className={`z-10 ${isActive('/') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2'}`}
+              />
+            </Link>
+
+            {/* Personas Link with filling effect */}
             <Link
               to="/personas"
-              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/personas') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
+              className={`p-2 md:px-3 md:py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/personas') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
               aria-label="Coder Personas"
             >
               <span
-                className={`absolute inset-0 bg-accent-1 ${isActive('/personas') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+                className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/personas') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
               <Users
-                className={`${isActive('/personas') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/personas') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
+                className={`z-10 ${isActive('/personas') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
-                className={`font-medium text-md z-10 ${isActive('/personas') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+                className={`hidden md:block text-sm font-medium z-10 ${isActive('/personas') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
               >
                 Personas
               </span>
             </Link>
 
-            {/* Badges Link with Medal Icon - Fill Background Effect */}
+            {/* Badges Link with filling effect */}
             <Link
               to="/badges"
-              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/badges') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
+              className={`p-2 md:px-3 md:py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/badges') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
               aria-label="Developer Badges"
             >
               <span
-                className={`absolute inset-0 bg-accent-1 ${isActive('/badges') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+                className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/badges') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
               <Medal
-                className={`${isActive('/badges') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/badges') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
+                className={`z-10 ${isActive('/badges') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
-                className={`font-medium text-md z-10 ${isActive('/badges') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+                className={`hidden md:block text-sm font-medium z-10 ${isActive('/badges') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
               >
                 Badges
               </span>
             </Link>
 
-            {/* Battle Mode with Trophy Icon - Fill Background Effect */}
+            {/* Battle Mode with filling effect */}
             <Link
               to="/battle"
-              className={`px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/battle') ? 'bg-accent-1 border-accent-1' : 'border border-accent-1/50'}`}
+              className={`p-2 md:px-3 md:py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/battle') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
               aria-label="Battle Mode"
             >
               <span
-                className={`absolute inset-0 bg-accent-1 ${isActive('/battle') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'} transition-transform duration-300`}
+                className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/battle') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
               <Trophy
-                className={`${isActive('/battle') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-accent-1'} z-10 ${!isActive('/battle') && 'group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200`}
                 size={16}
+                className={`z-10 ${isActive('/battle') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
-                className={`font-medium text-md z-10 ${isActive('/battle') ? 'text-l-text-inv dark:text-d-text-inv' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv'} transition-colors duration-200 hidden sm:block`}
+                className={`hidden md:block text-sm font-medium z-10 ${isActive('/battle') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
               >
-                Battle Mode
+                Battle
               </span>
             </Link>
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* Theme Toggle with spacing to separate it */}
+            <div className="ml-1 md:ml-2">
+              <ThemeToggle />
+            </div>
           </nav>
         </div>
       </div>
