@@ -2,6 +2,8 @@ import React, { JSX, useMemo } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { calculateBadges } from './DeveloperBadges';
 import { aggregateLanguageData } from '../services/githubService';
+import { Icons } from './shared/Icons';
+import { motion } from 'framer-motion';
 
 interface BattleUserData {
   user: GithubUser;
@@ -71,337 +73,131 @@ export default function GithubBattleResults({
     return diffInYears.toFixed(1);
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: 'beforeChildren',
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
+  const bannerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut',
+      },
+    },
+  };
+
   return (
-    <div>
+    <motion.div
+      className="space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Battle Result Banner */}
-      <div className="bg-gradient-to-r from-accent-1 to-accent-2 text-white rounded-lg p-6 mb-6 shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-4">Battle Results</h2>
-        {isDraw ? (
-          <p className="text-xl text-center font-bold">
-            It&apos;s a draw! Both developers are evenly matched!
-          </p>
-        ) : (
-          <p className="text-xl text-center font-bold">
-            <span className="bg-white/20 px-2 py-1 rounded mr-1">
-              {winner === 1 ? user1.user.login : user2.user.login}
-            </span>
-            wins with{' '}
-            {winner === 1 ? user1Score.totalScore : user2Score.totalScore}{' '}
-            points!
-          </p>
-        )}
-      </div>
+      <motion.div
+        className="bg-gradient-to-r from-accent-1 to-accent-2 text-white rounded-lg p-8 shadow-lg relative overflow-hidden"
+        variants={bannerVariants}
+      >
+        <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
+            <Icons.Trophy className="w-8 h-8" />
+            Battle Results
+          </h2>
+          {isDraw ? (
+            <p className="text-xl text-center font-bold">
+              It&apos;s a draw! Both developers are evenly matched!
+            </p>
+          ) : (
+            <div className="text-center">
+              <div className="inline-block bg-white/20 px-4 py-2 rounded-full mb-2">
+                <span className="text-xl font-bold">
+                  {winner === 1 ? user1.user.login : user2.user.login}
+                </span>
+              </div>
+              <p className="text-xl font-bold">
+                wins with{' '}
+                <span className="text-2xl bg-white/30 px-2 py-0.5 rounded">
+                  {winner === 1 ? user1Score.totalScore : user2Score.totalScore}
+                </span>{' '}
+                points!
+              </p>
+            </div>
+          )}
+        </div>
+      </motion.div>
 
       {/* Battle Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* User 1 Card */}
-        <div
-          className={`bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border-2 ${winner === 1 && !isDraw ? 'border-accent-success' : isDraw ? 'border-accent-1' : 'border-border-l dark:border-border-d'} overflow-hidden`}
-        >
-          {winner === 1 && !isDraw && (
-            <div className="bg-accent-success text-white text-center py-1 font-bold">
-              WINNER
-            </div>
-          )}
-          {isDraw && (
-            <div className="bg-accent-1 text-white text-center py-1 font-bold">
-              DRAW
-            </div>
-          )}
-
-          <div className="p-6">
-            {/* Profile Header */}
-            <div className="flex gap-4 items-center mb-4">
-              <img
-                src={user1.user.avatar_url}
-                alt={user1.user.login}
-                className="w-16 h-16 rounded-full border-2 border-border-l dark:border-border-d"
-              />
-              <div>
-                <h3 className="text-lg font-bold text-l-text-1 dark:text-d-text-1">
-                  {user1.user.name || user1.user.login}
-                </h3>
-                <p className="text-l-text-2 dark:text-d-text-2">
-                  @{user1.user.login}
-                </p>
-              </div>
-              <div className="ml-auto flex flex-col items-end">
-                <div className="text-2xl font-bold text-accent-1">
-                  {user1Score.totalScore}
-                </div>
-                <div className="text-sm text-l-text-3 dark:text-d-text-3">
-                  points
-                </div>
-              </div>
-            </div>
-
-            {/* Bio */}
-            {user1.user.bio && (
-              <div className="mb-4 p-3 bg-l-bg-1 dark:bg-d-bg-1 rounded border border-border-l/50 dark:border-border-d/50">
-                <p className="text-l-text-2 dark:text-d-text-2 text-sm line-clamp-2">
-                  {user1.user.bio}
-                </p>
-              </div>
-            )}
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <StatBox
-                label="Repositories"
-                value={user1.user.public_repos}
-                comparison={user1.user.public_repos > user2.user.public_repos}
-                isEqual={user1.user.public_repos === user2.user.public_repos}
-                metric={user1Score.metrics.repos}
-                icon={<RepositoryIcon />}
-              />
-              <StatBox
-                label="Followers"
-                value={user1.user.followers}
-                comparison={user1.user.followers > user2.user.followers}
-                isEqual={user1.user.followers === user2.user.followers}
-                metric={user1Score.metrics.followers}
-                icon={<UsersIcon />}
-              />
-              <StatBox
-                label="Total Stars"
-                value={user1.repositories.reduce(
-                  (sum, repo) => sum + repo.stargazers_count,
-                  0
-                )}
-                comparison={user1Score.metrics.stars > user2Score.metrics.stars}
-                isEqual={user1Score.metrics.stars === user2Score.metrics.stars}
-                metric={user1Score.metrics.stars}
-                icon={<StarIcon />}
-              />
-              <StatBox
-                label="Commits (Year)"
-                value={user1.contributionData?.totalContributions || 0}
-                comparison={
-                  user1Score.metrics.commits > user2Score.metrics.commits
-                }
-                isEqual={
-                  user1Score.metrics.commits === user2Score.metrics.commits
-                }
-                metric={user1Score.metrics.commits}
-                icon={<CommitIcon />}
-              />
-            </div>
-
-            {/* GitHub Details */}
-            <div className="flex flex-col gap-2 mb-4 text-sm">
-              <DetailRow
-                icon={<LocationIcon />}
-                text={user1.user.location || 'Location not specified'}
-              />
-              <DetailRow
-                icon={<CalendarIcon />}
-                text={`Joined ${formatDate(user1.user.created_at)} (${calculateAccountAge(user1.user.created_at)} years)`}
-              />
-              <DetailRow
-                icon={<CodeIcon />}
-                text={
-                  user1Languages.length > 0
-                    ? `Top languages: ${user1Languages.map(l => l.name).join(', ')}`
-                    : 'No language data'
-                }
-              />
-            </div>
-
-            {/* Earned Badges */}
-            <div>
-              <h4 className="font-medium text-l-text-1 dark:text-d-text-1 mb-2">
-                Top Badges
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {user1Badges
-                  .filter(b => b.earned)
-                  .slice(0, 3)
-                  .map(badge => (
-                    <div
-                      key={badge.id}
-                      className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 
-                      ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)}`}
-                    >
-                      <span className="w-3 h-3">
-                        {React.createElement(badge.icon, {
-                          className: 'w-full h-full',
-                        })}
-                      </span>
-                      {badge.name}
-                    </div>
-                  ))}
-                {user1Badges.filter(b => b.earned).length > 3 && (
-                  <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
-                    +{Math.max(0, user1Badges.filter(b => b.earned).length - 3)}{' '}
-                    more
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserBattleCard
+          userData={user1}
+          score={user1Score}
+          badges={user1Badges}
+          languages={user1Languages}
+          isWinner={winner === 1 && !isDraw}
+          isDraw={isDraw}
+          opponent={user2}
+          formatDate={formatDate}
+          calculateAccountAge={calculateAccountAge}
+          variants={itemVariants}
+        />
 
         {/* User 2 Card */}
-        <div
-          className={`bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border-2 ${winner === 2 && !isDraw ? 'border-accent-success' : isDraw ? 'border-accent-1' : 'border-border-l dark:border-border-d'} overflow-hidden`}
-        >
-          {winner === 2 && !isDraw && (
-            <div className="bg-accent-success text-white text-center py-1 font-bold">
-              WINNER
-            </div>
-          )}
-          {isDraw && (
-            <div className="bg-accent-1 text-white text-center py-1 font-bold">
-              DRAW
-            </div>
-          )}
-
-          <div className="p-6">
-            {/* Profile Header */}
-            <div className="flex gap-4 items-center mb-4">
-              <img
-                src={user2.user.avatar_url}
-                alt={user2.user.login}
-                className="w-16 h-16 rounded-full border-2 border-border-l dark:border-border-d"
-              />
-              <div>
-                <h3 className="text-lg font-bold text-l-text-1 dark:text-d-text-1">
-                  {user2.user.name || user2.user.login}
-                </h3>
-                <p className="text-l-text-2 dark:text-d-text-2">
-                  @{user2.user.login}
-                </p>
-              </div>
-              <div className="ml-auto flex flex-col items-end">
-                <div className="text-2xl font-bold text-accent-1">
-                  {user2Score.totalScore}
-                </div>
-                <div className="text-sm text-l-text-3 dark:text-d-text-3">
-                  points
-                </div>
-              </div>
-            </div>
-
-            {/* Bio */}
-            {user2.user.bio && (
-              <div className="mb-4 p-3 bg-l-bg-1 dark:bg-d-bg-1 rounded border border-border-l/50 dark:border-border-d/50">
-                <p className="text-l-text-2 dark:text-d-text-2 text-sm line-clamp-2">
-                  {user2.user.bio}
-                </p>
-              </div>
-            )}
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <StatBox
-                label="Repositories"
-                value={user2.user.public_repos}
-                comparison={user2.user.public_repos > user1.user.public_repos}
-                isEqual={user2.user.public_repos === user1.user.public_repos}
-                metric={user2Score.metrics.repos}
-                icon={<RepositoryIcon />}
-              />
-              <StatBox
-                label="Followers"
-                value={user2.user.followers}
-                comparison={user2.user.followers > user1.user.followers}
-                isEqual={user2.user.followers === user1.user.followers}
-                metric={user2Score.metrics.followers}
-                icon={<UsersIcon />}
-              />
-              <StatBox
-                label="Total Stars"
-                value={user2.repositories.reduce(
-                  (sum, repo) => sum + repo.stargazers_count,
-                  0
-                )}
-                comparison={user2Score.metrics.stars > user1Score.metrics.stars}
-                isEqual={user2Score.metrics.stars === user1Score.metrics.stars}
-                metric={user2Score.metrics.stars}
-                icon={<StarIcon />}
-              />
-              <StatBox
-                label="Commits (Year)"
-                value={user2.contributionData?.totalContributions || 0}
-                comparison={
-                  user2Score.metrics.commits > user1Score.metrics.commits
-                }
-                isEqual={
-                  user2Score.metrics.commits === user1Score.metrics.commits
-                }
-                metric={user2Score.metrics.commits}
-                icon={<CommitIcon />}
-              />
-            </div>
-
-            {/* GitHub Details */}
-            <div className="flex flex-col gap-2 mb-4 text-sm">
-              <DetailRow
-                icon={<LocationIcon />}
-                text={user2.user.location || 'Location not specified'}
-              />
-              <DetailRow
-                icon={<CalendarIcon />}
-                text={`Joined ${formatDate(user2.user.created_at)} (${calculateAccountAge(user2.user.created_at)} years)`}
-              />
-              <DetailRow
-                icon={<CodeIcon />}
-                text={
-                  user2Languages.length > 0
-                    ? `Top languages: ${user2Languages.map(l => l.name).join(', ')}`
-                    : 'No language data'
-                }
-              />
-            </div>
-
-            {/* Earned Badges */}
-            <div>
-              <h4 className="font-medium text-l-text-1 dark:text-d-text-1 mb-2">
-                Top Badges
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {user2Badges
-                  .filter(b => b.earned)
-                  .slice(0, 3)
-                  .map(badge => (
-                    <div
-                      key={badge.id}
-                      className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 
-                      ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)}`}
-                    >
-                      <span className="w-3 h-3">
-                        {React.createElement(badge.icon, {
-                          className: 'w-full h-full',
-                        })}
-                      </span>
-                      {badge.name}
-                    </div>
-                  ))}
-                {user2Badges.filter(b => b.earned).length > 3 && (
-                  <div className="px-2 py-1 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2">
-                    +{Math.max(0, user2Badges.filter(b => b.earned).length - 3)}{' '}
-                    more
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserBattleCard
+          userData={user2}
+          score={user2Score}
+          badges={user2Badges}
+          languages={user2Languages}
+          isWinner={winner === 2 && !isDraw}
+          isDraw={isDraw}
+          opponent={user1}
+          formatDate={formatDate}
+          calculateAccountAge={calculateAccountAge}
+          variants={itemVariants}
+        />
       </div>
 
       {/* Score Breakdown */}
-      <div className="mt-8 bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-        <h3 className="text-lg font-bold text-l-text-1 dark:text-d-text-1 mb-4">
+      <motion.div
+        className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d shadow-md"
+        variants={itemVariants}
+      >
+        <h3 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-6 flex items-center gap-2">
+          <Icons.Award className="w-5 h-5 text-accent-1" />
           Score Breakdown
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <ScoreBreakdownItem
             label="Repositories"
             user1Score={user1Score.metrics.repos}
             user2Score={user2Score.metrics.repos}
             user1Name={user1.user.login}
             user2Name={user2.user.login}
+            icon={<Icons.Repository className="w-4 h-4 text-accent-1" />}
           />
           <ScoreBreakdownItem
             label="Stars"
@@ -409,6 +205,7 @@ export default function GithubBattleResults({
             user2Score={user2Score.metrics.stars}
             user1Name={user1.user.login}
             user2Name={user2.user.login}
+            icon={<Icons.Star className="w-4 h-4 text-accent-1" />}
           />
           <ScoreBreakdownItem
             label="Commits"
@@ -416,6 +213,7 @@ export default function GithubBattleResults({
             user2Score={user2Score.metrics.commits}
             user1Name={user1.user.login}
             user2Name={user2.user.login}
+            icon={<Icons.Commit className="w-4 h-4 text-accent-1" />}
           />
           <ScoreBreakdownItem
             label="Followers"
@@ -423,6 +221,7 @@ export default function GithubBattleResults({
             user2Score={user2Score.metrics.followers}
             user1Name={user1.user.login}
             user2Name={user2.user.login}
+            icon={<Icons.Users className="w-4 h-4 text-accent-1" />}
           />
           <ScoreBreakdownItem
             label="Experience"
@@ -430,109 +229,410 @@ export default function GithubBattleResults({
             user2Score={user2Score.metrics.experience}
             user1Name={user1.user.login}
             user2Name={user2.user.login}
+            icon={<Icons.Calendar className="w-4 h-4 text-accent-1" />}
           />
         </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// UserBattleCard component for improved layout
+interface UserBattleCardProps {
+  userData: BattleUserData;
+  score: ScoreDetails;
+  badges: {
+    id: string;
+    name: string;
+    description: string;
+    icon: React.ElementType;
+    tier: string;
+    earned: boolean;
+  }[];
+  languages: {
+    name: string;
+    color: string;
+    percentage: number;
+  }[];
+  isWinner: boolean;
+  isDraw: boolean;
+  opponent: BattleUserData;
+  formatDate: (dateString: string) => string;
+  calculateAccountAge: (createdAt: string) => string;
+  variants: {
+    hidden: {
+      y: number;
+      opacity: number;
+    };
+    visible: {
+      y: number;
+      opacity: number;
+      transition: {
+        duration: number;
+      };
+    };
+  };
+}
+
+function UserBattleCard({
+  userData,
+  score,
+  badges,
+  languages,
+  isWinner,
+  isDraw,
+  opponent,
+  formatDate,
+  calculateAccountAge,
+  variants,
+}: UserBattleCardProps) {
+  const { user, repositories, contributionData } = userData;
+
+  // Calculate comparison metrics
+  const totalStars = repositories.reduce(
+    (sum, repo) => sum + repo.stargazers_count,
+    0
+  );
+  const opponentStars = opponent.repositories.reduce(
+    (sum, repo) => sum + repo.stargazers_count,
+    0
+  );
+
+  const totalCommits = contributionData?.totalContributions || 0;
+  const opponentCommits = opponent.contributionData?.totalContributions || 0;
+
+  return (
+    <motion.div
+      variants={variants}
+      className={`bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border-2 ${
+        isWinner
+          ? 'border-accent-success shadow-lg shadow-accent-success/10'
+          : isDraw
+            ? 'border-accent-1 shadow-lg shadow-accent-1/10'
+            : 'border-border-l dark:border-border-d'
+      } overflow-hidden transition-all hover:shadow-xl`}
+    >
+      {isWinner && (
+        <div className="bg-accent-success text-white text-center py-2 font-bold flex items-center justify-center gap-2">
+          <Icons.Trophy className="w-4 h-4" />
+          WINNER
+        </div>
+      )}
+      {isDraw && (
+        <div className="bg-accent-1 text-white text-center py-2 font-bold flex items-center justify-center gap-2">
+          <Icons.Medal className="w-4 h-4" />
+          DRAW
+        </div>
+      )}
+
+      <div className="p-6">
+        {/* Profile Header */}
+        <div className="flex gap-4 items-center mb-6">
+          <div className="relative">
+            <img
+              src={user.avatar_url}
+              alt={user.login}
+              className="w-20 h-20 rounded-lg border-2 border-border-l dark:border-border-d"
+            />
+            {(isWinner || isDraw) && (
+              <motion.div
+                className="absolute -top-3 -right-3 bg-accent-success text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white dark:border-d-bg-1"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.5, type: 'spring', stiffness: 300 }}
+              >
+                {isWinner ? (
+                  <Icons.Trophy className="w-4 h-4" />
+                ) : (
+                  <Icons.Medal className="w-4 h-4" />
+                )}
+              </motion.div>
+            )}
+          </div>
+          <div className="flex-grow">
+            <h3 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
+              {user.name || user.login}
+              {user.name && (
+                <span className="text-base font-normal text-l-text-2 dark:text-d-text-2">
+                  @{user.login}
+                </span>
+              )}
+            </h3>
+            {user.bio && (
+              <p className="text-l-text-2 dark:text-d-text-2 text-sm line-clamp-2 mt-1">
+                {user.bio}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-3xl font-bold text-accent-1">
+              {score.totalScore}
+            </div>
+            <div className="text-sm text-l-text-3 dark:text-d-text-3">
+              points
+            </div>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.Repository className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Repositories
+                </span>
+              </div>
+              {user.public_repos > opponent.user.public_repos && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {user.public_repos - opponent.user.public_repos}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {user.public_repos.toLocaleString()}
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.repos} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.Users className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Followers
+                </span>
+              </div>
+              {user.followers > opponent.user.followers && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {user.followers - opponent.user.followers}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {user.followers.toLocaleString()}
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.followers} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.Star className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Stars
+                </span>
+              </div>
+              {totalStars > opponentStars && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {totalStars - opponentStars}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {totalStars.toLocaleString()}
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.stars} points
+            </div>
+          </div>
+
+          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.Commit className="w-4 h-4 text-accent-1" />
+                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                  Commits
+                </span>
+              </div>
+              {totalCommits > opponentCommits && (
+                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                  {totalCommits - opponentCommits}
+                </span>
+              )}
+            </div>
+            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+              {totalCommits.toLocaleString()}
+            </div>
+            <div className="text-xs font-medium text-accent-1 mt-1">
+              +{score.metrics.commits} points
+            </div>
+          </div>
+        </div>
+
+        {/* GitHub Details */}
+        <div className="bg-l-bg-1/50 dark:bg-d-bg-1/50 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 mb-6">
+          <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center gap-1.5">
+            <Icons.Info className="w-4 h-4 text-accent-1" />
+            Developer Info
+          </h4>
+          <div className="flex flex-col gap-3 text-sm">
+            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2">
+              <Icons.MapPin className="w-4 h-4 text-l-text-3 dark:text-d-text-3" />
+              {user.location || 'Location not specified'}
+            </div>
+            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2">
+              <Icons.Calendar className="w-4 h-4 text-l-text-3 dark:text-d-text-3" />
+              Joined {formatDate(user.created_at)} (
+              {calculateAccountAge(user.created_at)} years)
+              <span className="text-xs bg-accent-1/10 text-accent-1 px-2 py-0.5 rounded-full ml-auto">
+                +{score.metrics.experience} exp points
+              </span>
+            </div>
+
+            <div className="flex gap-2 text-l-text-2 dark:text-d-text-2">
+              <Icons.Code className="w-4 h-4 text-l-text-3 dark:text-d-text-3 mt-0.5" />
+              <div className="flex-grow">
+                <div>Top languages:</div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {languages.length > 0 ? (
+                    languages.map(lang => (
+                      <span
+                        key={lang.name}
+                        className="inline-flex items-center gap-1.5 text-xs px-2 py-1 bg-l-bg-2 dark:bg-d-bg-2 rounded-full"
+                      >
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: lang.color }}
+                        />
+                        {lang.name}
+                        <span className="opacity-70">{lang.percentage}%</span>
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-l-text-3 dark:text-d-text-3">
+                      No language data available
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Earned Badges */}
+        <div>
+          <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center gap-1.5">
+            <Icons.Medal className="w-4 h-4 text-accent-1" />
+            Developer Achievements
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {badges
+              .filter(b => b.earned)
+              .slice(0, 3)
+              .map(badge => (
+                <div
+                  key={badge.id}
+                  className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 
+                  ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)} shadow-sm hover:shadow-md transition-shadow`}
+                >
+                  <span className="w-4 h-4 flex items-center justify-center">
+                    {React.createElement(badge.icon, {
+                      className: 'w-full h-full',
+                    })}
+                  </span>
+                  {badge.name}
+                </div>
+              ))}
+            {badges.filter(b => b.earned).length > 3 && (
+              <div className="px-3 py-1.5 rounded-full text-xs bg-l-bg-3 dark:bg-d-bg-3 text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover cursor-pointer transition-colors flex items-center gap-1">
+                <Icons.MoreVertical className="w-3 h-3" />+
+                {Math.max(0, badges.filter(b => b.earned).length - 3)} more
+              </div>
+            )}
+            {badges.filter(b => b.earned).length === 0 && (
+              <div className="text-sm text-l-text-3 dark:text-d-text-3 italic">
+                No badges earned yet
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 // Helper components
-function StatBox({
-  label,
-  value,
-  comparison,
-  isEqual,
-  metric,
-  icon,
-}: {
-  label: string;
-  value: number;
-  comparison: boolean;
-  isEqual: boolean;
-  metric: number;
-  icon: JSX.Element;
-}) {
-  return (
-    <div className="bg-l-bg-1 dark:bg-d-bg-1 p-3 rounded border border-border-l/50 dark:border-border-d/50">
-      <div className="flex justify-between">
-        <div className="flex items-center gap-1.5 text-xs text-l-text-2 dark:text-d-text-2 mb-1">
-          {icon}
-          {label}
-        </div>
-        {!isEqual && comparison && (
-          <span className="text-xs text-accent-success">
-            <ArrowUpIcon />
-          </span>
-        )}
-      </div>
-      <div className="flex justify-between items-baseline">
-        <div className="text-lg font-bold text-l-text-1 dark:text-d-text-1">
-          {value.toLocaleString()}
-        </div>
-        <div className="text-xs font-medium text-l-text-3 dark:text-d-text-3">
-          {metric} pts
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DetailRow({ icon, text }: { icon: JSX.Element; text: string }) {
-  return (
-    <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2">
-      <span className="w-4 h-4">{icon}</span>
-      {text}
-    </div>
-  );
-}
-
 function ScoreBreakdownItem({
   label,
   user1Score,
   user2Score,
   user1Name,
   user2Name,
+  icon,
 }: {
   label: string;
   user1Score: number;
   user2Score: number;
   user1Name: string;
   user2Name: string;
+  icon: JSX.Element;
 }) {
   const totalScore = user1Score + user2Score;
   const user1Percentage = totalScore > 0 ? (user1Score / totalScore) * 100 : 50;
-  // const user2Percentage = 100 - user1Percentage;
   const winner = user1Score > user2Score ? 1 : user2Score > user1Score ? 2 : 0;
 
   return (
-    <div className="flex flex-col">
-      <div className="text-sm text-l-text-1 dark:text-d-text-1 font-medium mb-1">
+    <motion.div
+      className="flex flex-col bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30"
+      whileHover={{
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        scale: 1.02,
+        transition: { duration: 0.2 },
+      }}
+    >
+      <div className="text-sm text-l-text-1 dark:text-d-text-1 font-medium mb-2 flex items-center gap-2">
+        {icon}
         {label}
       </div>
-      <div className="flex items-center text-xs mb-1">
+      <div className="flex items-center justify-between text-xs mb-2">
         <span
-          className={`${winner === 1 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'}`}
+          className={`${winner === 1 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'} flex items-center gap-1`}
         >
+          {winner === 1 && <Icons.ChevronUp className="w-3 h-3" />}
           {user1Name}: {user1Score}
         </span>
-        <span className="text-l-text-3 dark:text-d-text-3 mx-1">vs</span>
+        <span className="text-l-text-3 dark:text-d-text-3">vs</span>
         <span
-          className={`${winner === 2 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'}`}
+          className={`${winner === 2 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'} flex items-center gap-1`}
         >
           {user2Name}: {user2Score}
+          {winner === 2 && <Icons.ChevronUp className="w-3 h-3" />}
         </span>
       </div>
-      <div className="h-2 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden">
+      <div className="h-3 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden relative mt-1">
         <div
-          className="h-full bg-accent-1"
+          className={`h-full ${winner === 1 ? 'bg-accent-success' : 'bg-accent-1'}`}
           style={{
             width: `${user1Percentage}%`,
-            boxShadow: winner === 1 ? '0 0 8px var(--color-accent-1)' : 'none',
+            transition: 'width 1s ease-out',
           }}
         ></div>
+        <div
+          className={`h-full ${winner === 2 ? 'bg-accent-success' : 'bg-accent-2'}`}
+          style={{
+            width: `${100 - user1Percentage}%`,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            transition: 'width 1s ease-out',
+          }}
+        ></div>
+        <div
+          className="absolute top-0 left-0 h-full border-r-2 border-white"
+          style={{ left: `${user1Percentage}%` }}
+        ></div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -611,94 +711,4 @@ function getBadgeTextClass(tier: string): string {
     default:
       return 'text-l-text-2 dark:text-d-text-2';
   }
-}
-
-// Icons
-function RepositoryIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
-      <path d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
-      <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z" />
-    </svg>
-  );
-}
-
-function UsersIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className="w-3 h-3"
-    >
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
-      <path d="M16 3.13a4 4 0 010 7.75"></path>
-    </svg>
-  );
-}
-
-function CommitIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
-      <path d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
-  );
-}
-
-function LocationIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-      <path
-        fillRule="evenodd"
-        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-      <path
-        fillRule="evenodd"
-        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-}
-
-function CodeIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-      <path
-        fillRule="evenodd"
-        d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-}
-
-function ArrowUpIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-      <path
-        fillRule="evenodd"
-        d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
 }
