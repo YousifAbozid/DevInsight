@@ -29,6 +29,16 @@ import {
   Package,
   GitCommit,
   Shield,
+
+  // Additional icons for PersonalizedSummary
+  Flame,
+  FolderClosed,
+  Clock,
+  Award,
+
+  // Missing icons for expand/collapse functionality
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -92,4 +102,19 @@ export const Icons = {
   Trophy: ({ className }: IconProps) => <Trophy className={className} />,
   Filter: ({ className }: IconProps) => <Filter className={className} />,
   Medal: ({ className }: IconProps) => <Medal className={className} />,
+
+  // Add direct Shield mapping
+  Shield: ({ className }: IconProps) => <Shield className={className} />,
+
+  // Additional icons for PersonalizedSummary
+  Fire: ({ className }: IconProps) => <Flame className={className} />,
+  Folder: ({ className }: IconProps) => <FolderClosed className={className} />,
+  Clock: ({ className }: IconProps) => <Clock className={className} />,
+  Award: ({ className }: IconProps) => <Award className={className} />,
+
+  // Add missing icons for expand/collapse functionality
+  ChevronUp: ({ className }: IconProps) => <ChevronUp className={className} />,
+  ChevronDown: ({ className }: IconProps) => (
+    <ChevronDown className={className} />
+  ),
 };
