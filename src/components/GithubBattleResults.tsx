@@ -114,36 +114,36 @@ export default function GithubBattleResults({
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-6 sm:space-y-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Battle Result Banner */}
+      {/* Battle Result Banner - Improved for mobile */}
       <motion.div
-        className="bg-gradient-to-r from-accent-1 to-accent-2 text-white rounded-lg p-8 shadow-lg relative overflow-hidden"
+        className="bg-gradient-to-r from-accent-1 to-accent-2 text-white rounded-lg p-6 sm:p-8 shadow-lg relative overflow-hidden"
         variants={bannerVariants}
       >
         <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
         <div className="relative z-10">
-          <h2 className="text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
-            <Icons.Trophy className="w-8 h-8" />
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
+            <Icons.Trophy className="w-6 h-6 sm:w-8 sm:h-8" />
             Battle Results
           </h2>
           {isDraw ? (
-            <p className="text-xl text-center font-bold">
+            <p className="text-lg sm:text-xl text-center font-bold">
               It&apos;s a draw! Both developers are evenly matched!
             </p>
           ) : (
             <div className="text-center">
-              <div className="inline-block bg-white/20 px-4 py-2 rounded-full mb-2">
-                <span className="text-xl font-bold">
+              <div className="inline-block bg-white/20 px-3 sm:px-4 py-1 sm:py-2 rounded-full mb-2">
+                <span className="text-lg sm:text-xl font-bold">
                   {winner === 1 ? user1.user.login : user2.user.login}
                 </span>
               </div>
-              <p className="text-xl font-bold">
+              <p className="text-lg sm:text-xl font-bold">
                 wins with{' '}
-                <span className="text-2xl bg-white/30 px-2 py-0.5 rounded">
+                <span className="text-xl sm:text-2xl bg-white/30 px-2 py-0.5 rounded">
                   {winner === 1 ? user1Score.totalScore : user2Score.totalScore}
                 </span>{' '}
                 points!
@@ -154,7 +154,7 @@ export default function GithubBattleResults({
       </motion.div>
 
       {/* Battle Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* User 1 Card */}
         <UserBattleCard
           userData={user1}
@@ -184,17 +184,17 @@ export default function GithubBattleResults({
         />
       </div>
 
-      {/* Score Breakdown */}
+      {/* Score Breakdown - Improved for mobile */}
       <motion.div
-        className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d shadow-md"
+        className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-5 sm:p-8 border border-border-l dark:border-border-d shadow-md"
         variants={itemVariants}
       >
-        <h3 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-6 flex items-center gap-2">
+        <h3 className="text-lg sm:text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4 sm:mb-6 flex items-center gap-2">
           <Icons.Award className="w-5 h-5 text-accent-1" />
           Score Breakdown
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
           <ScoreBreakdownItem
             label="Repositories"
             user1Score={user1Score.metrics.repos}
@@ -366,35 +366,35 @@ function UserBattleCard({
         </div>
       )}
 
-      <div className="p-6">
-        {/* Profile Header */}
-        <div className="flex gap-4 items-center mb-6">
+      <div className="p-4 sm:p-6">
+        {/* Profile Header - Improved for mobile */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center mb-6">
           <div className="relative">
             <img
               src={user.avatar_url}
               alt={user.login}
-              className="w-20 h-20 rounded-lg border-2 border-border-l dark:border-border-d"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 border-border-l dark:border-border-d"
             />
             {(isWinner || isDraw) && (
               <motion.div
-                className="absolute -top-3 -right-3 bg-accent-success text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white dark:border-d-bg-1"
+                className="absolute -top-3 -right-3 bg-accent-success text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center border-2 border-white dark:border-d-bg-1"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.5, type: 'spring', stiffness: 300 }}
               >
                 {isWinner ? (
-                  <Icons.Trophy className="w-4 h-4" />
+                  <Icons.Trophy className="w-3 h-3 sm:w-4 sm:h-4" />
                 ) : (
-                  <Icons.Medal className="w-4 h-4" />
+                  <Icons.Medal className="w-3 h-3 sm:w-4 sm:h-4" />
                 )}
               </motion.div>
             )}
           </div>
-          <div className="flex-grow">
-            <h3 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
+          <div className="flex-grow text-center sm:text-left">
+            <h3 className="text-lg sm:text-xl font-bold text-l-text-1 dark:text-d-text-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 justify-center sm:justify-start">
               {user.name || user.login}
               {user.name && (
-                <span className="text-base font-normal text-l-text-2 dark:text-d-text-2">
+                <span className="text-sm sm:text-base font-normal text-l-text-2 dark:text-d-text-2">
                   @{user.login}
                 </span>
               )}
@@ -405,8 +405,8 @@ function UserBattleCard({
               </p>
             )}
           </div>
-          <div className="flex flex-col items-end">
-            <div className="text-3xl font-bold text-accent-1">
+          <div className="flex flex-col items-center sm:items-end mt-2 sm:mt-0">
+            <div className="text-2xl sm:text-3xl font-bold text-accent-1">
               {score.totalScore}
             </div>
             <div className="text-sm text-l-text-3 dark:text-d-text-3">
@@ -415,8 +415,8 @@ function UserBattleCard({
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        {/* Stats - Make responsive for small screens */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
@@ -511,12 +511,12 @@ function UserBattleCard({
         </div>
 
         {/* Additional Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <Icons.GitBranch className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
                   Forks
                 </span>
               </div>
@@ -527,7 +527,7 @@ function UserBattleCard({
                 </span>
               )}
             </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
               {repositories
                 .reduce((sum, repo) => sum + repo.forks_count, 0)
                 .toLocaleString()}
@@ -541,7 +541,7 @@ function UserBattleCard({
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <Icons.Languages className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
                   Languages
                 </span>
               </div>
@@ -552,7 +552,7 @@ function UserBattleCard({
                 </span>
               )}
             </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
               {
                 new Set(repositories.map(repo => repo.language).filter(Boolean))
                   .size
@@ -567,7 +567,7 @@ function UserBattleCard({
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <Icons.BadgeCheck className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
                   Quality Projects
                 </span>
               </div>
@@ -578,7 +578,7 @@ function UserBattleCard({
                 </span>
               )}
             </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
               {
                 repositories.filter(
                   repo => !repo.fork && repo.stargazers_count > 0
@@ -594,7 +594,7 @@ function UserBattleCard({
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <Icons.GitPullRequest className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
                   Pull Requests
                 </span>
               </div>
@@ -605,7 +605,7 @@ function UserBattleCard({
                 </span>
               )}
             </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+            <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
               {Math.round(totalCommits * 0.1).toLocaleString()}
               <span className="text-xs text-l-text-3 dark:text-d-text-3 ml-1">
                 (est.)
@@ -617,39 +617,45 @@ function UserBattleCard({
           </div>
         </div>
 
-        {/* GitHub Details */}
-        <div className="bg-l-bg-1/50 dark:bg-d-bg-1/50 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 mb-6">
+        {/* GitHub Details - Improved for mobile */}
+        <div className="bg-l-bg-1/50 dark:bg-d-bg-1/50 p-3 sm:p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 mb-6">
           <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center gap-1.5">
             <Icons.Info className="w-4 h-4 text-accent-1" />
             Developer Info
           </h4>
           <div className="flex flex-col gap-3 text-sm">
-            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2">
-              <Icons.MapPin className="w-4 h-4 text-l-text-3 dark:text-d-text-3" />
-              {user.location || 'Location not specified'}
-            </div>
-            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2">
-              <Icons.Calendar className="w-4 h-4 text-l-text-3 dark:text-d-text-3" />
-              Joined {formatDate(user.created_at)} (
-              {calculateAccountAge(user.created_at)} years)
-              <span className="text-xs bg-accent-1/10 text-accent-1 px-2 py-0.5 rounded-full ml-auto">
-                +{score.metrics.experience} exp points
+            <div className="flex items-start sm:items-center gap-2 text-l-text-2 dark:text-d-text-2">
+              <Icons.MapPin className="w-4 h-4 text-l-text-3 dark:text-d-text-3 mt-0.5 sm:mt-0 flex-shrink-0" />
+              <span className="break-words">
+                {user.location || 'Location not specified'}
               </span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-l-text-2 dark:text-d-text-2">
+              <div className="flex items-center gap-2">
+                <Icons.Calendar className="w-4 h-4 text-l-text-3 dark:text-d-text-3 flex-shrink-0" />
+                <span>Joined {formatDate(user.created_at)}</span>
+              </div>
+              <div className="flex items-center gap-2 sm:ml-auto">
+                <span>({calculateAccountAge(user.created_at)} years)</span>
+                <span className="text-xs bg-accent-1/10 text-accent-1 px-2 py-0.5 rounded-full">
+                  +{score.metrics.experience} exp pts
+                </span>
+              </div>
             </div>
 
             <div className="flex gap-2 text-l-text-2 dark:text-d-text-2">
-              <Icons.Code className="w-4 h-4 text-l-text-3 dark:text-d-text-3 mt-0.5" />
+              <Icons.Code className="w-4 h-4 text-l-text-3 dark:text-d-text-3 mt-0.5 flex-shrink-0" />
               <div className="flex-grow">
                 <div>Top languages:</div>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
                   {languages.length > 0 ? (
                     languages.map(lang => (
                       <span
                         key={lang.name}
-                        className="inline-flex items-center gap-1.5 text-xs px-2 py-1 bg-l-bg-2 dark:bg-d-bg-2 rounded-full"
+                        className="inline-flex items-center gap-1 sm:gap-1.5 text-xs px-1.5 sm:px-2 py-1 bg-l-bg-2 dark:bg-d-bg-2 rounded-full"
                       >
                         <span
-                          className="w-2 h-2 rounded-full"
+                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
                           style={{ backgroundColor: lang.color }}
                         />
                         {lang.name}
@@ -667,7 +673,7 @@ function UserBattleCard({
           </div>
         </div>
 
-        {/* Earned Badges */}
+        {/* Earned Badges - Improved for mobile */}
         <div>
           <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-3 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
@@ -678,22 +684,24 @@ function UserBattleCard({
               {badges.filter(b => b.earned).length} earned
             </span>
           </h4>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {badges
               .filter(b => b.earned)
               .map(badge => (
                 <div
                   key={badge.id}
-                  className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs flex items-center gap-1 sm:gap-1.5 
                   ${getBadgeBgClass(badge.tier)} ${getBadgeTextClass(badge.tier)} shadow-sm hover:shadow-md transition-shadow`}
                   title={badge.description}
                 >
-                  <span className="w-4 h-4 flex items-center justify-center">
+                  <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center flex-shrink-0">
                     {React.createElement(badge.icon, {
                       className: 'w-full h-full',
                     })}
                   </span>
-                  {badge.name}
+                  <span className="truncate max-w-[100px] sm:max-w-none">
+                    {badge.name}
+                  </span>
                 </div>
               ))}
             {badges.filter(b => b.earned).length === 0 && (
@@ -730,33 +738,47 @@ function ScoreBreakdownItem({
 
   return (
     <motion.div
-      className="flex flex-col bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30"
+      className="flex flex-col bg-l-bg-1 dark:bg-d-bg-1 p-3 sm:p-4 rounded-lg border border-border-l/30 dark:border-border-d/30"
       whileHover={{
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        scale: 1.02,
+        scale: 1.01,
         transition: { duration: 0.2 },
       }}
     >
-      <div className="text-sm text-l-text-1 dark:text-d-text-1 font-medium mb-2 flex items-center gap-2">
+      <div className="text-sm text-l-text-1 dark:text-d-text-1 font-medium mb-2 flex items-center gap-1.5">
         {icon}
         {label}
       </div>
       <div className="flex items-center justify-between text-xs mb-2">
         <span
-          className={`${winner === 1 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'} flex items-center gap-1`}
+          className={`${
+            winner === 1
+              ? 'text-accent-success font-medium'
+              : 'text-l-text-2 dark:text-d-text-2'
+          } flex items-center gap-1 truncate max-w-[45%]`}
         >
-          {winner === 1 && <Icons.ChevronUp className="w-3 h-3" />}
-          {user1Name}: {user1Score}
+          {winner === 1 && (
+            <Icons.ChevronUp className="w-3 h-3 flex-shrink-0" />
+          )}
+          <span className="truncate">{user1Name}</span>: {user1Score}
         </span>
-        <span className="text-l-text-3 dark:text-d-text-3">vs</span>
+        <span className="text-l-text-3 dark:text-d-text-3 mx-1 flex-shrink-0">
+          vs
+        </span>
         <span
-          className={`${winner === 2 ? 'text-accent-success font-medium' : 'text-l-text-2 dark:text-d-text-2'} flex items-center gap-1`}
+          className={`${
+            winner === 2
+              ? 'text-accent-success font-medium'
+              : 'text-l-text-2 dark:text-d-text-2'
+          } flex items-center gap-1 justify-end truncate max-w-[45%]`}
         >
-          {user2Name}: {user2Score}
-          {winner === 2 && <Icons.ChevronUp className="w-3 h-3" />}
+          <span className="truncate">{user2Name}</span>: {user2Score}
+          {winner === 2 && (
+            <Icons.ChevronUp className="w-3 h-3 flex-shrink-0" />
+          )}
         </span>
       </div>
-      <div className="h-3 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden relative mt-1">
+      <div className="h-2.5 sm:h-3 bg-l-bg-3 dark:bg-d-bg-3 rounded-full overflow-hidden relative mt-1">
         <div
           className={`h-full ${winner === 1 ? 'bg-accent-success' : 'bg-accent-1'}`}
           style={{
@@ -775,7 +797,7 @@ function ScoreBreakdownItem({
           }}
         ></div>
         <div
-          className="absolute top-0 left-0 h-full border-r-2 border-white"
+          className="absolute top-0 left-0 h-full border-r-[1px] sm:border-r-2 border-white"
           style={{ left: `${user1Percentage}%` }}
         ></div>
       </div>
