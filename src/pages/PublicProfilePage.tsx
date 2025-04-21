@@ -38,6 +38,251 @@ interface PublicProfilePageProps {
   profileType?: 'user' | 'organization';
 }
 
+// Interface for the ProfileErrorState component props
+interface ProfileErrorStateProps {
+  username: string;
+  profileType?: 'user' | 'organization';
+  errorType: 'not_found' | 'error';
+  errorMessage?: string;
+}
+
+// A unified component for displaying profile errors
+function ProfileErrorState({
+  username,
+  profileType,
+  errorType,
+  errorMessage,
+}: ProfileErrorStateProps) {
+  const navigate = useNavigate();
+
+  // Popular and verified GitHub profiles to suggest
+  const popularProfiles = [
+    { username: 'github', type: 'organization' },
+    { username: 'microsoft', type: 'organization' },
+    { username: 'google', type: 'organization' },
+    { username: 'torvalds', type: 'user' },
+    { username: 'sindresorhus', type: 'user' },
+  ];
+
+  const isNotFound = errorType === 'not_found';
+
+  return (
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d">
+      <div className="flex flex-col items-center justify-center text-center space-y-6">
+        {/* Error icon */}
+        <div
+          className={`p-4 ${isNotFound ? 'bg-accent-danger/10' : 'bg-accent-warning/10'} rounded-full`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`w-16 h-16 ${isNotFound ? 'text-accent-danger' : 'text-accent-warning'}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {isNotFound ? (
+              <>
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </>
+            ) : (
+              <>
+                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </>
+            )}
+          </svg>
+        </div>
+
+        {/* Error heading */}
+        <h2 className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+          {isNotFound
+            ? `GitHub ${profileType || 'Profile'} Not Found`
+            : 'Error Finding GitHub Profile'}
+        </h2>
+
+        {/* Error message */}
+        <p className="text-l-text-2 dark:text-d-text-2 max-w-md mx-auto">
+          {isNotFound ? (
+            <>
+              We couldn&apos;t find a GitHub {profileType || 'profile'} for{' '}
+              <span className="font-bold text-accent-1">{username}</span>.
+            </>
+          ) : (
+            <span className="font-medium text-accent-danger">
+              {errorMessage || 'An unexpected error occurred.'}
+            </span>
+          )}
+        </p>
+
+        {/* Possible reasons */}
+        <div className="w-full max-w-md mx-auto">
+          <h3 className="text-base font-semibold text-l-text-1 dark:text-d-text-1 mb-3 text-left">
+            This could be because:
+          </h3>
+          <ul className="text-left text-l-text-2 dark:text-d-text-2 space-y-2">
+            <li className="flex items-start gap-2">
+              <span
+                className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
+              >
+                •
+              </span>
+              <span>The username is misspelled or doesn&apos;t exist</span>
+            </li>
+
+            {isNotFound && (
+              <li className="flex items-start gap-2">
+                <span className="text-accent-danger mt-1">•</span>
+                <span>The profile may have been deleted or renamed</span>
+              </li>
+            )}
+
+            <li className="flex items-start gap-2">
+              <span
+                className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
+              >
+                •
+              </span>
+              <span>GitHub API might be experiencing issues</span>
+            </li>
+
+            {!isNotFound &&
+              errorMessage &&
+              errorMessage.includes('rate limit') && (
+                <li className="flex items-start gap-2">
+                  <span className="text-accent-warning mt-1">•</span>
+                  <span>
+                    GitHub API rate limit has been exceeded - wait a few minutes
+                    and try again
+                  </span>
+                </li>
+              )}
+
+            {!isNotFound && errorMessage && errorMessage.includes('token') && (
+              <li className="flex items-start gap-2">
+                <span className="text-accent-warning mt-1">•</span>
+                <span>
+                  Your GitHub access token may be invalid or doesn&apos;t have
+                  the necessary permissions
+                </span>
+              </li>
+            )}
+
+            {profileType && (
+              <li className="flex items-start gap-2">
+                <span
+                  className={`${isNotFound ? 'text-accent-danger' : 'text-accent-warning'} mt-1`}
+                >
+                  •
+                </span>
+                <span>
+                  It might be a{' '}
+                  {profileType === 'organization' ? 'user' : 'organization'}{' '}
+                  account instead of{' '}
+                  {profileType === 'organization'
+                    ? 'an organization'
+                    : 'a user'}{' '}
+                  account - try{' '}
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/${profileType === 'organization' ? 'user' : 'org'}/${username}`
+                      )
+                    }
+                    className="text-accent-1 hover:underline"
+                  >
+                    viewing as a{' '}
+                    {profileType === 'organization' ? 'user' : 'organization'}
+                  </button>
+                </span>
+              </li>
+            )}
+          </ul>
+        </div>
+
+        {/* Search again section */}
+        <div className="w-full max-w-md mx-auto pt-4 border-t border-border-l dark:border-border-d">
+          <h3 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-4">
+            Try searching for another profile
+          </h3>
+
+          <form
+            className="flex gap-2"
+            onSubmit={e => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const searchUsername = formData.get('searchUsername') as string;
+              if (searchUsername.trim()) {
+                navigate(`/${searchUsername}`);
+              }
+            }}
+          >
+            <input
+              type="text"
+              name="searchUsername"
+              placeholder="Enter GitHub username"
+              className="flex-1 px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
+              defaultValue=""
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+
+        {/* Popular profiles suggestions */}
+        <div className="w-full max-w-md mx-auto">
+          <h4 className="text-sm font-medium text-l-text-2 dark:text-d-text-2 mb-2">
+            Or try one of these verified profiles:
+          </h4>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {popularProfiles.map(profile => (
+              <button
+                key={profile.username}
+                onClick={() => navigate(`/${profile.type}/${profile.username}`)}
+                className="px-3 py-1.5 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-colors cursor-pointer flex items-center gap-1"
+              >
+                {profile.username}
+                <span
+                  className={`text-xs ${profile.type === 'organization' ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300'} px-1.5 py-0.5 rounded-full`}
+                >
+                  {profile.type === 'organization' ? 'org' : 'user'}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="pt-4 flex gap-4 justify-center">
+          {!isNotFound && (
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
+          )}
+          <a
+            href="/"
+            className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center"
+          >
+            Return Home
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PublicProfilePage({
   profileType,
 }: PublicProfilePageProps) {
@@ -371,82 +616,14 @@ export default function PublicProfilePage({
 
       {isUserLoading ? (
         <ProfileSkeleton />
-      ) : errorMessage ? (
-        <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-l-4 border-accent-danger border-l-accent-danger dark:border-l-accent-danger">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-left">
-            {/* Error icon */}
-            <div className="p-3 bg-accent-danger/10 rounded-full flex-shrink-0">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-10 h-10 text-accent-danger"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-
-            <div>
-              {/* Error heading and message */}
-              <h2 className="text-xl font-bold text-accent-danger mb-2">
-                Error Finding GitHub Profile
-              </h2>
-              <p className="text-l-text-2 dark:text-d-text-2 mb-4">
-                {errorMessage}
-              </p>
-
-              {/* Additional help */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-base font-semibold text-l-text-1 dark:text-d-text-1 mb-1">
-                    What you can try:
-                  </h3>
-                  <ul className="text-sm text-l-text-2 dark:text-d-text-2 space-y-1 list-disc pl-4">
-                    <li>Check if the GitHub username is spelled correctly</li>
-                    <li>Verify your internet connection</li>
-                    {userError instanceof Error &&
-                      userError.message.includes('rate limit') && (
-                        <li>
-                          Wait a few minutes and try again (GitHub API rate
-                          limit exceeded)
-                        </li>
-                      )}
-                    {userError instanceof Error &&
-                      userError.message.includes('token') && (
-                        <li>
-                          Check if your GitHub access token is valid and has the
-                          necessary permissions
-                        </li>
-                      )}
-                    <li>Try refreshing the page</li>
-                  </ul>
-                </div>
-
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="px-4 py-2 text-sm bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
-                  >
-                    Try Again
-                  </button>
-                  <a
-                    href="/"
-                    className="px-4 py-2 text-sm border border-accent-1 text-accent-1 hover:bg-accent-1/10 rounded-lg transition-colors inline-flex items-center"
-                  >
-                    Return Home
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : user ? (
+      ) : isUserError || !user ? (
+        <ProfileErrorState
+          username={username}
+          profileType={profileType}
+          errorType={isUserError ? 'error' : 'not_found'}
+          errorMessage={errorMessage || undefined}
+        />
+      ) : (
         <div className="space-y-6 md:space-y-8">
           <GithubProfileCard user={user} />
 
@@ -519,134 +696,6 @@ export default function PublicProfilePage({
               userCreatedAt={user?.created_at}
             />
           )}
-        </div>
-      ) : (
-        <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d">
-          <div className="flex flex-col items-center justify-center text-center space-y-6">
-            {/* Profile not found icon */}
-            <div className="p-4 bg-accent-danger/10 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-16 h-16 text-accent-danger"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-
-            {/* Clear error heading */}
-            <h2 className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
-              GitHub Profile Not Found
-            </h2>
-
-            {/* Informative message */}
-            <p className="text-l-text-2 dark:text-d-text-2 max-w-md mx-auto">
-              We couldn&apos;t find a GitHub {profileType || 'user'} profile for{' '}
-              <span className="font-bold text-accent-1">{username}</span>. This
-              could be because:
-            </p>
-
-            {/* Reasons for profile not found */}
-            <ul className="text-left text-l-text-2 dark:text-d-text-2 space-y-2 max-w-md mx-auto">
-              <li className="flex items-start gap-2">
-                <span className="text-accent-danger mt-1">•</span>
-                <span>The username is misspelled or doesn&apos;t exist</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent-danger mt-1">•</span>
-                <span>The profile may have been deleted or renamed</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent-danger mt-1">•</span>
-                <span>GitHub API might be experiencing issues</span>
-              </li>
-              {profileType && (
-                <li className="flex items-start gap-2">
-                  <span className="text-accent-danger mt-1">•</span>
-                  <span>
-                    It might be a{' '}
-                    {profileType === 'organization' ? 'user' : 'organization'}{' '}
-                    account instead of a{' '}
-                    {profileType === 'organization'
-                      ? 'an organization'
-                      : 'user'}{' '}
-                    account
-                  </span>
-                </li>
-              )}
-            </ul>
-
-            {/* Search again section */}
-            <div className="w-full max-w-md mx-auto pt-4 border-t border-border-l dark:border-border-d">
-              <h3 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-4">
-                Try searching for another profile
-              </h3>
-
-              <form
-                className="flex gap-2"
-                onSubmit={e => {
-                  e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
-                  const searchUsername = formData.get(
-                    'searchUsername'
-                  ) as string;
-                  if (searchUsername.trim()) {
-                    navigate(`/${searchUsername}`);
-                  }
-                }}
-              >
-                <input
-                  type="text"
-                  name="searchUsername"
-                  placeholder="Enter GitHub username"
-                  className="flex-1 px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors"
-                >
-                  Search
-                </button>
-              </form>
-            </div>
-
-            {/* Popular profiles suggestions */}
-            <div className="w-full max-w-md mx-auto">
-              <h4 className="text-sm font-medium text-l-text-2 dark:text-d-text-2 mb-2">
-                Or try one of these popular profiles:
-              </h4>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {['github', 'microsoft', 'facebook', 'google', 'torvalds'].map(
-                  suggestion => (
-                    <button
-                      key={suggestion}
-                      onClick={() => navigate(`/${suggestion}`)}
-                      className="px-2 py-1 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-colors cursor-pointer"
-                    >
-                      {suggestion}
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Return home link */}
-            <div className="pt-4">
-              <a
-                href="/"
-                className="text-accent-1 hover:text-accent-2 transition-colors font-medium"
-              >
-                Return to Home Page
-              </a>
-            </div>
-          </div>
         </div>
       )}
     </div>
