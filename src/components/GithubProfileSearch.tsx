@@ -295,32 +295,32 @@ const GithubProfileSearch = forwardRef(
             </div>
           )}
 
-          {/* Token section with improved UX */}
+          {/* Token section with improved mobile layout */}
           <div className="mt-1">
             <button
               type="button"
               onClick={() => setShowTokenInput(!showTokenInput)}
-              className="flex items-center gap-1.5 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer text-sm"
+              className="flex flex-wrap items-center gap-1.5 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer text-sm w-full"
             >
-              <Key size={16} />
-              <div>
-                <span className="font-medium">
-                  {showTokenInput ? 'Hide token input' : 'GitHub Access Token'}
-                </span>
-                <span className="text-xs ml-1.5 text-l-text-3 dark:text-d-text-3">
-                  (required for contribution data)
+              <div className="flex items-center">
+                <Key size={14} className="flex-shrink-0" />
+                <span className="font-medium ml-1.5">
+                  {showTokenInput ? 'Hide token' : 'GitHub Token'}
                 </span>
               </div>
+              <span className="text-xs text-l-text-3 dark:text-d-text-3">
+                (required for contribution data)
+              </span>
               {token && !showTokenInput && !showTokenSaved && (
-                <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1">
+                <span className="text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 ml-0 sm:ml-1.5">
                   <CheckCircle size={12} />
-                  <span>Token active</span>
+                  <span>Active</span>
                 </span>
               )}
               {showTokenSaved && (
-                <span className="ml-1.5 text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 animate-pulse">
+                <span className="text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 animate-pulse ml-0 sm:ml-1.5">
                   <CheckCircle size={12} />
-                  <span>{token ? 'Token saved!' : 'Token cleared!'}</span>
+                  <span>{token ? 'Saved' : 'Cleared'}</span>
                 </span>
               )}
             </button>
