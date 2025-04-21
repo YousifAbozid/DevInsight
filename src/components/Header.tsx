@@ -25,10 +25,10 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-l-bg-1/95 dark:bg-d-bg-1/95 backdrop-blur-sm transition-all duration-300 border-b border-border-l dark:border-border-d py-3 px-4 md:px-8 shadow-lg">
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
-          {/* Logo and Brand Name */}
+          {/* Logo and Brand Name - Hidden on extra small screens */}
           <Link
             to="/"
-            className="flex items-center gap-2 group relative rounded-md px-2 py-1 overflow-hidden"
+            className="hidden xs:flex items-center gap-2 group relative rounded-md px-2 py-1 overflow-hidden"
             aria-label="DevInsight Home"
           >
             {/* Fill effect for home */}
@@ -49,19 +49,24 @@ export default function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-2 md:gap-3">
-            {/* Home Link on Mobile */}
+          <nav className="flex items-center gap-2 md:gap-3 mx-auto xs:mx-0">
+            {/* Home Link - Shown on all screen sizes, styled like other nav items */}
             <Link
               to="/"
-              className={`md:hidden p-2 flex items-center justify-center rounded-md relative overflow-hidden ${isActive('/') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
+              className={`p-2 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden ${isActive('/') ? 'border-accent-1' : 'border border-border-l dark:border-border-d'}`}
               aria-label="Home"
             >
               <span
                 className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
               <Icons.Home
-                className={`w-4 h-4 z-10 ${isActive('/') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2'}`}
+                className={`w-4 h-4 z-10 ${isActive('/') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
+              <span
+                className={`hidden md:block text-sm font-medium z-10 ${isActive('/') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
+              >
+                Home
+              </span>
             </Link>
 
             {/* Personas Link with filling effect */}
