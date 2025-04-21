@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { Trophy, Users, Medal, Home } from 'lucide-react';
+import { Icons } from './shared/Icons';
 
 export default function Header() {
   // Get current location to determine active route
@@ -59,9 +59,8 @@ export default function Header() {
               <span
                 className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
-              <Home
-                size={16}
-                className={`z-10 ${isActive('/') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2'}`}
+              <Icons.Home
+                className={`w-4 h-4 z-10 ${isActive('/') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2'}`}
               />
             </Link>
 
@@ -74,9 +73,8 @@ export default function Header() {
               <span
                 className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/personas') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
-              <Users
-                size={16}
-                className={`z-10 ${isActive('/personas') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
+              <Icons.Users
+                className={`w-4 h-4 z-10 ${isActive('/personas') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
                 className={`hidden md:block text-sm font-medium z-10 ${isActive('/personas') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
@@ -94,9 +92,8 @@ export default function Header() {
               <span
                 className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/badges') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
-              <Medal
-                size={16}
-                className={`z-10 ${isActive('/badges') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
+              <Icons.Medal
+                className={`w-4 h-4 z-10 ${isActive('/badges') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
                 className={`hidden md:block text-sm font-medium z-10 ${isActive('/badges') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
@@ -114,9 +111,8 @@ export default function Header() {
               <span
                 className={`absolute inset-0 bg-accent-1 transition-transform duration-300 ease-out ${isActive('/battle') ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'}`}
               ></span>
-              <Trophy
-                size={16}
-                className={`z-10 ${isActive('/battle') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
+              <Icons.Trophy
+                className={`w-4 h-4 z-10 ${isActive('/battle') ? 'text-white' : 'text-accent-1 group-hover:text-white'} transition-colors duration-200`}
               />
               <span
                 className={`hidden md:block text-sm font-medium z-10 ${isActive('/battle') ? 'text-white' : 'text-l-text-2 dark:text-d-text-2 group-hover:text-white'} transition-colors duration-200`}
