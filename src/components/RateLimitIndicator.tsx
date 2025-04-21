@@ -8,42 +8,26 @@ import { Icons } from './shared/Icons';
 
 interface RateLimitIndicatorProps {
   token?: string;
-  alwaysShow?: boolean; // New prop to control visibility
 }
 
-export default function RateLimitIndicator({
-  token,
-  alwaysShow = false,
-}: RateLimitIndicatorProps) {
-  const [visible, setVisible] = useState(alwaysShow);
+export default function RateLimitIndicator({ token }: RateLimitIndicatorProps) {
+  const [visible, setVisible] = useState(false);
   const { data: rateLimitData, isLoading, error } = useRateLimitStatus(token);
   const [expanded, setExpanded] = useState(false);
 
   const warning = checkRateLimitWarning(rateLimitData);
 
   useEffect(() => {
-    // Show the indicator when we're close to limits or there's an error or alwaysShow is true
-    if (warning || error || alwaysShow) {
+    // Show the indicator only when we're close to limits or there's an error
+    if (warning || error) {
       setVisible(true);
+    } else {
+      setVisible(false);
     }
-  }, [warning, error, alwaysShow]);
+  }, [warning, error]);
 
-  // Don't render if not visible or if data is still loading and we're not set to always show
-  if (!visible || (isLoading && !alwaysShow)) return null;
-
-  // Show a loading state if we're set to always show but data is still loading
-  if (isLoading && alwaysShow) {
-    return (
-      <div className="mb-4 rounded-lg border border-border-l dark:border-border-d p-3 bg-l-bg-2 dark:bg-d-bg-2">
-        <div className="flex items-center gap-2">
-          <Icons.RefreshCw className="w-4 h-4 animate-spin text-accent-1" />
-          <span className="font-medium text-sm">
-            Loading API rate limit status...
-          </span>
-        </div>
-      </div>
-    );
-  }
+  // Don't render if not visible or if data is still loading
+  if (!visible || isLoading) return null;
 
   if (!rateLimitData) return null;
 

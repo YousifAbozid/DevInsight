@@ -39,7 +39,7 @@ function App() {
 
         <main className="container mx-auto p-4 md:px-8">
           {/* Rate limit indicator */}
-          <RateLimitIndicator token={token} alwaysShow={true} />
+          <RateLimitIndicator token={token} />
 
           <Routes>
             <Route path="/" element={<GithubProfilePage />} />
