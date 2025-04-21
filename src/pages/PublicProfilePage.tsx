@@ -66,10 +66,15 @@ function ProfileErrorState({
 
   const isNotFound = errorType === 'not_found';
 
+  // Handle suggestion clicks - simple navigation only
+  const handleSuggestionClick = (suggestion: string, type: string) => {
+    navigate(`/${type}/${suggestion}`);
+  };
+
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d">
       <div className="flex flex-col items-center justify-center text-center space-y-6">
-        {/* Error icon - replaced with Lucide icons */}
+        {/* Error icon */}
         <div
           className={`p-4 ${isNotFound ? 'bg-accent-danger/10' : 'bg-accent-warning/10'} rounded-full`}
         >
@@ -180,50 +185,18 @@ function ProfileErrorState({
           </ul>
         </div>
 
-        {/* Search again section */}
-        <div className="w-full max-w-md mx-auto pt-4 border-t border-border-l dark:border-border-d">
-          <h3 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-4">
-            Try searching for another profile
-          </h3>
-
-          <form
-            className="flex gap-2"
-            onSubmit={e => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const searchUsername = formData.get('searchUsername') as string;
-              if (searchUsername.trim()) {
-                navigate(`/${searchUsername}`);
-              }
-            }}
-          >
-            <input
-              type="text"
-              name="searchUsername"
-              placeholder="Enter GitHub username"
-              className="flex-1 px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
-              defaultValue=""
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-accent-1 hover:bg-accent-2 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Icons.Search className="w-4 h-4" />
-              Search
-            </button>
-          </form>
-        </div>
-
         {/* Popular profiles suggestions */}
-        <div className="w-full max-w-md mx-auto">
-          <h4 className="text-sm font-medium text-l-text-2 dark:text-d-text-2 mb-2">
-            Or try one of these verified profiles:
+        <div className="w-full max-w-md mx-auto pt-4 border-t border-border-l dark:border-border-d">
+          <h4 className="text-sm font-medium text-l-text-2 dark:text-d-text-2 mb-3">
+            Try one of these verified profiles instead:
           </h4>
           <div className="flex flex-wrap gap-2 justify-center">
             {popularProfiles.map(profile => (
               <button
                 key={profile.username}
-                onClick={() => navigate(`/${profile.type}/${profile.username}`)}
+                onClick={() =>
+                  handleSuggestionClick(profile.username, profile.type)
+                }
                 className="px-3 py-1.5 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-colors cursor-pointer flex items-center gap-1"
               >
                 {profile.username}
