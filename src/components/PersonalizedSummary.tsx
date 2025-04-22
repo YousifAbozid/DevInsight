@@ -411,8 +411,8 @@ export default function PersonalizedSummary({
   const hasMoreInsights = expandedInsights.length > 0;
 
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
         <div>
           <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
             <Icons.Award className="w-5 h-5 text-accent-1" />
@@ -433,17 +433,19 @@ export default function PersonalizedSummary({
         {initialInsights.map(insight => (
           <div
             key={insight.id}
-            className="flex items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+            className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors transform hover:-translate-y-0.5 duration-300"
           >
-            <div className={`mt-1 p-2 rounded-full ${insight.iconBg}`}>
+            <div
+              className={`p-2.5 rounded-full ${insight.iconBg} shrink-0 self-center sm:self-start`}
+            >
               <insight.icon className="w-4 h-4 text-l-text-inv dark:text-d-text-inv" />
             </div>
             <div>
-              <p className="text-l-text-1 dark:text-d-text-1 font-medium">
+              <p className="text-center sm:text-left text-l-text-1 dark:text-d-text-1 font-medium">
                 {insight.text}
               </p>
               {insight.subtext && (
-                <p className="text-sm text-l-text-3 dark:text-d-text-3 mt-1">
+                <p className="text-sm text-center sm:text-left text-l-text-3 dark:text-d-text-3 mt-1">
                   {insight.subtext}
                 </p>
               )}
@@ -460,17 +462,19 @@ export default function PersonalizedSummary({
           {expandedInsights.map(insight => (
             <div
               key={insight.id}
-              className="flex items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors transform hover:-translate-y-0.5 duration-300"
             >
-              <div className={`mt-1 p-2 rounded-full ${insight.iconBg}`}>
+              <div
+                className={`p-2.5 rounded-full ${insight.iconBg} shrink-0 self-center sm:self-start`}
+              >
                 <insight.icon className="w-4 h-4 text-l-text-inv dark:text-d-text-inv" />
               </div>
               <div>
-                <p className="text-l-text-1 dark:text-d-text-1 font-medium">
+                <p className="text-center sm:text-left text-l-text-1 dark:text-d-text-1 font-medium">
                   {insight.text}
                 </p>
                 {insight.subtext && (
-                  <p className="text-sm text-l-text-3 dark:text-d-text-3 mt-1">
+                  <p className="text-sm text-center sm:text-left text-l-text-3 dark:text-d-text-3 mt-1">
                     {insight.subtext}
                   </p>
                 )}
@@ -483,17 +487,17 @@ export default function PersonalizedSummary({
         {hasMoreInsights && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="w-full py-2 px-4 text-sm border border-border-l dark:border-border-d rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors cursor-pointer flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 mt-2 text-sm border border-border-l dark:border-border-d rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group"
           >
             {expanded ? (
               <>
-                <Icons.ChevronUp className="w-5 h-5" />
-                Show less insights
+                <Icons.ChevronUp className="w-5 h-5 group-hover:animate-bounce-short" />
+                <span>Show less insights</span>
               </>
             ) : (
               <>
-                <Icons.ChevronDown className="w-5 h-5" />
-                Show {expandedInsights.length} more insights
+                <Icons.ChevronDown className="w-5 h-5 group-hover:animate-pulse" />
+                <span>Show {expandedInsights.length} more insights</span>
               </>
             )}
           </button>
@@ -505,13 +509,13 @@ export default function PersonalizedSummary({
 
 function PersonalizedSummarySkeleton() {
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm animate-pulse">
-      <div className="flex justify-between mb-6">
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d shadow-sm animate-pulse">
+      <div className="flex flex-col sm:flex-row justify-between gap-3 mb-4 sm:mb-6">
         <div className="space-y-2">
           <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
           <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
         </div>
-        <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-full self-start"></div>
       </div>
 
       <div className="space-y-4">
@@ -520,17 +524,17 @@ function PersonalizedSummarySkeleton() {
           .map((_, i) => (
             <div
               key={i}
-              className="flex gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
+              className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
             >
-              <div className="mt-1 p-2 rounded-full bg-l-bg-3 dark:bg-d-bg-3 h-8 w-8"></div>
-              <div className="flex-1">
-                <div className="h-4 w-3/4 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
-                <div className="h-3 w-1/2 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+              <div className="p-2.5 rounded-full bg-l-bg-3 dark:bg-d-bg-3 h-8 w-8 shrink-0 self-center sm:self-start mb-2 sm:mb-0"></div>
+              <div className="flex-1 w-full">
+                <div className="h-4 w-full sm:w-3/4 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2 mx-auto sm:mx-0"></div>
+                <div className="h-3 w-2/3 sm:w-1/2 bg-l-bg-3 dark:bg-d-bg-3 rounded mx-auto sm:mx-0"></div>
               </div>
             </div>
           ))}
 
-        <div className="h-8 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+        <div className="h-10 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded-lg mt-2"></div>
       </div>
     </div>
   );
