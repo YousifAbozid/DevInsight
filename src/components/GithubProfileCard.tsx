@@ -485,15 +485,44 @@ export default function GithubProfileCard({
         {/* Avatar Column */}
         <div className="flex flex-col items-center space-y-3">
           <div className="relative">
-            <img
-              src={user.avatar_url}
-              alt={`${user.login}'s avatar`}
-              className="w-28 h-28 rounded-full border-4 border-accent-1 shadow-md"
-            />
+            <motion.div
+              className="relative z-10"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+            >
+              {/* Pulsing border effect */}
+              <motion.div
+                className="absolute -inset-1 rounded-full bg-accent-1/30 blur-sm z-0"
+                animate={{
+                  scale: [1, 1.05, 1],
+                  opacity: [0.7, 0.4, 0.7],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: 'reverse',
+                }}
+              />
+
+              {/* Circle animation similar to theme toggle */}
+              <span className="absolute inset-0 rounded-full scale-0 bg-accent-1/15 group-hover:scale-150 transition-transform duration-500 origin-center"></span>
+
+              <img
+                src={user.avatar_url}
+                alt={`${user.login}'s avatar`}
+                className="w-28 h-28 rounded-full border-4 border-accent-1 shadow-md relative z-10 bg-l-bg-2 dark:bg-d-bg-2"
+              />
+            </motion.div>
+
             {user.hireable && (
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 bg-accent-success text-white text-xs px-2 py-1 rounded-md shadow-sm">
+              <motion.span
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/3 bg-accent-success text-white text-xs px-2 py-1 rounded-md shadow-sm z-20"
+              >
                 Hireable
-              </span>
+              </motion.span>
             )}
           </div>
 
