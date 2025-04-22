@@ -556,7 +556,7 @@ export default function PersonalizedSummary({
         </div>
 
         {/* Fade edge effect for scrollable content */}
-        <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-l-bg-2 dark:from-d-bg-2 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-l-bg-2 dark:from-d-bg-2 to-transparent pointer-events-none"></div>
       </div>
 
       {/* Display insights */}
