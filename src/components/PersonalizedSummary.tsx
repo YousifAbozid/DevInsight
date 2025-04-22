@@ -522,7 +522,7 @@ export default function PersonalizedSummary({
         >
           <button
             onClick={() => setActiveCategory(null)}
-            className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
+            className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
               activeCategory === null
                 ? 'bg-accent-1 text-white'
                 : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
@@ -547,7 +547,7 @@ export default function PersonalizedSummary({
                     setActiveCategory(category);
                     setExpanded(false);
                   }}
-                  className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
+                  className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
                     activeCategory === category
                       ? 'bg-accent-1 text-white'
                       : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
