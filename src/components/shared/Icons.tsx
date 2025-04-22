@@ -82,6 +82,8 @@ import {
   FileJson,
   Files,
   Github,
+  Linkedin,
+  Twitter,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -228,4 +230,6 @@ export const Icons = {
 
   // Add GitHub Icon
   GitHub: ({ className }: IconProps) => <Github className={className} />,
+  LinkedIn: ({ className }: IconProps) => <Linkedin className={className} />,
+  Twitter: ({ className }: IconProps) => <Twitter className={className} />,
 };

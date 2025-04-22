@@ -22,11 +22,49 @@ export default function Footer() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  // Social icon animation - changed to a simpler color shift animation
+  // Social icon animation - improved with combined effects
   const socialIconVariants = {
+    initial: {
+      scale: 1,
+      opacity: 0,
+      y: 10,
+    },
+    animate: {
+      scale: 1,
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
     hover: {
-      color: 'var(--color-accent-1)', // Use CSS variable instead of hardcoded value
-      transition: { duration: 0.2 },
+      scale: 1.15,
+      transition: {
+        duration: 0.3,
+        type: 'spring',
+        stiffness: 300,
+      },
+    },
+    tap: {
+      scale: 0.95,
+      transition: {
+        duration: 0.1,
+      },
+    },
+  };
+
+  // Connect link group container animation
+  const connectLinksVariants = {
+    initial: { opacity: 1 },
+    hover: {
+      scale: 1.02,
+      transition: { staggerChildren: 0.05 },
+    },
+    animate: {
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
     },
   };
 
@@ -114,15 +152,22 @@ export default function Footer() {
               <Icons.Globe className="w-4 h-4 text-accent-1" />
               Connect
             </h3>
-            <div className="flex flex-wrap gap-3">
+            <motion.div
+              className="flex flex-wrap gap-3"
+              variants={connectLinksVariants}
+              initial="initial"
+              whileHover="hover"
+              animate="animate"
+            >
               <motion.a
                 href="https://github.com/YousifAbozid/DevInsight"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
+                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm transition-shadow hover:shadow-md"
                 aria-label="GitHub Repository"
-                whileHover="hover"
                 variants={socialIconVariants}
+                whileHover="hover"
+                whileTap="tap"
               >
                 <Icons.GitHub className="w-5 h-5" />
               </motion.a>
@@ -130,28 +175,58 @@ export default function Footer() {
                 href="https://github.com/YousifAbozid"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
+                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm transition-shadow hover:shadow-md"
                 aria-label="GitHub Profile"
-                whileHover="hover"
                 variants={socialIconVariants}
+                whileHover="hover"
+                whileTap="tap"
               >
                 <Icons.User className="w-5 h-5" />
               </motion.a>
               <motion.a
-                href="mailto:yousif.abozid@yahoo.com"
-                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
-                aria-label="Email"
-                whileHover="hover"
+                href="https://x.com/YousifAbozid12"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm transition-shadow hover:shadow-md"
+                aria-label="Twitter Profile"
                 variants={socialIconVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Icons.Twitter className="w-5 h-5" />
+              </motion.a>
+              <motion.a
+                href="https://linkedin.com/in/yousifabozid"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm transition-shadow hover:shadow-md"
+                aria-label="LinkedIn Profile"
+                variants={socialIconVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                <Icons.LinkedIn className="w-5 h-5" />
+              </motion.a>
+              <motion.a
+                href="mailto:yousif.abozid@yahoo.com"
+                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm transition-shadow hover:shadow-md"
+                aria-label="Email"
+                variants={socialIconVariants}
+                whileHover="hover"
+                whileTap="tap"
               >
                 <Icons.Mail className="w-5 h-5" />
               </motion.a>
-            </div>
+            </motion.div>
 
-            {/* Newsletter subscribe or call to action */}
+            {/* Newsletter subscribe or call to action - enhanced with pulsing animation */}
             <motion.div
               className="mt-2 p-3 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
-              whileHover={{ y: -2 }}
+              whileHover={{
+                y: -3,
+                boxShadow:
+                  '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+              }}
               transition={{ type: 'spring', stiffness: 400 }}
             >
               <h4 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-1">
@@ -160,15 +235,31 @@ export default function Footer() {
               <p className="text-xs text-l-text-2 dark:text-d-text-2 mb-2">
                 Star the repository to get updates and new features
               </p>
-              <a
+              <motion.a
                 href="https://github.com/YousifAbozid/DevInsight"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full bg-accent-1 hover:bg-accent-2 text-white py-1.5 px-2 rounded-md text-sm transition-colors"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                initial={{ boxShadow: '0 0 0 0 rgba(0, 0, 0, 0.2)' }}
+                animate={{
+                  boxShadow: [
+                    '0 0 0 0 rgba(79, 70, 229, 0.1)',
+                    '0 0 0 10px rgba(79, 70, 229, 0)',
+                    '0 0 0 0 rgba(79, 70, 229, 0)',
+                  ],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                  duration: 2,
+                  ease: 'easeInOut',
+                }}
               >
                 <Icons.Star className="w-4 h-4" />
                 <span>Star on GitHub</span>
-              </a>
+              </motion.a>
             </motion.div>
           </motion.div>
         </motion.div>
