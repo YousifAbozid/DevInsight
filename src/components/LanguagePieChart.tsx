@@ -165,7 +165,7 @@ export default function LanguagePieChart({
           <h3 className="text-lg font-medium text-l-text-1 dark:text-d-text-1 mb-3">
             Languages
           </h3>
-          <div className="space-y-3 max-h-64 md:max-h-72 overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-64 md:max-h-72 overflow-y-auto scrollbar-hide pr-2">
             {chartData.map((lang, index) => (
               <div
                 key={lang.name}
