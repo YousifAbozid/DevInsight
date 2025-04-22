@@ -377,20 +377,20 @@ export default function ContributionHeatmap({
     const intensity =
       count === 0 ? 0 : Math.ceil((count / maxContributions) * 4);
 
-    // Return appropriate color classes for light/dark themes
+    // Return appropriate color classes for light/dark themes with improved gradients
     switch (intensity) {
       case 0:
-        return 'bg-l-bg-3 dark:bg-d-bg-3';
+        return 'bg-gradient-to-br from-l-bg-3 to-l-bg-3/90 dark:from-d-bg-3 dark:to-d-bg-3/90';
       case 1:
-        return 'bg-[#9be9a8] dark:bg-[#0e4429]';
+        return 'bg-gradient-to-br from-[#9be9a8] to-[#9be9a8]/90 dark:from-[#0e4429] dark:to-[#0e4429]/90';
       case 2:
-        return 'bg-[#40c463] dark:bg-[#006d32]';
+        return 'bg-gradient-to-br from-[#40c463] to-[#40c463]/90 dark:from-[#006d32] dark:to-[#006d32]/90';
       case 3:
-        return 'bg-[#30a14e] dark:bg-[#26a641]';
+        return 'bg-gradient-to-br from-[#30a14e] to-[#30a14e]/90 dark:from-[#26a641] dark:to-[#26a641]/90';
       case 4:
-        return 'bg-[#216e39] dark:bg-[#39d353]';
+        return 'bg-gradient-to-br from-[#216e39] to-[#216e39]/90 dark:from-[#39d353] dark:to-[#39d353]/90';
       default:
-        return 'bg-l-bg-3 dark:bg-d-bg-3';
+        return 'bg-gradient-to-br from-l-bg-3 to-l-bg-3/90 dark:from-d-bg-3 dark:to-d-bg-3/90';
     }
   };
 
@@ -538,11 +538,19 @@ export default function ContributionHeatmap({
                         <div
                           key={`${weekIndex}-${dayIndex}`}
                           className={`aspect-square w-full ${colorClass} 
-                          rounded-[1px] hover:rounded-[2px]
-                          hover:scale-105 hover:z-10
-                          active:scale-95 cursor-pointer transition-all duration-150 ease-out
-                          ${day.contributionCount > 0 ? 'shadow-sm' : ''}`}
-                          style={{ position: 'relative' }}
+                          rounded-[2px] 
+                          hover:scale-110 hover:rounded-md hover:shadow-lg
+                          transition-all duration-200 ease-in-out
+                          ${day.contributionCount > 0 ? 'shadow-sm' : ''}
+                          ${day.isFuture ? '' : 'ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10'}
+                          relative overflow-hidden`}
+                          style={{
+                            position: 'relative',
+                            transform:
+                              day.contributionCount > 0
+                                ? 'translateZ(0)'
+                                : 'none', // Better rendering for cells with contributions
+                          }}
                           onMouseEnter={e => handleDayHover(day, e)}
                           onTouchStart={e =>
                             handleTouchStart(
@@ -559,7 +567,19 @@ export default function ContributionHeatmap({
                               ? 'Future date'
                               : `${day.contributionCount} contributions`
                           }`}
-                        ></div>
+                        >
+                          {/* Add subtle shine effect for cells with contributions */}
+                          {day.contributionCount > 0 && (
+                            <div
+                              className="absolute inset-0 opacity-30 bg-gradient-to-br from-white to-transparent"
+                              style={{
+                                clipPath:
+                                  'polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 50%)',
+                                mixBlendMode: 'soft-light',
+                              }}
+                            ></div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
