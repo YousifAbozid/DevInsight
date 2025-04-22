@@ -35,6 +35,7 @@ import {
   FolderClosed,
   Clock,
   Award,
+  Heart, // Added Heart icon
 
   // Missing icons for expand/collapse functionality
   ChevronUp,
@@ -80,6 +81,7 @@ import {
   // New file type icons - fixed the name from FileCsv to Files
   FileJson,
   Files,
+  Github,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -155,6 +157,7 @@ export const Icons = {
   Folder: ({ className }: IconProps) => <FolderClosed className={className} />,
   Clock: ({ className }: IconProps) => <Clock className={className} />,
   Award: ({ className }: IconProps) => <Award className={className} />,
+  Heart: ({ className }: IconProps) => <Heart className={className} />, // Added Heart icon
 
   // Add missing icons for expand/collapse functionality
   ChevronUp: ({ className }: IconProps) => <ChevronUp className={className} />,
@@ -222,4 +225,7 @@ export const Icons = {
   // Add new file type icons
   FileJson: ({ className }: IconProps) => <FileJson className={className} />,
   FileCsv: ({ className }: IconProps) => <Files className={className} />,
+
+  // Add GitHub Icon
+  GitHub: ({ className }: IconProps) => <Github className={className} />,
 };

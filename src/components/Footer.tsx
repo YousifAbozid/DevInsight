@@ -22,9 +22,12 @@ export default function Footer() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  // Social icon hover animation
+  // Social icon animation - changed to a simpler color shift animation
   const socialIconVariants = {
-    hover: { scale: 1.15, rotate: 5, transition: { duration: 0.2 } },
+    hover: {
+      color: 'var(--color-accent-1)', // Use CSS variable instead of hardcoded value
+      transition: { duration: 0.2 },
+    },
   };
 
   return (
@@ -121,7 +124,7 @@ export default function Footer() {
                 whileHover="hover"
                 variants={socialIconVariants}
               >
-                <Icons.GitBranch className="w-5 h-5" />
+                <Icons.GitHub className="w-5 h-5" />
               </motion.a>
               <motion.a
                 href="https://github.com/YousifAbozid"
@@ -135,35 +138,7 @@ export default function Footer() {
                 <Icons.User className="w-5 h-5" />
               </motion.a>
               <motion.a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
-                aria-label="Twitter"
-                whileHover="hover"
-                variants={socialIconVariants}
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </motion.a>
-              <motion.a
-                href="https://example.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
-                aria-label="Website"
-                whileHover="hover"
-                variants={socialIconVariants}
-              >
-                <Icons.Globe className="w-5 h-5" />
-              </motion.a>
-              <motion.a
-                href="mailto:info@example.com"
+                href="mailto:yousif.abozid@yahoo.com"
                 className="p-2.5 rounded-full bg-l-bg-1 dark:bg-d-bg-1 text-l-text-2 dark:text-d-text-2 hover:text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover shadow-sm"
                 aria-label="Email"
                 whileHover="hover"
@@ -201,8 +176,8 @@ export default function Footer() {
         {/* Divider */}
         <div className="h-px w-full bg-border-l dark:bg-border-d my-4"></div>
 
-        {/* Bottom copyright section */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+        {/* Bottom copyright section - Refactored for more engagement and mobile responsiveness */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
           <div className="flex items-center gap-2">
             <motion.img
               src="/favicon.svg"
@@ -215,26 +190,27 @@ export default function Footer() {
               © {currentYear} DevInsight. All rights reserved.
             </p>
           </div>
-          <p className="text-l-text-3 dark:text-d-text-3 text-sm mt-2 md:mt-0 flex items-center gap-1.5">
+          <p className="text-l-text-3 dark:text-d-text-3 text-sm flex items-center gap-1.5 flex-wrap justify-center md:justify-start">
             Built with
             <motion.div
               animate={{
-                scale: [1, 1.15, 1],
+                scale: [1, 1.2, 1],
               }}
               transition={{
-                duration: 1.5,
+                duration: 1.8,
                 repeat: Infinity,
                 repeatType: 'loop',
               }}
+              className="flex items-center"
             >
-              <Icons.Award className="w-4 h-4 text-accent-danger fill-accent-danger" />
+              <Icons.Heart className="w-4 h-4 text-red-500 fill-red-500" />
             </motion.div>
             by
             <a
               href="https://github.com/YousifAbozid"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-accent-1 hover:underline"
+              className="text-accent-1 hover:underline font-medium"
             >
               Yousif Abozid
             </a>
