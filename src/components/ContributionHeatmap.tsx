@@ -478,7 +478,7 @@ export default function ContributionHeatmap({
         ) : (
           /* Regular contribution grid when data is loaded */
           <div
-            className="overflow-x-auto overflow-y-hidden scrollbar-thin"
+            className="overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-style-github"
             style={{
               WebkitOverflowScrolling: 'touch',
               scrollbarWidth: 'thin',
