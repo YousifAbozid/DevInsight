@@ -518,13 +518,16 @@ export default function ContributionHeatmap({
               {/* Contribution grid */}
               <div className="col-span-53 grid grid-cols-53 gap-x-[1px] gap-y-[1px]">
                 {organizedCalendar.map((week, weekIndex) => (
-                  <div key={weekIndex} className="grid grid-rows-7 gap-y-[1px]">
+                  <div
+                    key={weekIndex}
+                    className="grid grid-rows-7 gap-y-[1px] h-full"
+                  >
                     {week.map((day, dayIndex) => {
                       if (day.isEmpty) {
                         return (
                           <div
                             key={`empty-${weekIndex}-${dayIndex}`}
-                            className="opacity-0 aspect-square w-full"
+                            className="opacity-0 aspect-square w-full h-full"
                           ></div>
                         );
                       }
@@ -539,8 +542,8 @@ export default function ContributionHeatmap({
                           key={`${weekIndex}-${dayIndex}`}
                           className={`aspect-square w-full ${colorClass} 
                           rounded-[2px] 
-                          hover:scale-110 hover:rounded-md hover:shadow-lg
-                          transition-all duration-200 ease-in-out
+                          hover:scale-105 hover:shadow-md
+                          transition-all duration-150 ease-in-out
                           ${day.contributionCount > 0 ? 'shadow-sm' : ''}
                           ${day.isFuture ? '' : 'ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10'}
                           relative overflow-hidden`}
@@ -623,18 +626,18 @@ export default function ContributionHeatmap({
         </div>
         <div className="flex items-center gap-1 text-xs text-l-text-3 dark:text-d-text-3">
           <span>Less</span>
-          <div className="w-2 h-2 rounded bg-l-bg-3 dark:bg-d-bg-3"></div>
-          <div className="w-2 h-2 rounded bg-[#9be9a8] dark:bg-[#0e4429]"></div>
-          <div className="w-2 h-2 rounded bg-[#40c463] dark:bg-[#006d32]"></div>
-          <div className="w-2 h-2 rounded bg-[#30a14e] dark:bg-[#26a641]"></div>
-          <div className="w-2 h-2 rounded bg-[#216e39] dark:bg-[#39d353]"></div>
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-l-bg-3 to-l-bg-3/90 dark:from-d-bg-3 dark:to-d-bg-3/90 ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10"></div>
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-[#9be9a8] to-[#9be9a8]/90 dark:from-[#0e4429] dark:to-[#0e4429]/90 ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10"></div>
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-[#40c463] to-[#40c463]/90 dark:from-[#006d32] dark:to-[#006d32]/90 ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10"></div>
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-[#30a14e] to-[#30a14e]/90 dark:from-[#26a641] dark:to-[#26a641]/90 ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10"></div>
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-gradient-to-br from-[#216e39] to-[#216e39]/90 dark:from-[#39d353] dark:to-[#39d353]/90 ring-[0.5px] ring-inset ring-black/5 dark:ring-white/10"></div>
           <span>More</span>
 
           {/* Add explanation for future dates if we're showing the current year */}
           {selectedYear === new Date().getFullYear() && (
             <>
               <span className="ml-3 mr-1">Future:</span>
-              <div className="w-2 h-2 rounded bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
+              <div className="w-2.5 h-2.5 rounded-[2px] bg-l-bg-3/40 dark:bg-d-bg-3/40 border border-dashed border-l-bg-3 dark:border-d-bg-3"></div>
             </>
           )}
         </div>
