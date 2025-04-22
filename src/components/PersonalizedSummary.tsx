@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
+import FilterTabs from './shared/FilterTabs';
 
 // Define proper interfaces
 interface PersonalizedSummaryProps {
@@ -507,56 +508,29 @@ export default function PersonalizedSummary({
 
       {/* Horizontal scrollable filters */}
       <div className="mb-4 relative">
-        <div
-          ref={filterScrollRef}
-          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1"
-        >
-          <button
-            onClick={() => setActiveCategory(null)}
-            className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
-              activeCategory === null
-                ? 'bg-accent-1 text-white'
-                : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-            }`}
-          >
-            All Insights ({insights.length})
-          </button>
-
-          {Object.entries(insightsByCategory).map(
-            ([category, categoryInsights]) => {
-              if (categoryInsights.length === 0) return null;
-
-              const CategoryIcon =
-                categoryInfo[category as keyof typeof categoryInfo]?.icon;
-
-              return (
-                <button
-                  key={category}
-                  data-category={category}
-                  onClick={() => {
-                    setActiveCategory(category);
-                    setExpanded(false);
-                  }}
-                  className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 cursor-pointer ${
-                    activeCategory === category
-                      ? 'bg-accent-1 text-white'
-                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                  }`}
-                >
-                  {CategoryIcon && (
-                    <CategoryIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                  )}
-                  {categoryInfo[category as keyof typeof categoryInfo]?.title ||
-                    category}{' '}
-                  ({categoryInsights.length})
-                </button>
-              );
-            }
-          )}
-        </div>
-
-        {/* Fade edge effect for scrollable content */}
-        <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-l-bg-2 dark:from-d-bg-2 to-transparent pointer-events-none"></div>
+        <FilterTabs
+          tabs={[
+            {
+              id: null,
+              label: `All Insights (${insights.length})`,
+              active: activeCategory === null,
+              onClick: () => setActiveCategory(null),
+            },
+            ...Object.entries(insightsByCategory).map(
+              ([category, categoryInsights]) => ({
+                id: category,
+                label: `${categoryInfo[category as keyof typeof categoryInfo]?.title || category} (${categoryInsights.length})`,
+                active: activeCategory === category,
+                onClick: () => {
+                  setActiveCategory(category);
+                  setExpanded(false);
+                },
+                icon: categoryInfo[category as keyof typeof categoryInfo]?.icon,
+              })
+            ),
+          ]}
+          scrollRef={filterScrollRef as React.RefObject<HTMLDivElement>}
+        />
       </div>
 
       {/* Display insights */}
