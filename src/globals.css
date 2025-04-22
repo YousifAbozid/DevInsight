@@ -215,3 +215,27 @@
 .transform {
 	will-change: transform;
 }
+
+/* GitHub style scrollbar */
+.scrollbar-style-github {
+	@apply overflow-x-auto overflow-y-hidden;
+	scrollbar-width: thin;
+	scrollbar-color: #d0d7de transparent;
+}
+
+.scrollbar-style-github::-webkit-scrollbar {
+	height: 5px;
+}
+
+.scrollbar-style-github::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scrollbar-style-github::-webkit-scrollbar-thumb {
+	@apply bg-[#d0d7de] dark:bg-[#484f58];
+	border-radius: 100vh;
+}
+
+.scrollbar-style-github:hover::-webkit-scrollbar-thumb {
+	@apply bg-[#afb8c1] dark:bg-[#6e7681];
+}
