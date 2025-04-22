@@ -137,38 +137,6 @@ export default function CoderPersona({
     }
   };
 
-  // Generate a markdown snippet for embedding
-  //   const generateMarkdownSnippet = () => {
-  //     const baseUrl = window.location.origin;
-  //     // In a real app, you would generate an actual image URL here
-  //     const imageUrl = `${baseUrl}/api/persona/${user.login}`;
-  //
-  //     const markdown = `[![${user.login}'s Coder Persona - ${persona.type}](${imageUrl})](${baseUrl}/personas/${user.login})`;
-  //
-  //     navigator.clipboard.writeText(markdown);
-  //     setCopiedSnippet(true);
-  //     setTimeout(() => setCopiedSnippet(false), 3000);
-  //   };
-  //
-  //   // Download markdown snippet as .md file
-  //   const downloadMarkdown = () => {
-  //     if (!user) return;
-  //
-  //     const baseUrl = window.location.origin;
-  //     const imageUrl = `${baseUrl}/api/persona/${user.login}`;
-  //     const markdown = `[![${user.login}'s Coder Persona - ${persona.type}](${imageUrl})](${baseUrl}/personas/${user.login})`;
-  //
-  //     // Create blob and download link
-  //     const blob = new Blob([markdown], { type: 'text/markdown' });
-  //     const link = document.createElement('a');
-  //     link.download = `${user.login}-coder-persona.md`;
-  //     link.href = URL.createObjectURL(blob);
-  //     link.click();
-  //
-  //     setExportSuccess(true);
-  //     setTimeout(() => setExportSuccess(false), 3000);
-  //   };
-
   if (loading) {
     return <CoderPersonaSkeleton />;
   }
@@ -181,15 +149,16 @@ export default function CoderPersona({
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
         <div className="flex items-center gap-2">
+          <Icons.Users className="w-6 h-6 text-accent-1" />
           <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
             Your Coder Persona
           </h2>
           <button
             onClick={() => setShowInfo(!showInfo)}
-            className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-1 rounded-full hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors cursor-pointer"
-            aria-label="Show information about coder persona"
+            className="text-l-text-3 dark:text-d-text-3 hover:text-accent-1 transition-colors ml-1 cursor-pointer"
+            aria-label="Show badge information"
           >
-            <Icons.Info className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
+            <Icons.Info className="w-4 h-4" />
           </button>
         </div>
         <div className="flex items-center gap-2">
@@ -211,8 +180,9 @@ export default function CoderPersona({
       </div>
 
       {showInfo && (
-        <div className="mb-4 p-3 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg text-sm text-l-text-2 dark:text-d-text-2">
-          <p>
+        <div className="my-4 p-4 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg text-sm text-l-text-2 dark:text-d-text-2 border border-border-l dark:border-border-d animate-fadeIn">
+          <p className="flex items-start gap-2">
+            <Icons.Info className="w-4 h-4 text-accent-1 mt-0.5 flex-shrink-0" />
             Your Coder Persona is based on an analysis of your GitHub activity.
             The visualization shows your strengths across six key dimensions of
             software development. This helps you understand your unique coding
