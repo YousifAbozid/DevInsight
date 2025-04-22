@@ -497,6 +497,7 @@ export default function PersonalizedSummary({
       id: null,
       label: `All Insights (${insights.length})`,
       active: activeCategory === null,
+      icon: Icons.Award,
       onClick: () => setActiveCategory(null),
     },
     ...Object.entries(insightsByCategory).map(
@@ -529,6 +530,7 @@ export default function PersonalizedSummary({
 
       <FilterTabs
         tabs={filterTabs}
+        activeTabId={activeCategory}
         scrollRef={filterScrollRef as React.RefObject<HTMLDivElement>}
       />
 
