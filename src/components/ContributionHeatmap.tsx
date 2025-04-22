@@ -478,20 +478,18 @@ export default function ContributionHeatmap({
         ) : (
           /* Regular contribution grid when data is loaded */
           <div
-            className="w-full overflow-x-auto overflow-y-hidden scrollbar-style-github rounded-md pb-1"
+            className="overflow-x-auto overflow-y-hidden scrollbar-thin"
             style={{
               WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'thin',
             }}
           >
-            <div className="min-w-[680px] sm:min-w-0 grid grid-cols-[auto_repeat(53,1fr)] gap-x-1 sm:gap-x-2 gap-y-1 sm:gap-y-2">
+            <div className="w-[890px] grid grid-cols-[auto_repeat(53,1fr)] gap-x-[2px] gap-y-[2px]">
               {/* Month labels */}
               <div className="col-span-1"></div>
-              <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1 sm:mb-2">
+              <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
                 {getMonthLabels().map((month, i) => {
-                  // Calculate month positions based on index
-                  // Each month takes approximately 4.3 weeks
                   const position = Math.floor(i * 4.3);
-
                   return (
                     <div
                       key={i}
@@ -518,18 +516,15 @@ export default function ContributionHeatmap({
               </div>
 
               {/* Contribution grid */}
-              <div className="col-span-53 grid grid-cols-53 gap-x-0 sm:gap-x-2 gap-y-0 sm:gap-y-2">
+              <div className="col-span-53 grid grid-cols-53 gap-x-[1px] gap-y-[1px]">
                 {organizedCalendar.map((week, weekIndex) => (
-                  <div
-                    key={weekIndex}
-                    className="grid grid-rows-7 gap-y-1 sm:gap-y-2"
-                  >
+                  <div key={weekIndex} className="grid grid-rows-7 gap-y-[1px]">
                     {week.map((day, dayIndex) => {
                       if (day.isEmpty) {
                         return (
                           <div
                             key={`empty-${weekIndex}-${dayIndex}`}
-                            className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm opacity-0"
+                            className="opacity-0 aspect-square w-full"
                           ></div>
                         );
                       }
@@ -542,8 +537,9 @@ export default function ContributionHeatmap({
                       return (
                         <div
                           key={`${weekIndex}-${dayIndex}`}
-                          className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-sm ${colorClass} 
-                          hover:scale-125 hover:rounded-md hover:ring-1 hover:ring-accent-1 hover:z-10
+                          className={`aspect-square w-full ${colorClass} 
+                          rounded-[1px] hover:rounded-[2px]
+                          hover:scale-105 hover:z-10
                           active:scale-95 cursor-pointer transition-all duration-150 ease-out
                           ${day.contributionCount > 0 ? 'shadow-sm' : ''}`}
                           style={{ position: 'relative' }}
