@@ -1,83 +1,10 @@
 import { useState } from 'react';
+import { Icons } from './shared/Icons';
 
 interface MostStarredReposProps {
   repositories: Repository[] | undefined;
   loading: boolean;
 }
-
-// Icons organized in a single object for better maintenance
-const Icons = {
-  Star: ({ className = 'w-4 h-4' }: { className?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-        clipRule="evenodd"
-      />
-    </svg>
-  ),
-  Clock: ({ className = 'w-4 h-4' }: { className?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z"
-        clipRule="evenodd"
-      />
-    </svg>
-  ),
-  Fork: ({ className = 'w-4 h-4' }: { className?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z"
-        clipRule="evenodd"
-      />
-    </svg>
-  ),
-  Repo: ({ className = 'w-4 h-4' }: { className?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm4.5 7.5a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zm3.75-1.5a.75.75 0 00-1.5 0v4.5a.75.75 0 001.5 0V12zm2.25-3a.75.75 0 01.75.75v6.75a.75.75 0 01-1.5 0V9.75A.75.75 0 0113.5 9zm3.75-1.5a.75.75 0 00-1.5 0v9a.75.75 0 001.5 0v-9z"
-        clipRule="evenodd"
-      />
-    </svg>
-  ),
-  Filter: ({ className = 'w-4 h-4' }: { className?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path
-        fillRule="evenodd"
-        d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z"
-        clipRule="evenodd"
-      />
-    </svg>
-  ),
-};
 
 // Skeleton component for loading state
 function MostStarredReposSkeleton() {
@@ -125,14 +52,20 @@ export default function MostStarredRepos({
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
         <div className="flex items-center gap-2 mb-4">
+          <Icons.Star className="w-6 h-6 text-accent-1" />
           <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
             Most Starred Repositories
           </h2>
         </div>
-        <div className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-4 text-center">
-          <Icons.Star className="w-12 h-12 mx-auto text-l-text-3 dark:text-d-text-3 mb-2" />
-          <p className="text-l-text-2 dark:text-d-text-2">
-            No repository data available. Start exploring!
+        <div className="text-center py-12 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
+          <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-1 dark:bg-d-bg-1">
+            <Icons.Star className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+          </div>
+          <h3 className="text-lg font-semibold text-l-text-2 dark:text-d-text-2 mb-2">
+            No starred repositories found
+          </h3>
+          <p className="text-l-text-3 dark:text-d-text-3 max-w-md mx-auto">
+            Start creating repositories or star other projects to see them here.
           </p>
         </div>
       </div>
@@ -202,45 +135,67 @@ export default function MostStarredRepos({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-          Most Starred Repositories
-        </h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Icons.Star className="w-6 h-6 text-accent-1" />
+          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
+            Most Starred Repositories
+          </h2>
+        </div>
+      </div>
 
-        {languages.length > 0 && (
-          <div className="flex items-center gap-2 text-sm">
-            <div className="flex items-center gap-1 text-l-text-2 dark:text-d-text-2">
-              <Icons.Filter className="w-3.5 h-3.5" />
-              <span>Filter:</span>
+      {/* Category filters with improved styling matching DeveloperBadges component */}
+      {languages.length > 0 && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
+              <Icons.Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter Languages</span>
             </div>
+
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilter(null)}
-                className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
                   filter === null
                     ? 'bg-accent-1 text-white'
                     : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
                 }`}
               >
-                All
+                <Icons.Code className="w-4 h-4" />
+                All Languages ({repositories.length})
               </button>
-              {languages.map(lang => (
-                <button
-                  key={lang}
-                  onClick={() => setFilter(lang)}
-                  className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
-                    filter === lang
-                      ? 'bg-accent-1 text-white'
-                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
+
+              {languages.map(lang => {
+                const repoCount = repositories.filter(
+                  repo => repo.language === lang
+                ).length;
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => setFilter(lang)}
+                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                      filter === lang
+                        ? 'bg-accent-1 text-white'
+                        : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                    }`}
+                  >
+                    <span
+                      className="w-3 h-3 rounded-full"
+                      style={{
+                        backgroundColor: lang
+                          ? getLanguageColor(lang)
+                          : '#8b949e',
+                      }}
+                    ></span>
+                    {lang} ({repoCount})
+                  </button>
+                );
+              })}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sortedRepos.map(repo => (
@@ -283,7 +238,7 @@ export default function MostStarredRepos({
 
                 {repo.forks_count > 0 && (
                   <div className="bg-l-bg-2 dark:bg-d-bg-2 px-2.5 py-1 rounded-full text-xs font-medium text-l-text-2 dark:text-d-text-2 flex items-center">
-                    <Icons.Fork className="w-3 h-3 mr-1" />
+                    <Icons.GitBranch className="w-3 h-3 mr-1" />
                     {repo.forks_count}
                   </div>
                 )}
