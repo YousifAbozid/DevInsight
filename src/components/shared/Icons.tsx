@@ -40,6 +40,7 @@ import {
   // Missing icons for expand/collapse functionality
   ChevronUp,
   ChevronDown,
+  ChevronLeft,
 
   // Additional icons for DevJourneyTimeline
   Cake,
@@ -165,6 +166,9 @@ export const Icons = {
   ChevronUp: ({ className }: IconProps) => <ChevronUp className={className} />,
   ChevronDown: ({ className }: IconProps) => (
     <ChevronDown className={className} />
+  ),
+  ChevronLeft: ({ className }: IconProps) => (
+    <ChevronLeft className={className} />
   ),
 
   // Additional icons for DevJourneyTimeline

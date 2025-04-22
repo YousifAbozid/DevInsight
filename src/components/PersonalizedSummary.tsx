@@ -16,7 +16,37 @@ interface Insight {
   subtext?: string;
   icon: React.FC<{ className?: string }>;
   iconBg: string;
+  category: 'activity' | 'languages' | 'repositories' | 'impact' | 'personal';
 }
+
+// Category configuration
+const categoryInfo = {
+  activity: {
+    title: 'Contribution Activity',
+    icon: Icons.Activity,
+    description: 'Insights about your GitHub activity patterns',
+  },
+  languages: {
+    title: 'Language Usage',
+    icon: Icons.Code,
+    description: 'Findings related to your programming languages',
+  },
+  repositories: {
+    title: 'Repository Insights',
+    icon: Icons.Repo,
+    description: 'Information about your GitHub repositories',
+  },
+  impact: {
+    title: 'Community Impact',
+    icon: Icons.Star,
+    description: 'Your influence in the developer community',
+  },
+  personal: {
+    title: 'Profile Highlights',
+    icon: Icons.User,
+    description: 'Personal milestones and account information',
+  },
+};
 
 // Custom hook to generate insights
 function useGithubInsights(
@@ -61,6 +91,7 @@ function useGithubInsights(
           subtext: `That's when you make the most contributions to your projects.`,
           icon: Icons.Calendar,
           iconBg: 'bg-accent-1',
+          category: 'activity',
         });
       }
 
@@ -96,6 +127,7 @@ function useGithubInsights(
                 : `Great start! Try to build momentum with regular contributions.`,
             icon: Icons.Fire,
             iconBg: 'bg-accent-warning',
+            category: 'activity',
           });
         }
       }
@@ -124,6 +156,7 @@ function useGithubInsights(
         subtext: `${percentage}% of your repositories use ${topLanguage}. ${getLanguageCompliment(topLanguage)}`,
         icon: Icons.Code,
         iconBg: 'bg-accent-success',
+        category: 'languages',
       });
 
       // If they have multiple languages
@@ -137,6 +170,7 @@ function useGithubInsights(
             .join(', ')}`,
           icon: Icons.Globe,
           iconBg: 'bg-accent-1',
+          category: 'languages',
         });
       }
     }
@@ -169,6 +203,7 @@ function useGithubInsights(
           })}`,
           icon: Icons.Folder,
           iconBg: 'bg-accent-2',
+          category: 'repositories',
         });
       }
     }
@@ -186,6 +221,7 @@ function useGithubInsights(
         subtext: starLevel,
         icon: Icons.Star,
         iconBg: 'bg-accent-warning',
+        category: 'impact',
       });
     }
 
@@ -203,6 +239,7 @@ function useGithubInsights(
         subtext: `It has ${mostStarredRepo.stargazers_count} stars${mostStarredRepo.forks_count ? ` and ${mostStarredRepo.forks_count} forks` : ''}.`,
         icon: Icons.Trophy,
         iconBg: 'bg-accent-1',
+        category: 'repositories',
       });
     }
 
@@ -228,6 +265,7 @@ function useGithubInsights(
             : `Keep up the good work!`,
         icon: Icons.Clock,
         iconBg: 'bg-accent-2',
+        category: 'activity',
       });
     }
 
@@ -251,6 +289,7 @@ function useGithubInsights(
         })}`,
         icon: Icons.Award,
         iconBg: 'bg-accent-success',
+        category: 'personal',
       });
     }
 
@@ -262,6 +301,7 @@ function useGithubInsights(
         subtext: `This is a special GitHub account with additional capabilities.`,
         icon: Icons.Shield,
         iconBg: 'bg-accent-2',
+        category: 'personal',
       });
     }
 
@@ -273,6 +313,7 @@ function useGithubInsights(
         subtext: `This user works at GitHub and has administrative privileges.`,
         icon: Icons.Star,
         iconBg: 'bg-accent-warning',
+        category: 'personal',
       });
     }
 
@@ -296,6 +337,7 @@ function useGithubInsights(
         subtext: followerMilestone,
         icon: Icons.Users,
         iconBg: 'bg-accent-1',
+        category: 'impact',
       });
     }
 
@@ -388,6 +430,7 @@ export default function PersonalizedSummary({
   loading,
 }: PersonalizedSummaryProps) {
   const [expanded, setExpanded] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   // Move the custom hook call to the top level, before any conditional returns
   // This ensures hooks are always called in the same order
@@ -405,9 +448,28 @@ export default function PersonalizedSummary({
     return null;
   }
 
-  // Select a subset of insights to display initially
-  const initialInsights = insights.slice(0, 3);
-  const expandedInsights = insights.slice(3);
+  // Group insights by category
+  const insightsByCategory = insights.reduce(
+    (acc, insight) => {
+      if (!acc[insight.category]) {
+        acc[insight.category] = [];
+      }
+      acc[insight.category].push(insight);
+      return acc;
+    },
+    {} as Record<string, Insight[]>
+  );
+
+  // Display insights based on active category
+  const displayInsights = activeCategory
+    ? insights.filter(insight => insight.category === activeCategory)
+    : insights;
+
+  // Select a subset of insights to display initially if using the default view
+  const initialInsights = !activeCategory
+    ? displayInsights.slice(0, 3)
+    : displayInsights;
+  const expandedInsights = !activeCategory ? displayInsights.slice(3) : [];
   const hasMoreInsights = expandedInsights.length > 0;
 
   return (
@@ -429,6 +491,59 @@ export default function PersonalizedSummary({
         </div>
       </div>
 
+      {/* Category filters with improved styling */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
+            <Icons.Filter className="w-4 h-4" />
+            <span className="text-sm font-medium">Filter Insights</span>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                activeCategory === null
+                  ? 'bg-accent-1 text-white'
+                  : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+              }`}
+            >
+              All Insights ({insights.length})
+            </button>
+
+            {Object.entries(insightsByCategory).map(
+              ([category, categoryInsights]) => {
+                if (categoryInsights.length === 0) return null;
+
+                const CategoryIcon =
+                  categoryInfo[category as keyof typeof categoryInfo]?.icon;
+
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      setActiveCategory(category);
+                      setExpanded(false); // Reset expanded state when switching categories
+                    }}
+                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                      activeCategory === category
+                        ? 'bg-accent-1 text-white'
+                        : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                    }`}
+                  >
+                    {CategoryIcon && <CategoryIcon className="w-4 h-4" />}
+                    {categoryInfo[category as keyof typeof categoryInfo]
+                      ?.title || category}{' '}
+                    ({categoryInsights.length})
+                  </button>
+                );
+              }
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Display insights */}
       <div className="space-y-4">
         {initialInsights.map(insight => (
           <div
@@ -483,8 +598,8 @@ export default function PersonalizedSummary({
           ))}
         </div>
 
-        {/* Show more/less button with improved styling */}
-        {hasMoreInsights && (
+        {/* Show more/less button with improved styling - only show when not filtering */}
+        {hasMoreInsights && !activeCategory && (
           <button
             onClick={() => setExpanded(!expanded)}
             className="w-full py-2.5 px-4 mt-2 text-sm border border-border-l dark:border-border-d rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group"
@@ -502,6 +617,29 @@ export default function PersonalizedSummary({
             )}
           </button>
         )}
+
+        {/* No insights message when filtering with no results */}
+        {activeCategory && displayInsights.length === 0 && (
+          <div className="text-center py-12 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg border border-border-l dark:border-border-d">
+            <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-3/30 dark:bg-d-bg-3/30">
+              <Icons.Search className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+            </div>
+            <h3 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
+              No insights found
+            </h3>
+            <p className="text-l-text-2 dark:text-d-text-2 max-w-md mx-auto">
+              No insights available for this category. Try selecting a different
+              category.
+            </p>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="mt-4 text-accent-1 hover:underline flex items-center gap-1.5 mx-auto"
+            >
+              <Icons.ChevronLeft className="w-4 h-4" />
+              View all insights
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -516,6 +654,18 @@ function PersonalizedSummarySkeleton() {
           <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
         </div>
         <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-full self-start"></div>
+      </div>
+
+      {/* Filter tabs skeleton */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="h-8 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
+          <div className="flex flex-wrap gap-2">
+            <div className="h-8 w-28 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
+            <div className="h-8 w-32 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
+            <div className="h-8 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
