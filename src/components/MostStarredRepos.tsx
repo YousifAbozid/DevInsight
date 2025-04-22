@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
+import FilterTabs, { FilterTab } from './shared/FilterTabs';
 
 interface MostStarredReposProps {
   repositories: Repository[] | undefined;
@@ -88,6 +89,30 @@ export default function MostStarredRepos({
     .sort((a, b) => b.stargazers_count - a.stargazers_count)
     .slice(0, 6);
 
+  // Prepare filter tabs using our FilterTab interface
+  const filterTabs: FilterTab[] = [
+    {
+      id: null,
+      label: 'All Languages',
+      count: repositories.length,
+      icon: Icons.Code,
+      active: filter === null,
+      onClick: () => setFilter(null),
+    },
+    ...languages.map(lang => {
+      const repoCount = repositories.filter(
+        repo => repo.language === lang
+      ).length;
+      return {
+        id: lang,
+        label: String(lang), // Ensure label is always a string
+        count: repoCount,
+        active: filter === lang,
+        onClick: () => setFilter(lang),
+      };
+    }),
+  ];
+
   // Calculate how long ago the repository was updated
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
@@ -143,57 +168,8 @@ export default function MostStarredRepos({
         infoTooltip="Repositories are sorted by star count. Stars represent appreciation from other GitHub users and indicate popular or useful projects."
       />
 
-      {/* Category filters with improved styling matching DeveloperBadges component */}
       {languages.length > 0 && (
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
-              <Icons.Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filter Languages</span>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setFilter(null)}
-                className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                  filter === null
-                    ? 'bg-accent-1 text-white'
-                    : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                }`}
-              >
-                <Icons.Code className="w-4 h-4" />
-                All Languages ({repositories.length})
-              </button>
-
-              {languages.map(lang => {
-                const repoCount = repositories.filter(
-                  repo => repo.language === lang
-                ).length;
-                return (
-                  <button
-                    key={lang}
-                    onClick={() => setFilter(lang)}
-                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                      filter === lang
-                        ? 'bg-accent-1 text-white'
-                        : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                    }`}
-                  >
-                    <span
-                      className="w-3 h-3 rounded-full"
-                      style={{
-                        backgroundColor: lang
-                          ? getLanguageColor(lang)
-                          : '#8b949e',
-                      }}
-                    ></span>
-                    {lang} ({repoCount})
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <FilterTabs tabs={filterTabs} activeTabId={filter} />
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
