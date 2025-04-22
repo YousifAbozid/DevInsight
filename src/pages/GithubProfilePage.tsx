@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
   aggregateLanguageData,
   saveUserData,
@@ -106,10 +107,12 @@ export default function GithubProfilePage() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 bg-accent-1/10 rounded-lg animate-pulse relative">
-            <img
+            <motion.img
               src="/favicon.svg"
               alt="DevInsight Logo"
               className="w-8 h-8 animate-fade-in"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.6 }}
             />
             {/* Add subtle circle animation behind the logo */}
             <span className="absolute inset-0 bg-accent-1/5 rounded-lg scale-0 animate-[pulse_2s_ease-in-out_infinite]"></span>
