@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useContributionData } from '../services/githubGraphQLService';
+import SectionHeader from './shared/SectionHeader';
+import { Icons } from './shared/Icons';
 
 interface ContributionHeatmapProps {
   username: string;
@@ -436,14 +438,13 @@ export default function ContributionHeatmap({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d">
-      <div className="flex flex-col gap-2 mb-4">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-          Contribution Heatmap
-        </h2>
-
-        {/* Updated year tabs - matching the MostStarredRepos style */}
-        <div className="flex flex-wrap">
-          <div className="w-full mb-2">
+      <SectionHeader
+        title="Contribution Heatmap"
+        icon={Icons.Activity}
+        subtitle={`${yearContributions.toLocaleString()} contributions in ${selectedYear}`}
+        infoTooltip="This heatmap visualizes your GitHub contribution activity. Each cell represents a day, with color intensity showing the number of contributions made on that day."
+        rightControls={
+          <div className="flex flex-wrap">
             <div className="flex overflow-x-auto hide-scrollbar">
               <div className="flex items-center gap-2 text-sm">
                 <div className="flex items-center gap-1 text-l-text-2 dark:text-d-text-2">
@@ -468,16 +469,8 @@ export default function ContributionHeatmap({
               </div>
             </div>
           </div>
-
-          <div className="text-sm text-l-text-2 dark:text-d-text-2">
-            {isLoading ? (
-              <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded animate-pulse"></div>
-            ) : (
-              `${yearContributions.toLocaleString()} contributions in ${selectedYear}`
-            )}
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="relative pb-2" ref={containerRef}>
         {/* Show grid skeleton when loading after initial load */}
