@@ -492,23 +492,18 @@ export default function PersonalizedSummary({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-3 sm:p-5 border border-border-l dark:border-border-d shadow-sm">
-      {/* Compact header with badge */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="bg-accent-1/10 p-1.5 rounded-full">
-            <Icons.Award className="w-4 h-4 sm:w-5 sm:h-5 text-accent-1" />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-l-text-1 dark:text-d-text-1 leading-tight">
-              Your GitHub Story
-            </h2>
-            <p className="text-xs sm:text-sm text-l-text-2 dark:text-d-text-2">
-              Insights from your developer journey
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
+            <Icons.Award className="w-5 h-5 text-accent-1" />
+            Your GitHub Story
+          </h2>
+          <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-1">
+            Insights from your developer journey
+          </p>
         </div>
-        <div className="flex-shrink-0">
-          <span className="px-2.5 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium whitespace-nowrap">
+        <div className="flex items-center">
+          <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
             {profileLevel}
           </span>
         </div>
@@ -590,7 +585,7 @@ export default function PersonalizedSummary({
         {hasMoreInsights && !activeCategory && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="w-full py-2 px-4 mt-1 text-xs sm:text-sm border border-border-l dark:border-border-d rounded-md bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 flex items-center justify-center gap-2 group"
+            className="w-full py-2 px-4 mt-1 text-xs sm:text-sm border border-border-l dark:border-border-d rounded-md bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer"
           >
             {expanded ? (
               <>
@@ -620,7 +615,7 @@ export default function PersonalizedSummary({
             </p>
             <button
               onClick={() => setActiveCategory(null)}
-              className="text-accent-1 hover:underline flex items-center gap-1.5 mx-auto text-sm"
+              className="text-accent-1 hover:underline flex items-center gap-1.5 mx-auto text-sm cursor-pointer"
             >
               <Icons.ChevronLeft className="w-3 h-3" />
               View all insights
