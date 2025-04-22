@@ -281,9 +281,9 @@ export default function Footer() {
               © {currentYear} DevInsight. All rights reserved.
             </p>
           </div>
-          <p className="text-l-text-3 dark:text-d-text-3 text-sm flex items-center gap-1.5 flex-wrap justify-center md:justify-start">
-            Built with
-            <motion.div
+          <div className="text-l-text-3 dark:text-d-text-3 text-sm flex items-center gap-1.5 flex-wrap justify-center md:justify-start">
+            <span>Built with</span>
+            <motion.span
               animate={{
                 scale: [1, 1.2, 1],
               }}
@@ -295,8 +295,8 @@ export default function Footer() {
               className="flex items-center"
             >
               <Icons.Heart className="w-4 h-4 text-red-500 fill-red-500" />
-            </motion.div>
-            by
+            </motion.span>
+            <span>by</span>
             <a
               href="https://github.com/YousifAbozid"
               target="_blank"
@@ -305,7 +305,7 @@ export default function Footer() {
             >
               Yousif Abozid
             </a>
-          </p>
+          </div>
         </div>
       </div>
     </footer>
