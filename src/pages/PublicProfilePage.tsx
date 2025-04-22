@@ -5,7 +5,7 @@ import {
   useBatchUserData, // Added batch data hook
 } from '../services/githubService';
 import GithubProfileCard from '../components/GithubProfileCard';
-import ProfileSkeleton from '../components/ProfileSkeleton';
+import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
 import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
@@ -375,7 +375,7 @@ export default function PublicProfilePage({
       )}
 
       {isUserLoading ? (
-        <ProfileSkeleton />
+        <GithubProfileCardSkeleton />
       ) : isUserError || !user ? (
         <ProfileErrorState
           username={username}

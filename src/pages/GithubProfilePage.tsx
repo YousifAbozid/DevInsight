@@ -8,7 +8,7 @@ import {
 } from '../services/githubService';
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
-import ProfileSkeleton from '../components/ProfileSkeleton';
+import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
 import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
@@ -154,7 +154,7 @@ export default function GithubProfilePage() {
       />
 
       {isUserLoading ? (
-        <ProfileSkeleton />
+        <GithubProfileCardSkeleton />
       ) : errorMessage ? (
         <ProfileErrorState
           username={username}
