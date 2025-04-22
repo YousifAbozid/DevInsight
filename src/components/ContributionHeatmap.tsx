@@ -484,7 +484,7 @@ export default function ContributionHeatmap({
               scrollbarWidth: 'thin',
             }}
           >
-            <div className="w-[890px] grid grid-cols-[auto_repeat(53,1fr)] gap-x-[2px] gap-y-[2px]">
+            <div className="w-[890px] grid grid-cols-[auto_repeat(53,1fr)] gap-x-[3px] gap-y-[2px]">
               {/* Month labels */}
               <div className="col-span-1"></div>
               <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-1">
@@ -516,7 +516,7 @@ export default function ContributionHeatmap({
               </div>
 
               {/* Contribution grid */}
-              <div className="col-span-53 grid grid-cols-53 gap-x-[1px] gap-y-[1px]">
+              <div className="col-span-53 grid grid-cols-53 gap-x-[3px] gap-y-[1px]">
                 {organizedCalendar.map((week, weekIndex) => (
                   <div
                     key={weekIndex}
