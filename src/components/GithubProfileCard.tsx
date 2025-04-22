@@ -757,7 +757,7 @@ export default function GithubProfileCard({
                 <div className="flex items-center text-l-text-2 dark:text-d-text-2 mt-1.5">
                   <Icons.Twitter className="w-4 h-4 mr-2 flex-shrink-0" />
                   <a
-                    href={`https://twitter.com/${user.twitter_username}`}
+                    href={`https://x.com/${user.twitter_username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-accent-1 hover:underline cursor-pointer"
