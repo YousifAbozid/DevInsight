@@ -85,6 +85,7 @@ import {
   Github,
   Linkedin,
   Twitter,
+  Hash,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -236,4 +237,7 @@ export const Icons = {
   GitHub: ({ className }: IconProps) => <Github className={className} />,
   LinkedIn: ({ className }: IconProps) => <Linkedin className={className} />,
   Twitter: ({ className }: IconProps) => <Twitter className={className} />,
+
+  // Add Hash icon
+  Hash: ({ className }: IconProps) => <Hash className={className} />,
 };

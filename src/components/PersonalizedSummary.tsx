@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 
@@ -22,27 +22,27 @@ interface Insight {
 // Category configuration
 const categoryInfo = {
   activity: {
-    title: 'Contribution Activity',
+    title: 'Activity',
     icon: Icons.Activity,
     description: 'Insights about your GitHub activity patterns',
   },
   languages: {
-    title: 'Language Usage',
+    title: 'Languages',
     icon: Icons.Code,
     description: 'Findings related to your programming languages',
   },
   repositories: {
-    title: 'Repository Insights',
+    title: 'Repositories',
     icon: Icons.Repo,
     description: 'Information about your GitHub repositories',
   },
   impact: {
-    title: 'Community Impact',
+    title: 'Impact',
     icon: Icons.Star,
     description: 'Your influence in the developer community',
   },
   personal: {
-    title: 'Profile Highlights',
+    title: 'Profile',
     icon: Icons.User,
     description: 'Personal milestones and account information',
   },
@@ -431,14 +431,30 @@ export default function PersonalizedSummary({
 }: PersonalizedSummaryProps) {
   const [expanded, setExpanded] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const filterScrollRef = useRef<HTMLDivElement>(null);
 
-  // Move the custom hook call to the top level, before any conditional returns
-  // This ensures hooks are always called in the same order
+  // Ensure hooks are always called in the same order
   const insights = useGithubInsights(
     user,
     repositories || [],
     contributionData
   );
+
+  // Scroll filters into view when selecting a category
+  useEffect(() => {
+    if (activeCategory && filterScrollRef.current) {
+      const button = filterScrollRef.current.querySelector(
+        `[data-category="${activeCategory}"]`
+      );
+      if (button) {
+        button.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    }
+  }, [activeCategory]);
 
   if (loading) {
     return <PersonalizedSummarySkeleton />;
@@ -472,170 +488,141 @@ export default function PersonalizedSummary({
   const expandedInsights = !activeCategory ? displayInsights.slice(3) : [];
   const hasMoreInsights = expandedInsights.length > 0;
 
+  const profileLevel = getProfileLevel(user, repositories, contributionData);
+
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
-            <Icons.Award className="w-5 h-5 text-accent-1" />
-            Your GitHub Story
-          </h2>
-          <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-1">
-            Insights from your developer journey
-          </p>
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-3 sm:p-5 border border-border-l dark:border-border-d shadow-sm">
+      {/* Compact header with badge */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="bg-accent-1/10 p-1.5 rounded-full">
+            <Icons.Award className="w-4 h-4 sm:w-5 sm:h-5 text-accent-1" />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-l-text-1 dark:text-d-text-1 leading-tight">
+              Your GitHub Story
+            </h2>
+            <p className="text-xs sm:text-sm text-l-text-2 dark:text-d-text-2">
+              Insights from your developer journey
+            </p>
+          </div>
         </div>
-        <div className="flex items-center">
-          <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
-            {getProfileLevel(user, repositories, contributionData)}
+        <div className="flex-shrink-0">
+          <span className="px-2.5 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium whitespace-nowrap">
+            {profileLevel}
           </span>
         </div>
       </div>
 
-      {/* Category filters with improved styling */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
-            <Icons.Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filter Insights</span>
-          </div>
+      {/* Horizontal scrollable filters */}
+      <div className="mb-4 relative">
+        <div
+          ref={filterScrollRef}
+          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1"
+        >
+          <button
+            onClick={() => setActiveCategory(null)}
+            className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
+              activeCategory === null
+                ? 'bg-accent-1 text-white'
+                : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+            }`}
+          >
+            <Icons.Hash className="w-3 h-3 sm:w-4 sm:h-4" />
+            All ({insights.length})
+          </button>
 
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                activeCategory === null
-                  ? 'bg-accent-1 text-white'
-                  : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-              }`}
-            >
-              All Insights ({insights.length})
-            </button>
+          {Object.entries(insightsByCategory).map(
+            ([category, categoryInsights]) => {
+              if (categoryInsights.length === 0) return null;
 
-            {Object.entries(insightsByCategory).map(
-              ([category, categoryInsights]) => {
-                if (categoryInsights.length === 0) return null;
+              const CategoryIcon =
+                categoryInfo[category as keyof typeof categoryInfo]?.icon;
 
-                const CategoryIcon =
-                  categoryInfo[category as keyof typeof categoryInfo]?.icon;
-
-                return (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      setActiveCategory(category);
-                      setExpanded(false); // Reset expanded state when switching categories
-                    }}
-                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                      activeCategory === category
-                        ? 'bg-accent-1 text-white'
-                        : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                    }`}
-                  >
-                    {CategoryIcon && <CategoryIcon className="w-4 h-4" />}
-                    {categoryInfo[category as keyof typeof categoryInfo]
-                      ?.title || category}{' '}
-                    ({categoryInsights.length})
-                  </button>
-                );
-              }
-            )}
-          </div>
+              return (
+                <button
+                  key={category}
+                  data-category={category}
+                  onClick={() => {
+                    setActiveCategory(category);
+                    setExpanded(false);
+                  }}
+                  className={`px-2.5 py-1.5 text-xs sm:text-sm rounded-md flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
+                    activeCategory === category
+                      ? 'bg-accent-1 text-white'
+                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                  }`}
+                >
+                  {CategoryIcon && (
+                    <CategoryIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                  )}
+                  {categoryInfo[category as keyof typeof categoryInfo]?.title ||
+                    category}{' '}
+                  ({categoryInsights.length})
+                </button>
+              );
+            }
+          )}
         </div>
+
+        {/* Fade edge effect for scrollable content */}
+        <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-l-bg-2 dark:from-d-bg-2 to-transparent pointer-events-none"></div>
       </div>
 
       {/* Display insights */}
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         {initialInsights.map(insight => (
-          <div
-            key={insight.id}
-            className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors transform hover:-translate-y-0.5 duration-300"
-          >
-            <div
-              className={`p-2.5 rounded-full ${insight.iconBg} shrink-0 self-center sm:self-start`}
-            >
-              <insight.icon className="w-4 h-4 text-l-text-inv dark:text-d-text-inv" />
-            </div>
-            <div>
-              <p className="text-center sm:text-left text-l-text-1 dark:text-d-text-1 font-medium">
-                {insight.text}
-              </p>
-              {insight.subtext && (
-                <p className="text-sm text-center sm:text-left text-l-text-3 dark:text-d-text-3 mt-1">
-                  {insight.subtext}
-                </p>
-              )}
-            </div>
-          </div>
+          <InsightCard key={insight.id} insight={insight} />
         ))}
 
         {/* Expanded insights with transition */}
         <div
-          className={`space-y-4 overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`space-y-2.5 overflow-hidden transition-all duration-300 ease-in-out ${
             expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
           {expandedInsights.map(insight => (
-            <div
-              key={insight.id}
-              className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors transform hover:-translate-y-0.5 duration-300"
-            >
-              <div
-                className={`p-2.5 rounded-full ${insight.iconBg} shrink-0 self-center sm:self-start`}
-              >
-                <insight.icon className="w-4 h-4 text-l-text-inv dark:text-d-text-inv" />
-              </div>
-              <div>
-                <p className="text-center sm:text-left text-l-text-1 dark:text-d-text-1 font-medium">
-                  {insight.text}
-                </p>
-                {insight.subtext && (
-                  <p className="text-sm text-center sm:text-left text-l-text-3 dark:text-d-text-3 mt-1">
-                    {insight.subtext}
-                  </p>
-                )}
-              </div>
-            </div>
+            <InsightCard key={insight.id} insight={insight} />
           ))}
         </div>
 
-        {/* Show more/less button with improved styling - only show when not filtering */}
+        {/* Show more/less button - only show when not filtering */}
         {hasMoreInsights && !activeCategory && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="w-full py-2.5 px-4 mt-2 text-sm border border-border-l dark:border-border-d rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 group"
+            className="w-full py-2 px-4 mt-1 text-xs sm:text-sm border border-border-l dark:border-border-d rounded-md bg-l-bg-1 dark:bg-d-bg-1 text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:border-accent-1/30 transition-all duration-300 flex items-center justify-center gap-2 group"
           >
             {expanded ? (
               <>
-                <Icons.ChevronUp className="w-5 h-5 group-hover:animate-bounce-short" />
-                <span>Show less insights</span>
+                <Icons.ChevronUp className="w-4 h-4 group-hover:animate-bounce-short" />
+                <span>Show less</span>
               </>
             ) : (
               <>
-                <Icons.ChevronDown className="w-5 h-5 group-hover:animate-pulse" />
-                <span>Show {expandedInsights.length} more insights</span>
+                <Icons.ChevronDown className="w-4 h-4 group-hover:animate-pulse" />
+                <span>Show {expandedInsights.length} more</span>
               </>
             )}
           </button>
         )}
 
-        {/* No insights message when filtering with no results */}
+        {/* No insights message */}
         {activeCategory && displayInsights.length === 0 && (
-          <div className="text-center py-12 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg border border-border-l dark:border-border-d">
-            <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-3/30 dark:bg-d-bg-3/30">
-              <Icons.Search className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+          <div className="text-center py-8 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg border border-border-l dark:border-border-d">
+            <div className="mb-3 inline-block p-3 rounded-full bg-l-bg-3/30 dark:bg-d-bg-3/30">
+              <Icons.Search className="w-8 h-8 text-l-text-3 dark:text-d-text-3" />
             </div>
-            <h3 className="text-lg font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
+            <h3 className="text-base font-semibold text-l-text-1 dark:text-d-text-1 mb-1">
               No insights found
             </h3>
-            <p className="text-l-text-2 dark:text-d-text-2 max-w-md mx-auto">
-              No insights available for this category. Try selecting a different
-              category.
+            <p className="text-sm text-l-text-2 dark:text-d-text-2 max-w-md mx-auto mb-3">
+              Try selecting a different category
             </p>
             <button
               onClick={() => setActiveCategory(null)}
-              className="mt-4 text-accent-1 hover:underline flex items-center gap-1.5 mx-auto"
+              className="text-accent-1 hover:underline flex items-center gap-1.5 mx-auto text-sm"
             >
-              <Icons.ChevronLeft className="w-4 h-4" />
+              <Icons.ChevronLeft className="w-3 h-3" />
               View all insights
             </button>
           </div>
@@ -645,46 +632,64 @@ export default function PersonalizedSummary({
   );
 }
 
+// Extracted insight card component for better organization
+function InsightCard({ insight }: { insight: Insight }) {
+  return (
+    <div className="flex items-start gap-2.5 p-3 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors">
+      <div className={`p-2 rounded-full ${insight.iconBg} shrink-0 mt-0.5`}>
+        <insight.icon className="w-3.5 h-3.5 text-l-text-inv dark:text-d-text-inv" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-l-text-1 dark:text-d-text-1 leading-tight">
+          {insight.text}
+        </p>
+        {insight.subtext && (
+          <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-1 leading-relaxed">
+            {insight.subtext}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function PersonalizedSummarySkeleton() {
   return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d shadow-sm animate-pulse">
-      <div className="flex flex-col sm:flex-row justify-between gap-3 mb-4 sm:mb-6">
-        <div className="space-y-2">
-          <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-          <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-3 sm:p-5 border border-border-l dark:border-border-d shadow-sm animate-pulse">
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
+          <div>
+            <div className="h-5 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-1"></div>
+            <div className="h-3 w-28 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
+          </div>
         </div>
-        <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-full self-start"></div>
+        <div className="h-6 w-20 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
       </div>
 
       {/* Filter tabs skeleton */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="h-8 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
-          <div className="flex flex-wrap gap-2">
-            <div className="h-8 w-28 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
-            <div className="h-8 w-32 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
-            <div className="h-8 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded-md"></div>
-          </div>
-        </div>
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <div className="h-8 w-20 bg-l-bg-3 dark:bg-d-bg-3 rounded-md flex-shrink-0"></div>
+        <div className="h-8 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-md flex-shrink-0"></div>
+        <div className="h-8 w-28 bg-l-bg-3 dark:bg-d-bg-3 rounded-md flex-shrink-0"></div>
       </div>
 
-      <div className="space-y-4">
-        {Array(3)
-          .fill(0)
-          .map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col sm:flex-row items-start gap-3 p-4 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
-            >
-              <div className="p-2.5 rounded-full bg-l-bg-3 dark:bg-d-bg-3 h-8 w-8 shrink-0 self-center sm:self-start mb-2 sm:mb-0"></div>
-              <div className="flex-1 w-full">
-                <div className="h-4 w-full sm:w-3/4 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2 mx-auto sm:mx-0"></div>
-                <div className="h-3 w-2/3 sm:w-1/2 bg-l-bg-3 dark:bg-d-bg-3 rounded mx-auto sm:mx-0"></div>
-              </div>
+      {/* Insights skeleton */}
+      <div className="space-y-2.5">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="flex items-start gap-2.5 p-3 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
+          >
+            <div className="w-7 h-7 bg-l-bg-3 dark:bg-d-bg-3 rounded-full flex-shrink-0"></div>
+            <div className="w-full">
+              <div className="h-4 w-4/5 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
+              <div className="h-3 w-3/5 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
             </div>
-          ))}
-
-        <div className="h-10 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded-lg mt-2"></div>
+          </div>
+        ))}
+        <div className="h-8 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded-md mt-1"></div>
       </div>
     </div>
   );
