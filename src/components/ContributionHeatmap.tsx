@@ -360,7 +360,7 @@ export default function ContributionHeatmap({
                     <button
                       key={year}
                       onClick={() => handleYearChange(year)}
-                      className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
+                      className={`px-2.5 py-1 text-xs rounded-full transition-colors cursor-pointer ${
                         selectedYear === year
                           ? 'bg-accent-1 text-white'
                           : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
