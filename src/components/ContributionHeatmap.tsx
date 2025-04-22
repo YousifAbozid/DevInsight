@@ -418,7 +418,7 @@ export default function ContributionHeatmap({
                       key={i}
                       className="text-center"
                       style={{
-                        gridColumn: `${position + 1} / span 4`,
+                        gridColumn: `${position + 2} / span 4`,
                       }}
                     >
                       {month}
@@ -427,8 +427,8 @@ export default function ContributionHeatmap({
                 })}
               </div>
 
-              {/* Day of week labels */}
-              <div className="grid grid-rows-7 gap-y-2 text-xs text-l-text-3 dark:text-d-text-3 pr-2">
+              {/* Day of week labels - Updated to align right with grid cells */}
+              <div className="grid grid-rows-7 gap-y-2 -translate-y-1 text-xs text-l-text-3 dark:text-d-text-3 pr-2 justify-items-end">
                 <span className="h-3 flex items-center">Mon</span>
                 <span className="h-3 flex items-center">Tue</span>
                 <span className="h-3 flex items-center">Wed</span>
