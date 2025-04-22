@@ -641,7 +641,7 @@ export default function GithubProfileCard({
                 <div className="bg-l-bg-2 dark:bg-d-bg-2 p-1.5 rounded-full mr-3 mt-0.5">
                   <Icons.Clock className="w-4 h-4 text-accent-success" />
                 </div>
-                <div>
+                <div className="flex flex-col items-start">
                   <p className="font-medium text-l-text-1 dark:text-d-text-1">
                     Joined GitHub
                   </p>
@@ -657,7 +657,7 @@ export default function GithubProfileCard({
                   <div className="bg-l-bg-2 dark:bg-d-bg-2 p-1.5 rounded-full mr-3 mt-0.5">
                     <Icons.Timer className="w-4 h-4 text-accent-warning" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex flex-col items-start">
                     <p className="font-medium text-l-text-1 dark:text-d-text-1">
                       Next Anniversary
                     </p>
