@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
-import FilterTabs from './shared/FilterTabs';
+import FilterTabs, { FilterTab } from './shared/FilterTabs';
 
 // Define proper interfaces
 interface PersonalizedSummaryProps {
@@ -492,6 +492,27 @@ export default function PersonalizedSummary({
 
   const profileLevel = getProfileLevel(user, repositories, contributionData);
 
+  const filterTabs: FilterTab[] = [
+    {
+      id: null,
+      label: `All Insights (${insights.length})`,
+      active: activeCategory === null,
+      onClick: () => setActiveCategory(null),
+    },
+    ...Object.entries(insightsByCategory).map(
+      ([category, categoryInsights]) => ({
+        id: category,
+        label: `${categoryInfo[category as keyof typeof categoryInfo]?.title || category} (${categoryInsights.length})`,
+        active: activeCategory === category,
+        onClick: () => {
+          setActiveCategory(category);
+          setExpanded(false);
+        },
+        icon: categoryInfo[category as keyof typeof categoryInfo]?.icon,
+      })
+    ),
+  ];
+
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-3 sm:p-5 border border-border-l dark:border-border-d shadow-sm">
       <SectionHeader
@@ -506,32 +527,10 @@ export default function PersonalizedSummary({
         }
       />
 
-      {/* Horizontal scrollable filters */}
-      <div className="mb-4 relative">
-        <FilterTabs
-          tabs={[
-            {
-              id: null,
-              label: `All Insights (${insights.length})`,
-              active: activeCategory === null,
-              onClick: () => setActiveCategory(null),
-            },
-            ...Object.entries(insightsByCategory).map(
-              ([category, categoryInsights]) => ({
-                id: category,
-                label: `${categoryInfo[category as keyof typeof categoryInfo]?.title || category} (${categoryInsights.length})`,
-                active: activeCategory === category,
-                onClick: () => {
-                  setActiveCategory(category);
-                  setExpanded(false);
-                },
-                icon: categoryInfo[category as keyof typeof categoryInfo]?.icon,
-              })
-            ),
-          ]}
-          scrollRef={filterScrollRef as React.RefObject<HTMLDivElement>}
-        />
-      </div>
+      <FilterTabs
+        tabs={filterTabs}
+        scrollRef={filterScrollRef as React.RefObject<HTMLDivElement>}
+      />
 
       {/* Display insights */}
       <div className="space-y-2.5">
