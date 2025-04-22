@@ -755,7 +755,7 @@ export default function GithubProfileCard({
 
               {user.twitter_username && (
                 <div className="flex items-center text-l-text-2 dark:text-d-text-2 mt-1.5">
-                  <Icons.AtSign className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <Icons.Twitter className="w-4 h-4 mr-2 flex-shrink-0" />
                   <a
                     href={`https://twitter.com/${user.twitter_username}`}
                     target="_blank"
