@@ -8,6 +8,8 @@ import {
   ChartData,
 } from 'chart.js';
 import { useState } from 'react';
+import SectionHeader from './shared/SectionHeader';
+import { Icons } from './shared/Icons';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -147,14 +149,12 @@ export default function LanguagePieChart({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <div className="flex flex-col gap-2 mb-6">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-          Language Distribution
-        </h2>
-        <p className="text-sm text-l-text-2 dark:text-d-text-2">
-          Analysis across {totalRepos} repositories
-        </p>
-      </div>
+      <SectionHeader
+        title="Language Distribution"
+        icon={Icons.Languages}
+        subtitle={`Analysis across ${totalRepos} repositories`}
+        infoTooltip="This chart shows the programming languages used across your repositories, helping you visualize your technical expertise and project diversity."
+      />
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="md:w-1/2 h-64 md:h-80">
