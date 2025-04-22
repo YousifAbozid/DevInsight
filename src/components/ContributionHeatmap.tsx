@@ -57,43 +57,6 @@ function ContributionGridSkeleton() {
   );
 }
 
-// Complete skeleton for initial load
-function ContributionHeatmapSkeleton() {
-  return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d animate-pulse">
-      <div className="flex flex-col gap-2 mb-4">
-        <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="w-full mb-2">
-          <div className="flex space-x-2 overflow-x-auto pb-2">
-            <div className="h-5 w-10 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-5 w-14 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"
-              ></div>
-            ))}
-          </div>
-        </div>
-        <div className="h-4 w-36 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-      </div>
-
-      <ContributionGridSkeleton />
-
-      <div className="mt-4 flex justify-between items-center">
-        <div className="h-3 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="flex items-center gap-1">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-2 w-14 bg-l-bg-3 dark:bg-d-bg-3 rounded"
-            ></div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function ContributionHeatmap({
   username,
   token,
@@ -337,10 +300,6 @@ export default function ContributionHeatmap({
     );
   }
 
-  if (isLoading && !data) {
-    return <ContributionHeatmapSkeleton />;
-  }
-
   if (error) {
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
@@ -354,19 +313,6 @@ export default function ContributionHeatmap({
               : 'Failed to load contribution data'}
           </p>
         </div>
-      </div>
-    );
-  }
-
-  if (!data || data.weeks.length === 0) {
-    return (
-      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4">
-          Contribution Heatmap
-        </h2>
-        <p className="text-l-text-2 dark:text-d-text-2">
-          No contribution data available
-        </p>
       </div>
     );
   }
@@ -650,20 +596,4 @@ export default function ContributionHeatmap({
       </div>
     </div>
   );
-}
-
-// Add a CSS class to hide scrollbars but keep functionality
-const styleElement =
-  typeof document !== 'undefined' ? document.createElement('style') : null;
-if (styleElement) {
-  styleElement.textContent = `
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-  `;
-  document.head.appendChild(styleElement);
 }
