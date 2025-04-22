@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
+import FilterTabs, { FilterTab } from './shared/FilterTabs';
 
 interface DevJourneyTimelineProps {
   user: GithubUser;
@@ -474,8 +475,25 @@ export default function DevJourneyTimeline({
     {} as Record<string, number>
   );
 
-  // Get unique event types for filter options
-  const eventTypes = Object.keys(eventCounts);
+  // Generate filter tabs from event types
+  const filterTabs: FilterTab[] = [
+    {
+      id: 'all',
+      label: 'All Events',
+      count: sortedEvents.length,
+      icon: Icons.Calendar,
+      active: filter === 'all',
+      onClick: () => setFilter('all'),
+    },
+    ...Object.keys(eventCounts).map(type => ({
+      id: type,
+      label: eventTypeInfo[type as keyof typeof eventTypeInfo]?.title || type,
+      count: eventCounts[type],
+      icon: eventTypeInfo[type as keyof typeof eventTypeInfo]?.icon,
+      active: filter === type,
+      onClick: () => setFilter(type),
+    })),
+  ];
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
@@ -510,54 +528,7 @@ export default function DevJourneyTimeline({
         }
       />
 
-      {/* Filter tabs with improved styling matching DeveloperBadges component */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
-            <Icons.Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filter Timeline</span>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                filter === 'all'
-                  ? 'bg-accent-1 text-white'
-                  : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-              }`}
-            >
-              {eventTypeInfo.all.icon && (
-                <eventTypeInfo.all.icon className="w-4 h-4" />
-              )}
-              All Events ({sortedEvents.length})
-            </button>
-
-            {eventTypes.map(type => {
-              const EventIcon =
-                eventTypeInfo[type as keyof typeof eventTypeInfo]?.icon;
-              const eventTitle =
-                eventTypeInfo[type as keyof typeof eventTypeInfo]?.title ||
-                type;
-
-              return (
-                <button
-                  key={type}
-                  onClick={() => setFilter(type)}
-                  className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                    filter === type
-                      ? 'bg-accent-1 text-white'
-                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                  }`}
-                >
-                  {EventIcon && <EventIcon className="w-4 h-4" />}
-                  {eventTitle} ({eventCounts[type]})
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <FilterTabs tabs={filterTabs} activeTabId={filter} />
 
       {/* Timeline container */}
       <div className="relative">
