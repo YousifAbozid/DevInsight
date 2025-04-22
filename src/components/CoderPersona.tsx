@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ContributionData } from '../services/githubGraphQLService';
 import PersonaStrengthBars from './PersonaStrengthBars';
 import { Icons } from '../components/shared/Icons';
+import SectionHeader from './shared/SectionHeader';
 import * as htmlToImage from 'html-to-image';
 
 interface CoderPersonaProps {
@@ -45,7 +46,6 @@ export default function CoderPersona({
   contributionData,
   loading,
 }: CoderPersonaProps) {
-  const [showInfo, setShowInfo] = useState(false);
   const [showPersonasModal, setShowPersonasModal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -147,54 +147,34 @@ export default function CoderPersona({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
-      <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-        <div className="flex items-center gap-2">
-          <Icons.Users className="w-6 h-6 text-accent-1" />
-          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-            Your Coder Persona
-          </h2>
-          <button
-            onClick={() => setShowInfo(!showInfo)}
-            className="text-l-text-3 dark:text-d-text-3 hover:text-accent-1 transition-colors ml-1 cursor-pointer"
-            aria-label="Show badge information"
-          >
-            <Icons.Info className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/personas"
-            className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
-            aria-label="View all coder personas"
-          >
-            <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
-            <Icons.Users className="w-4 h-4 text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200" />
-            <span className="text-xs font-medium z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200">
-              See all personas
+      <SectionHeader
+        title="Your Coder Persona"
+        icon={Icons.Users}
+        infoTooltip="Your Coder Persona is based on an analysis of your GitHub activity. The visualization shows your strengths across six key dimensions of software development. This helps you understand your unique coding style and preferences."
+        rightControls={
+          <div className="flex items-center gap-2">
+            <Link
+              to="/personas"
+              className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+              aria-label="View all coder personas"
+            >
+              <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+              <Icons.Users className="w-4 h-4 text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200" />
+              <span className="text-xs font-medium z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200">
+                See all personas
+              </span>
+            </Link>
+            <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
+              {persona.type}
             </span>
-          </Link>
-          <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
-            {persona.type}
-          </span>
-        </div>
-      </div>
-
-      {showInfo && (
-        <div className="my-4 p-4 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg text-sm text-l-text-2 dark:text-d-text-2 border border-border-l dark:border-border-d animate-fadeIn">
-          <p className="flex items-start gap-2">
-            <Icons.Info className="w-4 h-4 text-accent-1 mt-0.5 flex-shrink-0" />
-            Your Coder Persona is based on an analysis of your GitHub activity.
-            The visualization shows your strengths across six key dimensions of
-            software development. This helps you understand your unique coding
-            style and preferences.
-          </p>
-        </div>
-      )}
+          </div>
+        }
+      />
 
       {/* Persona Card */}
       <div
         ref={cardRef}
-        className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-6 border border-border-l dark:border-border-d"
+        className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-6 border border-border-l dark:border-border-d mt-4"
       >
         <div className="flex flex-col md:flex-row gap-6">
           {/* Persona Icon and Title */}
