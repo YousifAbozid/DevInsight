@@ -149,6 +149,7 @@ export default function CoderPersona({
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
       <SectionHeader
         title="Your Coder Persona"
+        subtitle="Discover your unique developer profile based on GitHub activity"
         icon={Icons.Users}
         infoTooltip="Your Coder Persona is based on an analysis of your GitHub activity. The visualization shows your strengths across six key dimensions of software development. This helps you understand your unique coding style and preferences."
         rightControls={
