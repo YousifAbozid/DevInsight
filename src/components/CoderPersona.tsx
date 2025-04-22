@@ -198,7 +198,7 @@ export default function CoderPersona({
       >
         <div className="flex flex-col md:flex-row gap-6">
           {/* Persona Icon and Title */}
-          <div className="md:w-1/4 flex flex-col items-center text-center">
+          <div className="md:w-1/4 flex flex-col items-center text-center my-auto">
             <div className={`p-4 rounded-full ${persona.color} mb-4`}>
               <persona.icon className="w-7 h-7" />
             </div>
