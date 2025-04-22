@@ -100,216 +100,182 @@ function useBadges(
       return diffInDays < 30; // Activity within the last 30 days
     });
 
-    // Repository count badges
-    if (repositories.length >= 1) {
-      badges.push({
-        id: 'repo-starter',
-        name: 'Project Starter',
-        description: 'Created your first GitHub repository',
-        icon: Icons.Repository,
-        tier: 'bronze',
-        category: 'repositories',
-        earned: true,
-      });
-    }
+    // Repository count badges - always add all 4
+    badges.push({
+      id: 'repo-starter',
+      name: 'Project Starter',
+      description: 'Created your first GitHub repository',
+      icon: Icons.Repository,
+      tier: 'bronze',
+      category: 'repositories',
+      earned: repositories.length >= 1,
+    });
 
-    if (repositories.length >= 5) {
-      badges.push({
-        id: 'repo-creator',
-        name: 'Project Creator',
-        description: 'Maintained 5+ GitHub repositories',
-        icon: Icons.Repository,
-        tier: 'silver',
-        category: 'repositories',
-        earned: true,
-      });
-    }
+    badges.push({
+      id: 'repo-creator',
+      name: 'Project Creator',
+      description: 'Maintained 5+ GitHub repositories',
+      icon: Icons.Repository,
+      tier: 'silver',
+      category: 'repositories',
+      earned: repositories.length >= 5,
+    });
 
-    if (repositories.length >= 15) {
-      badges.push({
-        id: 'repo-manager',
-        name: 'Repository Manager',
-        description: 'Managed an impressive collection of 15+ repositories',
-        icon: Icons.Repository,
-        tier: 'gold',
-        category: 'repositories',
-        earned: true,
-      });
-    }
+    badges.push({
+      id: 'repo-manager',
+      name: 'Repository Manager',
+      description: 'Managed an impressive collection of 15+ repositories',
+      icon: Icons.Repository,
+      tier: 'gold',
+      category: 'repositories',
+      earned: repositories.length >= 15,
+    });
 
-    if (repositories.length >= 30) {
-      badges.push({
-        id: 'repo-guru',
-        name: 'Repository Guru',
-        description: 'Mastered the art of managing 30+ repositories',
-        icon: Icons.Repository,
-        tier: 'platinum',
-        category: 'repositories',
-        earned: true,
-      });
-    }
+    badges.push({
+      id: 'repo-guru',
+      name: 'Repository Guru',
+      description: 'Mastered the art of managing 30+ repositories',
+      icon: Icons.Repository,
+      tier: 'platinum',
+      category: 'repositories',
+      earned: repositories.length >= 30,
+    });
 
-    // Contribution badges
-    if (totalContributions >= 1) {
-      badges.push({
-        id: 'code-contributor',
-        name: 'Code Contributor',
-        description: 'Made your first contributions on GitHub',
-        icon: Icons.Commit,
-        tier: 'bronze',
-        category: 'activity',
-        earned: true,
-      });
-    }
+    // Contribution badges - always add all 4
+    badges.push({
+      id: 'code-contributor',
+      name: 'Code Contributor',
+      description: 'Made your first contributions on GitHub',
+      icon: Icons.Commit,
+      tier: 'bronze',
+      category: 'activity',
+      earned: totalContributions >= 1,
+    });
 
-    if (totalContributions >= 100) {
-      badges.push({
-        id: 'code-enthusiast',
-        name: 'Code Enthusiast',
-        description: 'Made 100+ contributions in the past year',
-        icon: Icons.Commit,
-        tier: 'silver',
-        category: 'activity',
-        earned: totalContributions >= 100,
-      });
-    }
+    badges.push({
+      id: 'code-enthusiast',
+      name: 'Code Enthusiast',
+      description: 'Made 100+ contributions in the past year',
+      icon: Icons.Commit,
+      tier: 'silver',
+      category: 'activity',
+      earned: totalContributions >= 100,
+    });
 
-    if (totalContributions >= 500) {
-      badges.push({
-        id: 'commit-machine',
-        name: 'Commit Machine',
-        description: 'Made 500+ contributions in the past year',
-        icon: Icons.Commit,
-        tier: 'gold',
-        category: 'activity',
-        earned: totalContributions >= 500,
-      });
-    }
+    badges.push({
+      id: 'commit-machine',
+      name: 'Commit Machine',
+      description: 'Made 500+ contributions in the past year',
+      icon: Icons.Commit,
+      tier: 'gold',
+      category: 'activity',
+      earned: totalContributions >= 500,
+    });
 
-    if (totalContributions >= 1000) {
-      badges.push({
-        id: 'commit-ninja',
-        name: 'Commit Ninja',
-        description: 'Made 1,000+ contributions in the past year',
-        icon: Icons.Commit,
-        tier: 'platinum',
-        category: 'activity',
-        earned: totalContributions >= 1000,
-      });
-    }
+    badges.push({
+      id: 'commit-ninja',
+      name: 'Commit Ninja',
+      description: 'Made 1,000+ contributions in the past year',
+      icon: Icons.Commit,
+      tier: 'platinum',
+      category: 'activity',
+      earned: totalContributions >= 1000,
+    });
 
-    // Language badges
-    if (languages.size >= 1) {
-      badges.push({
-        id: 'code-writer',
-        name: 'Code Writer',
-        description: 'Wrote code in your first programming language',
-        icon: Icons.Code,
-        tier: 'bronze',
-        category: 'languages',
-        earned: true,
-      });
-    }
+    // Language badges - always add all 4
+    badges.push({
+      id: 'code-writer',
+      name: 'Code Writer',
+      description: 'Wrote code in your first programming language',
+      icon: Icons.Code,
+      tier: 'bronze',
+      category: 'languages',
+      earned: languages.size >= 1,
+    });
 
-    if (languages.size >= 3) {
-      badges.push({
-        id: 'language-explorer',
-        name: 'Language Explorer',
-        description: 'Explored and used 3+ programming languages',
-        icon: Icons.Code,
-        tier: 'silver',
-        category: 'languages',
-        earned: languages.size >= 3,
-      });
-    }
+    badges.push({
+      id: 'language-explorer',
+      name: 'Language Explorer',
+      description: 'Explored and used 3+ programming languages',
+      icon: Icons.Code,
+      tier: 'silver',
+      category: 'languages',
+      earned: languages.size >= 3,
+    });
 
-    if (languages.size >= 6) {
-      badges.push({
-        id: 'polyglot-coder',
-        name: 'Polyglot Programmer',
-        description: 'Mastered 6+ different programming languages',
-        icon: Icons.Code,
-        tier: 'gold',
-        category: 'languages',
-        earned: languages.size >= 6,
-      });
-    }
+    badges.push({
+      id: 'polyglot-coder',
+      name: 'Polyglot Programmer',
+      description: 'Mastered 6+ different programming languages',
+      icon: Icons.Code,
+      tier: 'gold',
+      category: 'languages',
+      earned: languages.size >= 6,
+    });
 
-    if (languages.size >= 10) {
-      badges.push({
-        id: 'language-master',
-        name: 'Language Master',
-        description: 'Achieved proficiency in 10+ programming languages',
-        icon: Icons.Code,
-        tier: 'platinum',
-        category: 'languages',
-        earned: languages.size >= 10,
-      });
-    }
+    badges.push({
+      id: 'language-master',
+      name: 'Language Master',
+      description: 'Achieved proficiency in 10+ programming languages',
+      icon: Icons.Code,
+      tier: 'platinum',
+      category: 'languages',
+      earned: languages.size >= 10,
+    });
 
-    // Star badges
-    if (totalStars >= 1) {
-      badges.push({
-        id: 'first-star',
-        name: 'First Star',
-        description: 'Someone starred one of your repositories',
-        icon: Icons.Star,
-        tier: 'bronze',
-        category: 'impact',
-        earned: true,
-      });
-    }
+    // Star badges - always add all 4
+    badges.push({
+      id: 'first-star',
+      name: 'First Star',
+      description: 'Someone starred one of your repositories',
+      icon: Icons.Star,
+      tier: 'bronze',
+      category: 'impact',
+      earned: totalStars >= 1,
+    });
 
-    if (totalStars >= 50) {
-      badges.push({
-        id: 'rising-star',
-        name: 'Rising Star',
-        description: 'Earned 50+ stars across your repositories',
-        icon: Icons.Star,
-        tier: 'silver',
-        category: 'impact',
-        earned: totalStars >= 50,
-      });
-    }
+    badges.push({
+      id: 'rising-star',
+      name: 'Rising Star',
+      description: 'Earned 50+ stars across your repositories',
+      icon: Icons.Star,
+      tier: 'silver',
+      category: 'impact',
+      earned: totalStars >= 50,
+    });
 
-    if (totalStars >= 250) {
-      badges.push({
-        id: 'community-favorite',
-        name: 'Community Favorite',
-        description: 'Earned 250+ stars across your repositories',
-        icon: Icons.Star,
-        tier: 'gold',
-        category: 'impact',
-        earned: totalStars >= 250,
-      });
-    }
+    badges.push({
+      id: 'community-favorite',
+      name: 'Community Favorite',
+      description: 'Earned 250+ stars across your repositories',
+      icon: Icons.Star,
+      tier: 'gold',
+      category: 'impact',
+      earned: totalStars >= 250,
+    });
 
-    if (totalStars >= 1000) {
-      badges.push({
-        id: 'open-source-hero',
-        name: 'Open Source Hero',
-        description: 'Earned 1,000+ stars for your valuable contributions',
-        icon: Icons.Star,
-        tier: 'platinum',
-        category: 'impact',
-        earned: totalStars >= 1000,
-      });
-    }
+    badges.push({
+      id: 'open-source-hero',
+      name: 'Open Source Hero',
+      description: 'Earned 1,000+ stars for your valuable contributions',
+      icon: Icons.Star,
+      tier: 'platinum',
+      category: 'impact',
+      earned: totalStars >= 1000,
+    });
 
-    // Activity badges
-    if (recentActivity) {
-      badges.push({
-        id: 'active-developer',
-        name: 'Active Developer',
-        description: 'Showed coding activity within the last 30 days',
-        icon: Icons.Activity,
-        tier: 'silver',
-        category: 'activity',
-        earned: true,
-      });
-    }
+    // Activity badge - always add regardless of activity status
+    badges.push({
+      id: 'active-developer',
+      name: 'Active Developer',
+      description: 'Showed coding activity within the last 30 days',
+      icon: Icons.Activity,
+      tier: 'silver',
+      category: 'activity',
+      earned: recentActivity,
+    });
 
-    // Language specialty badges
+    // Language specialty badges - only add if there's a primary language
     if (primaryLanguage) {
       const langCount = languageCounts[primaryLanguage];
       let tier: 'bronze' | 'silver' | 'gold' = 'bronze';
@@ -421,7 +387,7 @@ export default function DeveloperBadges({
 
   // Filter badges by active category or show all if no category is selected
   const displayBadges = activeCategory
-    ? badges.filter(badge => badge.category === activeCategory)
+    ? badges.filter(badge => badge.category === activeCategory && badge.earned)
     : earnedBadges;
 
   return (
@@ -458,8 +424,12 @@ export default function DeveloperBadges({
               <span className="flex items-center gap-1.5">
                 <span className="inline-block w-2.5 h-2.5 rounded-full bg-accent-1"></span>
                 <span className="font-medium">{earnedBadges.length}</span>
+                <span className="text-l-text-3 dark:text-d-text-3">/</span>
+                <span className="text-l-text-3 dark:text-d-text-3">
+                  {badges.length}
+                </span>
               </span>
-              badge{earnedBadges.length !== 1 ? 's' : ''} earned
+              badges earned
             </div>
           </div>
         </div>
@@ -738,216 +708,182 @@ export function calculateBadges(
     return diffInDays < 30; // Activity within the last 30 days
   });
 
-  // Repository count badges
-  if (repositories.length >= 1) {
-    badges.push({
-      id: 'repo-starter',
-      name: 'Project Starter',
-      description: 'Created your first GitHub repository',
-      icon: getIcon('repository'),
-      tier: 'bronze',
-      category: 'repositories',
-      earned: true,
-    });
-  }
+  // Repository count badges - always add all 4
+  badges.push({
+    id: 'repo-starter',
+    name: 'Project Starter',
+    description: 'Created your first GitHub repository',
+    icon: getIcon('repository'),
+    tier: 'bronze',
+    category: 'repositories',
+    earned: repositories.length >= 1,
+  });
 
-  if (repositories.length >= 5) {
-    badges.push({
-      id: 'repo-creator',
-      name: 'Project Creator',
-      description: 'Maintained 5+ GitHub repositories',
-      icon: getIcon('repository'),
-      tier: 'silver',
-      category: 'repositories',
-      earned: true,
-    });
-  }
+  badges.push({
+    id: 'repo-creator',
+    name: 'Project Creator',
+    description: 'Maintained 5+ GitHub repositories',
+    icon: getIcon('repository'),
+    tier: 'silver',
+    category: 'repositories',
+    earned: repositories.length >= 5,
+  });
 
-  if (repositories.length >= 15) {
-    badges.push({
-      id: 'repo-manager',
-      name: 'Repository Manager',
-      description: 'Managed an impressive collection of 15+ repositories',
-      icon: getIcon('repository'),
-      tier: 'gold',
-      category: 'repositories',
-      earned: true,
-    });
-  }
+  badges.push({
+    id: 'repo-manager',
+    name: 'Repository Manager',
+    description: 'Managed an impressive collection of 15+ repositories',
+    icon: getIcon('repository'),
+    tier: 'gold',
+    category: 'repositories',
+    earned: repositories.length >= 15,
+  });
 
-  if (repositories.length >= 30) {
-    badges.push({
-      id: 'repo-guru',
-      name: 'Repository Guru',
-      description: 'Mastered the art of managing 30+ repositories',
-      icon: getIcon('repository'),
-      tier: 'platinum',
-      category: 'repositories',
-      earned: true,
-    });
-  }
+  badges.push({
+    id: 'repo-guru',
+    name: 'Repository Guru',
+    description: 'Mastered the art of managing 30+ repositories',
+    icon: getIcon('repository'),
+    tier: 'platinum',
+    category: 'repositories',
+    earned: repositories.length >= 30,
+  });
 
-  // Contribution badges
-  if (totalContributions >= 1) {
-    badges.push({
-      id: 'code-contributor',
-      name: 'Code Contributor',
-      description: 'Made your first contributions on GitHub',
-      icon: getIcon('commit'),
-      tier: 'bronze',
-      category: 'activity',
-      earned: true,
-    });
-  }
+  // Contribution badges - always add all 4
+  badges.push({
+    id: 'code-contributor',
+    name: 'Code Contributor',
+    description: 'Made your first contributions on GitHub',
+    icon: getIcon('commit'),
+    tier: 'bronze',
+    category: 'activity',
+    earned: totalContributions >= 1,
+  });
 
-  if (totalContributions >= 100) {
-    badges.push({
-      id: 'code-enthusiast',
-      name: 'Code Enthusiast',
-      description: 'Made 100+ contributions in the past year',
-      icon: getIcon('commit'),
-      tier: 'silver',
-      category: 'activity',
-      earned: totalContributions >= 100,
-    });
-  }
+  badges.push({
+    id: 'code-enthusiast',
+    name: 'Code Enthusiast',
+    description: 'Made 100+ contributions in the past year',
+    icon: getIcon('commit'),
+    tier: 'silver',
+    category: 'activity',
+    earned: totalContributions >= 100,
+  });
 
-  if (totalContributions >= 500) {
-    badges.push({
-      id: 'commit-machine',
-      name: 'Commit Machine',
-      description: 'Made 500+ contributions in the past year',
-      icon: getIcon('commit'),
-      tier: 'gold',
-      category: 'activity',
-      earned: totalContributions >= 500,
-    });
-  }
+  badges.push({
+    id: 'commit-machine',
+    name: 'Commit Machine',
+    description: 'Made 500+ contributions in the past year',
+    icon: getIcon('commit'),
+    tier: 'gold',
+    category: 'activity',
+    earned: totalContributions >= 500,
+  });
 
-  if (totalContributions >= 1000) {
-    badges.push({
-      id: 'commit-ninja',
-      name: 'Commit Ninja',
-      description: 'Made 1,000+ contributions in the past year',
-      icon: getIcon('commit'),
-      tier: 'platinum',
-      category: 'activity',
-      earned: totalContributions >= 1000,
-    });
-  }
+  badges.push({
+    id: 'commit-ninja',
+    name: 'Commit Ninja',
+    description: 'Made 1,000+ contributions in the past year',
+    icon: getIcon('commit'),
+    tier: 'platinum',
+    category: 'activity',
+    earned: totalContributions >= 1000,
+  });
 
-  // Language badges
-  if (languages.size >= 1) {
-    badges.push({
-      id: 'code-writer',
-      name: 'Code Writer',
-      description: 'Wrote code in your first programming language',
-      icon: getIcon('code'),
-      tier: 'bronze',
-      category: 'languages',
-      earned: true,
-    });
-  }
+  // Language badges - always add all 4
+  badges.push({
+    id: 'code-writer',
+    name: 'Code Writer',
+    description: 'Wrote code in your first programming language',
+    icon: getIcon('code'),
+    tier: 'bronze',
+    category: 'languages',
+    earned: languages.size >= 1,
+  });
 
-  if (languages.size >= 3) {
-    badges.push({
-      id: 'language-explorer',
-      name: 'Language Explorer',
-      description: 'Explored and used 3+ programming languages',
-      icon: getIcon('code'),
-      tier: 'silver',
-      category: 'languages',
-      earned: languages.size >= 3,
-    });
-  }
+  badges.push({
+    id: 'language-explorer',
+    name: 'Language Explorer',
+    description: 'Explored and used 3+ programming languages',
+    icon: getIcon('code'),
+    tier: 'silver',
+    category: 'languages',
+    earned: languages.size >= 3,
+  });
 
-  if (languages.size >= 6) {
-    badges.push({
-      id: 'polyglot-coder',
-      name: 'Polyglot Programmer',
-      description: 'Mastered 6+ different programming languages',
-      icon: getIcon('code'),
-      tier: 'gold',
-      category: 'languages',
-      earned: languages.size >= 6,
-    });
-  }
+  badges.push({
+    id: 'polyglot-coder',
+    name: 'Polyglot Programmer',
+    description: 'Mastered 6+ different programming languages',
+    icon: getIcon('code'),
+    tier: 'gold',
+    category: 'languages',
+    earned: languages.size >= 6,
+  });
 
-  if (languages.size >= 10) {
-    badges.push({
-      id: 'language-master',
-      name: 'Language Master',
-      description: 'Achieved proficiency in 10+ programming languages',
-      icon: getIcon('code'),
-      tier: 'platinum',
-      category: 'languages',
-      earned: languages.size >= 10,
-    });
-  }
+  badges.push({
+    id: 'language-master',
+    name: 'Language Master',
+    description: 'Achieved proficiency in 10+ programming languages',
+    icon: getIcon('code'),
+    tier: 'platinum',
+    category: 'languages',
+    earned: languages.size >= 10,
+  });
 
-  // Star badges
-  if (totalStars >= 1) {
-    badges.push({
-      id: 'first-star',
-      name: 'First Star',
-      description: 'Someone starred one of your repositories',
-      icon: getIcon('star'),
-      tier: 'bronze',
-      category: 'impact',
-      earned: true,
-    });
-  }
+  // Star badges - always add all 4
+  badges.push({
+    id: 'first-star',
+    name: 'First Star',
+    description: 'Someone starred one of your repositories',
+    icon: getIcon('star'),
+    tier: 'bronze',
+    category: 'impact',
+    earned: totalStars >= 1,
+  });
 
-  if (totalStars >= 50) {
-    badges.push({
-      id: 'rising-star',
-      name: 'Rising Star',
-      description: 'Earned 50+ stars across your repositories',
-      icon: getIcon('star'),
-      tier: 'silver',
-      category: 'impact',
-      earned: totalStars >= 50,
-    });
-  }
+  badges.push({
+    id: 'rising-star',
+    name: 'Rising Star',
+    description: 'Earned 50+ stars across your repositories',
+    icon: getIcon('star'),
+    tier: 'silver',
+    category: 'impact',
+    earned: totalStars >= 50,
+  });
 
-  if (totalStars >= 250) {
-    badges.push({
-      id: 'community-favorite',
-      name: 'Community Favorite',
-      description: 'Earned 250+ stars across your repositories',
-      icon: getIcon('star'),
-      tier: 'gold',
-      category: 'impact',
-      earned: totalStars >= 250,
-    });
-  }
+  badges.push({
+    id: 'community-favorite',
+    name: 'Community Favorite',
+    description: 'Earned 250+ stars across your repositories',
+    icon: getIcon('star'),
+    tier: 'gold',
+    category: 'impact',
+    earned: totalStars >= 250,
+  });
 
-  if (totalStars >= 1000) {
-    badges.push({
-      id: 'open-source-hero',
-      name: 'Open Source Hero',
-      description: 'Earned 1,000+ stars for your valuable contributions',
-      icon: getIcon('star'),
-      tier: 'platinum',
-      category: 'impact',
-      earned: totalStars >= 1000,
-    });
-  }
+  badges.push({
+    id: 'open-source-hero',
+    name: 'Open Source Hero',
+    description: 'Earned 1,000+ stars for your valuable contributions',
+    icon: getIcon('star'),
+    tier: 'platinum',
+    category: 'impact',
+    earned: totalStars >= 1000,
+  });
 
-  // Activity badges
-  if (recentActivity) {
-    badges.push({
-      id: 'active-developer',
-      name: 'Active Developer',
-      description: 'Showed coding activity within the last 30 days',
-      icon: getIcon('activity'),
-      tier: 'silver',
-      category: 'activity',
-      earned: true,
-    });
-  }
+  // Activity badge - always add regardless of activity status
+  badges.push({
+    id: 'active-developer',
+    name: 'Active Developer',
+    description: 'Showed coding activity within the last 30 days',
+    icon: getIcon('activity'),
+    tier: 'silver',
+    category: 'activity',
+    earned: recentActivity,
+  });
 
-  // Language specialty badges
+  // Language specialty badges - only add if there's a primary language
   if (primaryLanguage) {
     const langCount = languageCounts[primaryLanguage];
     let tier: 'bronze' | 'silver' | 'gold' = 'bronze';
