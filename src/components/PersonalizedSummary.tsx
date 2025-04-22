@@ -608,13 +608,6 @@ export default function PersonalizedSummary({
             <p className="text-sm text-l-text-2 dark:text-d-text-2 max-w-md mx-auto mb-3">
               Try selecting a different category
             </p>
-            <button
-              onClick={() => setActiveCategory(null)}
-              className="text-accent-1 hover:underline flex items-center gap-1.5 mx-auto text-sm cursor-pointer"
-            >
-              <Icons.ChevronLeft className="w-3 h-3" />
-              View all insights
-            </button>
           </div>
         )}
       </div>
