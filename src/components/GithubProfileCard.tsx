@@ -694,10 +694,10 @@ export default function GithubProfileCard({
                     <span className="inline-block text-2xl">🎉</span>
                   </div>
                   <div>
-                    <p className="text-accent-warning font-medium">
+                    <p className="text-start text-accent-warning font-medium">
                       Happy GitHub Anniversary!
                     </p>
-                    <p className="text-sm text-l-text-2 dark:text-d-text-2">
+                    <p className="text-start text-sm text-l-text-2 dark:text-d-text-2">
                       Today marks {accountAge.years} year
                       {accountAge.years !== 1 ? 's' : ''} since you joined
                       GitHub!
