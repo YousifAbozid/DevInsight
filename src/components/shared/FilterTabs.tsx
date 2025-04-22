@@ -62,7 +62,7 @@ export default function FilterTabs({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative mb-4 ${className}`}>
       <div
         ref={tabsScrollRef}
         className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1"
