@@ -519,8 +519,7 @@ export default function PersonalizedSummary({
                 : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
             }`}
           >
-            <Icons.Hash className="w-3 h-3 sm:w-4 sm:h-4" />
-            All ({insights.length})
+            All Insights ({insights.length})
           </button>
 
           {Object.entries(insightsByCategory).map(
