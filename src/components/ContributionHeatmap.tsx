@@ -301,7 +301,6 @@ export default function ContributionHeatmap({
     day: { date: string; contributionCount: number },
     event: React.TouchEvent
   ) => {
-    event.preventDefault();
     const element = event.currentTarget as HTMLElement;
     setHoveredDay({
       date: day.date,
@@ -478,8 +477,8 @@ export default function ContributionHeatmap({
           <ContributionGridSkeleton />
         ) : (
           /* Regular contribution grid when data is loaded */
-          <div className="w-full overflow-x-auto sm:overflow-visible">
-            <div className="min-w-[720px] sm:min-w-0 sm:w-full grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
+          <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-l-bg-3 dark:scrollbar-thumb-d-bg-3 scrollbar-track-transparent">
+            <div className="min-w-[720px] grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
               {/* Month labels */}
               <div className="col-span-1"></div>
               <div className="col-span-53 grid grid-cols-53 text-xs text-l-text-3 dark:text-d-text-3 mb-2">
