@@ -4,6 +4,17 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer utilities {
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none;
+	}
+
+	.scrollbar-hide {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+}
+
 @theme {
 	/* Light Mode - Background Colors */
 	--color-l-bg-1: #ffffff;
