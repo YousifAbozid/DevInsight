@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import DevCard from './DevCard';
 import * as htmlToImage from 'html-to-image';
+import SectionHeader from './shared/SectionHeader';
+import { Icons } from './shared/Icons';
 
 interface DevCardGeneratorProps {
   user: GithubUser;
@@ -116,9 +118,12 @@ export default function DevCardGenerator({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4">
-        GitHub README Dev Card
-      </h2>
+      <SectionHeader
+        title="GitHub README Dev Card"
+        icon={Icons.BadgeCheck}
+        subtitle="Create and export personalized GitHub profile cards for your README"
+        infoTooltip="Showcase your GitHub profile statistics with a beautiful card that you can add to your GitHub README profile. Choose a theme and download in various formats."
+      />
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Card Preview */}
