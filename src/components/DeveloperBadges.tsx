@@ -3,6 +3,7 @@ import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import { Link } from 'react-router-dom';
 import SectionHeader from './shared/SectionHeader';
+import FilterTabs, { FilterTab } from './shared/FilterTabs';
 
 interface DeveloperBadgesProps {
   user: GithubUser;
@@ -390,6 +391,29 @@ export default function DeveloperBadges({
     ? badges.filter(badge => badge.category === activeCategory && badge.earned)
     : earnedBadges;
 
+  // Create filter tabs for categories with earned badges
+  const filterTabs: FilterTab[] = [
+    {
+      id: null,
+      label: `All Earned (${earnedBadges.length})`,
+      active: activeCategory === null,
+      icon: Icons.Medal,
+      onClick: () => setActiveCategory(null),
+    },
+    ...Object.entries(badgesByCategory)
+      .filter(([, categoryBadges]) => categoryBadges.some(b => b.earned))
+      .map(([category, categoryBadges]) => {
+        const earnedCount = categoryBadges.filter(b => b.earned).length;
+        return {
+          id: category,
+          label: `${categoryInfo[category as keyof typeof categoryInfo]?.title || category} (${earnedCount})`,
+          icon: categoryInfo[category as keyof typeof categoryInfo]?.icon,
+          active: activeCategory === category,
+          onClick: () => setActiveCategory(category),
+        };
+      }),
+  ];
+
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
       <SectionHeader
@@ -425,55 +449,7 @@ export default function DeveloperBadges({
         }
       />
 
-      {/* Category filters with improved styling */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
-            <Icons.Filter className="w-4 h-4" />
-            <span className="text-sm font-medium">Filter Badges</span>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                activeCategory === null
-                  ? 'bg-accent-1 text-white'
-                  : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-              }`}
-            >
-              All Earned ({earnedBadges.length})
-            </button>
-
-            {Object.entries(badgesByCategory).map(
-              ([category, categoryBadges]) => {
-                const earnedCount = categoryBadges.filter(b => b.earned).length;
-                if (earnedCount === 0) return null;
-
-                const CategoryIcon =
-                  categoryInfo[category as keyof typeof categoryInfo]?.icon;
-
-                return (
-                  <button
-                    key={category}
-                    onClick={() => setActiveCategory(category)}
-                    className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
-                      activeCategory === category
-                        ? 'bg-accent-1 text-white'
-                        : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-                    }`}
-                  >
-                    {CategoryIcon && <CategoryIcon className="w-4 h-4" />}
-                    {categoryInfo[category as keyof typeof categoryInfo]
-                      ?.title || category}{' '}
-                    ({earnedCount})
-                  </button>
-                );
-              }
-            )}
-          </div>
-        </div>
-      </div>
+      <FilterTabs tabs={filterTabs} activeTabId={activeCategory} />
 
       {displayBadges.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
