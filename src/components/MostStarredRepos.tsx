@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Icons } from './shared/Icons';
+import SectionHeader from './shared/SectionHeader';
 
 interface MostStarredReposProps {
   repositories: Repository[] | undefined;
@@ -135,14 +136,12 @@ export default function MostStarredRepos({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Icons.Star className="w-6 h-6 text-accent-1" />
-          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-            Most Starred Repositories
-          </h2>
-        </div>
-      </div>
+      <SectionHeader
+        title="Most Starred Repositories"
+        icon={Icons.Star}
+        subtitle="Your highest-rated GitHub projects by community stars"
+        infoTooltip="Repositories are sorted by star count. Stars represent appreciation from other GitHub users and indicate popular or useful projects."
+      />
 
       {/* Category filters with improved styling matching DeveloperBadges component */}
       {languages.length > 0 && (
