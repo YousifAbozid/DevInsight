@@ -310,6 +310,45 @@ function useTimelineEvents(
   }, [user, repositories, contributionData]);
 }
 
+// Category configuration for timeline events
+const eventTypeInfo = {
+  all: {
+    title: 'All Events',
+    icon: Icons.Calendar,
+    description: 'View your complete GitHub journey',
+  },
+  repo: {
+    title: 'Repository Events',
+    icon: Icons.Repo,
+    description: 'Events related to your GitHub repositories',
+  },
+  star: {
+    title: 'Star Achievements',
+    icon: Icons.Star,
+    description: 'Recognition from the GitHub community',
+  },
+  follower: {
+    title: 'Follower Milestones',
+    icon: Icons.Users,
+    description: 'Growth of your GitHub following',
+  },
+  streak: {
+    title: 'Contribution Streaks',
+    icon: Icons.Fire,
+    description: 'Periods of consistent activity on GitHub',
+  },
+  anniversary: {
+    title: 'GitHub Anniversaries',
+    icon: Icons.Cake,
+    description: 'Celebrating your time on GitHub',
+  },
+  milestone: {
+    title: 'Career Milestones',
+    icon: Icons.Trophy,
+    description: 'Significant achievements in your developer journey',
+  },
+};
+
 // Helper function for rendering individual timeline events
 function TimelineEventItem({ event }: { event: TimelineEvent }) {
   return (
@@ -476,38 +515,52 @@ export default function DevJourneyTimeline({
         </div>
       </div>
 
-      {/* Filter options */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div className="flex items-center gap-1 text-l-text-2 dark:text-d-text-2">
-          <Icons.Filter className="w-4 h-4" />
-          <span className="text-sm">Filter:</span>
-        </div>
+      {/* Filter tabs with improved styling matching DeveloperBadges component */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2 bg-l-bg-3/50 dark:bg-d-bg-3/50 px-2.5 py-1.5 rounded-md">
+            <Icons.Filter className="w-4 h-4" />
+            <span className="text-sm font-medium">Filter Timeline</span>
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-2.5 py-1 text-xs rounded-full transition-colors ${
-              filter === 'all'
-                ? 'bg-accent-1 text-white'
-                : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
-            }`}
-          >
-            All ({sortedEvents.length})
-          </button>
-
-          {eventTypes.map(type => (
+          <div className="flex flex-wrap gap-2">
             <button
-              key={type}
-              onClick={() => setFilter(type)}
-              className={`px-2.5 py-1 text-xs rounded-full capitalize transition-colors ${
-                filter === type
+              onClick={() => setFilter('all')}
+              className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                filter === 'all'
                   ? 'bg-accent-1 text-white'
                   : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
               }`}
             >
-              {type} ({eventCounts[type]})
+              {eventTypeInfo.all.icon && (
+                <eventTypeInfo.all.icon className="w-4 h-4" />
+              )}
+              All Events ({sortedEvents.length})
             </button>
-          ))}
+
+            {eventTypes.map(type => {
+              const EventIcon =
+                eventTypeInfo[type as keyof typeof eventTypeInfo]?.icon;
+              const eventTitle =
+                eventTypeInfo[type as keyof typeof eventTypeInfo]?.title ||
+                type;
+
+              return (
+                <button
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  className={`px-3 py-1.5 text-sm rounded-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    filter === type
+                      ? 'bg-accent-1 text-white'
+                      : 'bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
+                  }`}
+                >
+                  {EventIcon && <EventIcon className="w-4 h-4" />}
+                  {eventTitle} ({eventCounts[type]})
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
