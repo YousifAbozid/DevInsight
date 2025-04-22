@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import { Link } from 'react-router-dom';
+import SectionHeader from './shared/SectionHeader';
 
 interface DeveloperBadgesProps {
   user: GithubUser;
@@ -346,7 +347,6 @@ export default function DeveloperBadges({
   loading,
 }: DeveloperBadgesProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [showInfo, setShowInfo] = useState<boolean>(false);
 
   // Move the hook call here before any conditional returns
   // This ensures hooks are always called in the same order
@@ -392,22 +392,12 @@ export default function DeveloperBadges({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
-      {/* Improved Header Layout */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Icons.Medal className="w-6 h-6 text-accent-1" />
-            <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-              Developer Achievements
-            </h2>
-            <button
-              onClick={() => setShowInfo(!showInfo)}
-              className="text-l-text-3 dark:text-d-text-3 hover:text-accent-1 transition-colors ml-1 cursor-pointer"
-              aria-label="Show badge information"
-            >
-              <Icons.Info className="w-4 h-4" />
-            </button>
-          </div>
+      <SectionHeader
+        title="Developer Badges"
+        icon={Icons.Medal}
+        subtitle="Showcase your GitHub development milestones and accomplishments"
+        infoTooltip="Badges are awarded based on your GitHub activity and achievements. They come in four tiers: Bronze, Silver, Gold, and Platinum. Continue your open source journey to unlock more badges!"
+        rightControls={
           <div className="flex items-center gap-2">
             <Link
               to="/badges"
@@ -432,22 +422,8 @@ export default function DeveloperBadges({
               badges earned
             </div>
           </div>
-        </div>
-
-        {showInfo && (
-          <div className="mt-4 p-4 bg-l-bg-1 dark:bg-d-bg-1 rounded-lg text-sm text-l-text-2 dark:text-d-text-2 border border-border-l dark:border-border-d animate-fadeIn">
-            <p className="flex items-start gap-2">
-              <Icons.Info className="w-4 h-4 text-accent-1 mt-0.5 flex-shrink-0" />
-              <span>
-                Badges are awarded based on your GitHub activity and
-                achievements. They come in four tiers: Bronze, Silver, Gold, and
-                Platinum. Continue your open source journey to unlock more
-                badges!
-              </span>
-            </p>
-          </div>
-        )}
-      </div>
+        }
+      />
 
       {/* Category filters with improved styling */}
       <div className="mb-6">
