@@ -520,14 +520,20 @@ export default function ContributionHeatmap({
                 {organizedCalendar.map((week, weekIndex) => (
                   <div
                     key={weekIndex}
-                    className="grid grid-rows-7 gap-y-[1px] h-full"
+                    className="grid grid-rows-7 gap-y-[1px]"
+                    style={{
+                      height: '100%',
+                      gridTemplateRows: 'repeat(7, minmax(0, 1fr))',
+                    }}
                   >
                     {week.map((day, dayIndex) => {
                       if (day.isEmpty) {
                         return (
                           <div
                             key={`empty-${weekIndex}-${dayIndex}`}
-                            className="opacity-0 aspect-square w-full h-full"
+                            className="w-2.5 h-2.5 opacity-0"
+                            style={{ visibility: 'hidden' }}
+                            aria-hidden="true"
                           ></div>
                         );
                       }
@@ -540,7 +546,7 @@ export default function ContributionHeatmap({
                       return (
                         <div
                           key={`${weekIndex}-${dayIndex}`}
-                          className={`aspect-square w-full ${colorClass} 
+                          className={`w-2.5 h-2.5 ${colorClass} 
                           rounded-[2px] 
                           hover:scale-105 hover:shadow-md
                           transition-all duration-150 ease-in-out
