@@ -105,19 +105,41 @@ export default function GithubProfilePage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-accent-1/10 rounded-lg animate-pulse">
-            <img src="/favicon.svg" alt="DevInsight Logo" className="w-8 h-8" />
+          <div className="p-2 bg-accent-1/10 rounded-lg animate-pulse relative">
+            <img
+              src="/favicon.svg"
+              alt="DevInsight Logo"
+              className="w-8 h-8 animate-fade-in"
+            />
+            {/* Add subtle circle animation behind the logo */}
+            <span className="absolute inset-0 bg-accent-1/5 rounded-lg scale-0 animate-[pulse_2s_ease-in-out_infinite]"></span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold">
-            <span className="text-l-text-1 dark:text-d-text-1">Dev</span>
-            <span className="text-accent-1">Insight</span>
-            <span className="text-l-text-2 dark:text-d-text-2 font-normal text-xl md:text-2xl">
+            <span
+              className="text-l-text-1 dark:text-d-text-1 inline-block animate-fade-in-down"
+              style={{ animationDelay: '0.1s' }}
+            >
+              Dev
+            </span>
+            <span
+              className="text-accent-1 inline-block animate-fade-in-down"
+              style={{ animationDelay: '0.2s' }}
+            >
+              Insight
+            </span>
+            <span
+              className="text-l-text-2 dark:text-d-text-2 font-normal text-xl md:text-2xl inline-block animate-fade-in-down"
+              style={{ animationDelay: '0.3s' }}
+            >
               {' '}
               - GitHub Profile Explorer
             </span>
           </h1>
         </div>
-        <p className="text-l-text-2 dark:text-d-text-2 pl-1">
+        <p
+          className="text-l-text-2 dark:text-d-text-2 pl-1 animate-fade-in"
+          style={{ animationDelay: '0.4s' }}
+        >
           Enter a GitHub username to view their profile information
         </p>
       </div>
@@ -282,11 +304,16 @@ export default function GithubProfilePage() {
                     'yyx990803',
                     'sindresorhus',
                     'ThePrimeagen',
-                  ].map(suggestion => (
+                  ].map((suggestion, index) => (
                     <button
                       key={suggestion}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="px-2 py-1 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-colors cursor-pointer"
+                      className="px-2 py-1 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-all cursor-pointer hover:scale-110 hover:-translate-y-1"
+                      style={{
+                        animation: 'fadeInDown 0.5s ease-out forwards',
+                        animationDelay: `${0.2 + index * 0.1}s`,
+                        opacity: 0,
+                      }}
                     >
                       {suggestion}
                     </button>
