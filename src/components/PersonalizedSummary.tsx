@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
+import SectionHeader from './shared/SectionHeader';
 
 // Define proper interfaces
 interface PersonalizedSummaryProps {
@@ -492,22 +493,16 @@ export default function PersonalizedSummary({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-3 sm:p-5 border border-border-l dark:border-border-d shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2">
-            <Icons.Award className="w-5 h-5 text-accent-1" />
-            Your GitHub Story
-          </h2>
-          <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-1">
-            Insights from your developer journey
-          </p>
-        </div>
-        <div className="flex items-center">
+      <SectionHeader
+        title="Your GitHub Story"
+        subtitle="Insights from your developer journey"
+        icon={Icons.Award}
+        rightControls={
           <span className="px-3 py-1 text-xs rounded-full bg-accent-1/15 text-accent-1 font-medium">
             {profileLevel}
           </span>
-        </div>
-      </div>
+        }
+      />
 
       {/* Horizontal scrollable filters */}
       <div className="mb-4 relative">
