@@ -477,7 +477,10 @@ export default function ContributionHeatmap({
           <ContributionGridSkeleton />
         ) : (
           /* Regular contribution grid when data is loaded */
-          <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-l-bg-3 dark:scrollbar-thumb-d-bg-3 scrollbar-track-transparent">
+          <div
+            className="w-full overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-accent-1/30 hover:scrollbar-thumb-accent-1/50 scrollbar-track-transparent rounded-md pb-1"
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             <div className="min-w-[720px] grid grid-cols-[auto_repeat(53,1fr)] gap-x-3 gap-y-2">
               {/* Month labels */}
               <div className="col-span-1"></div>
