@@ -483,6 +483,7 @@ export default function DevJourneyTimeline({
         title="Developer Journey Timeline"
         subtitle="Your GitHub story, from first commit to latest achievements"
         icon={Icons.Calendar}
+        infoTooltip="The Developer Journey Timeline visualizes your GitHub milestones and achievements chronologically. It shows repository creations, contribution streaks, follower milestones, and important events from your developer career."
         rightControls={
           <div className="flex items-center p-1 bg-l-bg-1 dark:bg-d-bg-1 rounded-full border border-border-l dark:border-border-d">
             <button
