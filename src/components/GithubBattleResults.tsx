@@ -1,6 +1,6 @@
 import React, { JSX, useMemo, useState } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
-import { calculateBadges } from './DeveloperBadges';
+import { calculateBadges } from '../hooks/useBadgeFunctions';
 import { aggregateLanguageData } from '../services/githubService';
 import { Icons } from './shared/Icons';
 import { motion } from 'framer-motion';
