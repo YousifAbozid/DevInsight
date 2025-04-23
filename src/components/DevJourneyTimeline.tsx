@@ -205,7 +205,7 @@ export default function DevJourneyTimeline({
           <div className="flex items-center p-1 bg-l-bg-1 dark:bg-d-bg-1 rounded-full border border-border-l dark:border-border-d">
             <button
               onClick={() => setViewMode('compact')}
-              className={`px-3 py-1 text-sm rounded-full transition-all ${
+              className={`px-3 py-1 text-sm rounded-full transition-all cursor-pointer ${
                 viewMode === 'compact'
                   ? 'bg-accent-1 text-white shadow-sm'
                   : 'bg-transparent text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'
@@ -215,7 +215,7 @@ export default function DevJourneyTimeline({
             </button>
             <button
               onClick={() => setViewMode('detailed')}
-              className={`px-3 py-1 text-sm rounded-full transition-all ${
+              className={`px-3 py-1 text-sm rounded-full transition-all cursor-pointer ${
                 viewMode === 'detailed'
                   ? 'bg-accent-1 text-white shadow-sm'
                   : 'bg-transparent text-l-text-2 dark:text-d-text-2 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover'

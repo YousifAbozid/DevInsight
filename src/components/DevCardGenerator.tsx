@@ -140,7 +140,7 @@ export default function DevCardGenerator({
               ).map(theme => (
                 <button
                   key={theme}
-                  className={`p-3 border rounded-md text-sm ${
+                  className={`p-3 border rounded-md text-sm cursor-pointer  ${
                     selectedTheme === theme
                       ? 'border-accent-1 bg-accent-1/10 text-accent-1'
                       : 'border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2'
