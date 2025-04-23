@@ -238,6 +238,3 @@ export default function DeveloperBadges({
     </div>
   );
 }
-
-// Export the badge calculation function from the hook file
-export { calculateBadges } from '../hooks/useBadgeFunctions';
