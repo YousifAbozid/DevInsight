@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Toast as ToastType } from './ToastContext';
+import { useEffect, useState, useRef } from 'react';
+import { Toast as ToastType } from '../../context/ToastContext';
 import { Icons } from './Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,15 +10,40 @@ interface ToastProps {
 
 export default function Toast({ toast, onRemove }: ToastProps) {
   const [visible, setVisible] = useState(true);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const startTimeRef = useRef<number>(Date.now());
+  const animationFrameRef = useRef<number | null>(null);
 
   // Start exit animation before removing from DOM
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 2700); // 300ms before the actual removal to allow for animation
+    }, toast.duration - 300); // 300ms before the actual removal to allow for animation
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Update progress bar
+    const updateProgressBar = () => {
+      if (!progressRef.current) return;
+
+      const elapsed = Date.now() - startTimeRef.current;
+      const remaining = Math.max(0, toast.duration - elapsed);
+      const progress = (remaining / toast.duration) * 100;
+
+      progressRef.current.style.width = `${progress}%`;
+
+      if (progress > 0) {
+        animationFrameRef.current = requestAnimationFrame(updateProgressBar);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(updateProgressBar);
+
+    return () => {
+      clearTimeout(timer);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [toast.duration]);
 
   // Once exit animation completes, call onRemove
   useEffect(() => {
@@ -35,27 +60,31 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         return {
           icon: <Icons.Check className="w-5 h-5" />,
           bgColor: 'bg-accent-success text-white',
+          progressColor: 'bg-white/60',
         };
       case 'error':
         return {
           icon: <Icons.AlertCircle className="w-5 h-5" />,
           bgColor: 'bg-accent-danger text-white',
+          progressColor: 'bg-white/60',
         };
       case 'warning':
         return {
           icon: <Icons.AlertTriangle className="w-5 h-5" />,
           bgColor: 'bg-accent-warning text-l-text-1 dark:text-d-text-1',
+          progressColor: 'bg-l-text-1 dark:bg-d-text-1/60',
         };
       case 'info':
       default:
         return {
           icon: <Icons.Info className="w-5 h-5" />,
           bgColor: 'bg-accent-1 text-white',
+          progressColor: 'bg-white/60',
         };
     }
   };
 
-  const { icon, bgColor } = getToastStyles();
+  const { icon, bgColor, progressColor } = getToastStyles();
 
   return (
     <AnimatePresence>
@@ -65,11 +94,22 @@ export default function Toast({ toast, onRemove }: ToastProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.9 }}
           transition={{ duration: 0.2 }}
-          className={`${bgColor} rounded-lg p-3 shadow-lg flex items-center gap-3 max-w-md w-full`}
+          className={`${bgColor} rounded-lg shadow-lg flex flex-col max-w-md w-full overflow-hidden`}
           role="alert"
         >
-          {icon}
-          <p className="text-sm font-medium flex-1">{toast.message}</p>
+          <div className="p-3 flex items-center gap-3">
+            {icon}
+            <p className="text-sm font-medium flex-1">{toast.message}</p>
+          </div>
+
+          {/* Progress indicator */}
+          <div className="h-1 w-full bg-black/10">
+            <div
+              ref={progressRef}
+              className={`h-full ${progressColor} transition-all`}
+              style={{ width: '100%' }}
+            />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
