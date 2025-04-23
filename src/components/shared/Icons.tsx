@@ -86,6 +86,14 @@ import {
   Linkedin,
   Twitter,
   Hash,
+
+  // Adding missing icons used in CoderPersona and elsewhere
+  Share2,
+  Image,
+  FileCode,
+
+  // Add missing Loader icon for loading states
+  Loader,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -240,4 +248,12 @@ export const Icons = {
 
   // Add Hash icon
   Hash: ({ className }: IconProps) => <Hash className={className} />,
+
+  // Add missing icons used in CoderPersona export section
+  Share2: ({ className }: IconProps) => <Share2 className={className} />,
+  Image: ({ className }: IconProps) => <Image className={className} />,
+  FileCode: ({ className }: IconProps) => <FileCode className={className} />,
+
+  // Add missing Loader icon for loading states
+  Loader: ({ className }: IconProps) => <Loader className={className} />,
 };

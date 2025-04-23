@@ -173,88 +173,56 @@ export default function CoderPersona({
         </div>
       </div>
 
-      {/* Export Options */}
-      <div className="mt-6 border-t border-border-l dark:border-border-d pt-4">
-        <div className="flex flex-wrap items-center justify-between">
-          <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-2 md:mb-0">
+      {/* Export Options - Clean & Simple Design */}
+      <div className="mt-5 flex flex-col border-t border-border-l dark:border-border-d pt-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center">
+            <Icons.Share2 className="w-4 h-4 text-accent-1 mr-1.5" />
             Share Your Persona
           </h3>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2">
             <button
               onClick={() => generateImage('png')}
               disabled={isExporting}
-              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              title="Download as PNG image"
             >
-              <Icons.Download className="w-4 h-4" />
+              <Icons.Image className="w-3.5 h-3.5 text-accent-1" />
               PNG
             </button>
 
             <button
               onClick={() => generateImage('svg')}
               disabled={isExporting}
-              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              title="Download as SVG vector"
             >
-              <Icons.Code className="w-4 h-4" />
+              <Icons.FileCode className="w-3.5 h-3.5 text-accent-2" />
               SVG
             </button>
-
-            {/* <button
-              onClick={generateMarkdownSnippet}
-              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
-            >
-              <Icons.Copy className="w-4 h-4" />
-              Copy MD
-            </button>
-
-            <button
-              onClick={downloadMarkdown}
-              className="px-3 py-1.5 flex items-center justify-center gap-1.5 text-xs font-medium bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover"
-            >
-              <Icons.Document className="w-4 h-4" />
-              .MD
-            </button> */}
           </div>
         </div>
 
-        {/* Status messages */}
-        <div className="mt-2 min-h-6">
+        {/* Status message area */}
+        <div className="h-6 flex justify-center items-center text-xs">
           {isExporting && (
-            <div className="text-l-text-2 dark:text-d-text-2 text-xs flex items-center gap-1.5 justify-end">
-              <svg
-                className="animate-spin h-3 w-3"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Generating image...
+            <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2">
+              <Icons.Loader className="w-3.5 h-3.5 animate-spin" />
+              Exporting your persona...
             </div>
           )}
 
           {exportSuccess && (
-            <div className="text-accent-success text-xs flex items-center gap-1.5 justify-end">
-              <Icons.Check className="w-3 h-3" />
+            <div className="flex items-center gap-1.5 text-accent-success">
+              <Icons.Check className="w-3.5 h-3.5" />
               Successfully exported!
             </div>
           )}
 
           {copiedSnippet && (
-            <div className="text-accent-success text-xs flex items-center gap-1.5 justify-end">
-              <Icons.Check className="w-3 h-3" />
+            <div className="flex items-center gap-1.5 text-accent-success">
+              <Icons.Check className="w-3.5 h-3.5" />
               Copied to clipboard!
             </div>
           )}
