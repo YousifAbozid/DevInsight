@@ -96,112 +96,110 @@ export default function GitHubBattlePage() {
     !hasError;
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-482px)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
-            GitHub Battle ⚔️
-          </h1>
-          <p className="text-l-text-2 dark:text-d-text-2 text-base md:text-lg">
-            Compare two GitHub users and see who comes out on top
-          </p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-l-text-1 dark:text-d-text-1 mb-2">
+          GitHub Battle ⚔️
+        </h1>
+        <p className="text-l-text-2 dark:text-d-text-2 text-base md:text-lg">
+          Compare two GitHub users and see who comes out on top
+        </p>
+      </div>
+
+      <GithubCompareForm
+        onCompare={handleCompare}
+        isLoading={isLoading}
+        initialToken={token}
+      />
+
+      {isLoading && (
+        <div className="flex justify-center my-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-1"></div>
         </div>
+      )}
 
-        <GithubCompareForm
-          onCompare={handleCompare}
-          isLoading={isLoading}
-          initialToken={token}
-        />
+      {hasError && (
+        <div className="bg-accent-danger/10 border-l-4 border-accent-danger p-6 rounded-lg my-6">
+          <div className="flex items-start gap-4">
+            <div className="text-accent-danger">
+              <Icons.AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-accent-danger mb-2">
+                Battle Error
+              </h3>
 
-        {isLoading && (
-          <div className="flex justify-center my-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-1"></div>
-          </div>
-        )}
+              {user1ErrorType === 'not_found' && (
+                <p className="text-accent-danger mb-2">
+                  User <span className="font-bold">{usernames?.user1}</span> was
+                  not found. Please check the spelling and try again.
+                </p>
+              )}
 
-        {hasError && (
-          <div className="bg-accent-danger/10 border-l-4 border-accent-danger p-6 rounded-lg my-6">
-            <div className="flex items-start gap-4">
-              <div className="text-accent-danger">
-                <Icons.AlertCircle className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-accent-danger mb-2">
-                  Battle Error
-                </h3>
+              {user2ErrorType === 'not_found' && (
+                <p className="text-accent-danger mb-2">
+                  User <span className="font-bold">{usernames?.user2}</span> was
+                  not found. Please check the spelling and try again.
+                </p>
+              )}
 
-                {user1ErrorType === 'not_found' && (
+              {user1ErrorType === 'rate_limit' ||
+                (user2ErrorType === 'rate_limit' && (
                   <p className="text-accent-danger mb-2">
-                    User <span className="font-bold">{usernames?.user1}</span>{' '}
-                    was not found. Please check the spelling and try again.
+                    GitHub API rate limit exceeded. Please try again later or
+                    use a personal access token.
                   </p>
-                )}
+                ))}
 
-                {user2ErrorType === 'not_found' && (
-                  <p className="text-accent-danger mb-2">
-                    User <span className="font-bold">{usernames?.user2}</span>{' '}
-                    was not found. Please check the spelling and try again.
-                  </p>
-                )}
+              {!user1ErrorType && !user2ErrorType && (
+                <p className="text-accent-danger mb-2">
+                  {user1Error instanceof Error
+                    ? user1Error.message
+                    : user2Error instanceof Error
+                      ? user2Error.message
+                      : 'An error occurred'}
+                </p>
+              )}
 
-                {user1ErrorType === 'rate_limit' ||
-                  (user2ErrorType === 'rate_limit' && (
-                    <p className="text-accent-danger mb-2">
-                      GitHub API rate limit exceeded. Please try again later or
-                      use a personal access token.
-                    </p>
-                  ))}
-
-                {!user1ErrorType && !user2ErrorType && (
-                  <p className="text-accent-danger mb-2">
-                    {user1Error instanceof Error
-                      ? user1Error.message
-                      : user2Error instanceof Error
-                        ? user2Error.message
-                        : 'An error occurred'}
-                  </p>
-                )}
-
-                <div className="mt-3 text-sm text-accent-danger/80">
-                  <p>Possible solutions:</p>
-                  <ul className="list-disc ml-5 mt-1 space-y-1">
-                    {(user1ErrorType === 'not_found' ||
-                      user2ErrorType === 'not_found') && (
-                      <li>Double-check the username spelling</li>
-                    )}
-                    {(user1ErrorType === 'rate_limit' ||
-                      user2ErrorType === 'rate_limit') && (
-                      <li>
-                        Add your GitHub personal access token to increase rate
-                        limits
-                      </li>
-                    )}
+              <div className="mt-3 text-sm text-accent-danger/80">
+                <p>Possible solutions:</p>
+                <ul className="list-disc ml-5 mt-1 space-y-1">
+                  {(user1ErrorType === 'not_found' ||
+                    user2ErrorType === 'not_found') && (
+                    <li>Double-check the username spelling</li>
+                  )}
+                  {(user1ErrorType === 'rate_limit' ||
+                    user2ErrorType === 'rate_limit') && (
                     <li>
-                      Try again in a few minutes if GitHub API is experiencing
-                      issues
+                      Add your GitHub personal access token to increase rate
+                      limits
                     </li>
-                  </ul>
-                </div>
+                  )}
+                  <li>
+                    Try again in a few minutes if GitHub API is experiencing
+                    issues
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {showResults && (
-          <GithubBattleResults
-            user1={{
-              user: user1,
-              repositories: user1Repos,
-              contributionData: user1ContributionData,
-            }}
-            user2={{
-              user: user2,
-              repositories: user2Repos,
-              contributionData: user2ContributionData,
-            }}
-          />
-        )}
-      </div>
+      {showResults && (
+        <GithubBattleResults
+          user1={{
+            user: user1,
+            repositories: user1Repos,
+            contributionData: user1ContributionData,
+          }}
+          user2={{
+            user: user2,
+            repositories: user2Repos,
+            contributionData: user2ContributionData,
+          }}
+        />
+      )}
     </div>
   );
 }

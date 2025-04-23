@@ -41,7 +41,7 @@ function App() {
         <div className="min-h-screen bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1">
           <Header />
 
-          <main className="container mx-auto p-4 md:px-8">
+          <main className="container mx-auto p-4 md:px-8 min-h-[calc(100vh-450px)]">
             {/* Rate limit indicator */}
             <RateLimitIndicator token={token} />
 
