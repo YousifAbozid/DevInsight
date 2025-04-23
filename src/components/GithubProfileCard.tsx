@@ -4,6 +4,7 @@ import { useUserPullRequests, useUserIssues } from '../services/githubService';
 import { Icons } from './shared/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../context/ToastContext';
+import GithubProfileCardSkeleton from './shared/Skeletons/GithubProfileCardSkeleton';
 
 interface GithubProfileCardProps {
   user: GithubUser;
@@ -11,6 +12,7 @@ interface GithubProfileCardProps {
   onSaveUserData?: () => void;
   onSaveReposData?: () => void;
   hasRepositories?: boolean;
+  loading?: boolean;
 }
 
 export default function GithubProfileCard({
@@ -19,11 +21,17 @@ export default function GithubProfileCard({
   onSaveUserData,
   onSaveReposData,
   hasRepositories = false,
+  loading = false,
 }: GithubProfileCardProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
   const { notify } = useToast(); // Use our new toast notification system
+
+  // Return skeleton loader if loading prop is true
+  if (loading) {
+    return <GithubProfileCardSkeleton />;
+  }
 
   // Get token from localStorage for authenticated requests
   const token = localStorage.getItem('github_token') || undefined;
