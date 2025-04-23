@@ -13,25 +13,33 @@ export default function Toast({ toast, onRemove }: ToastProps) {
   const progressRef = useRef<HTMLDivElement>(null);
   const startTimeRef = useRef<number>(Date.now());
   const animationFrameRef = useRef<number | null>(null);
+  const toastDuration = toast.duration;
+  const animationDuration = 300; // Exit animation duration in ms
 
   // Start exit animation before removing from DOM
   useEffect(() => {
+    const visibleDuration = toastDuration - animationDuration;
+
     const timer = setTimeout(() => {
       setVisible(false);
-    }, toast.duration - 300); // 300ms before the actual removal to allow for animation
+    }, visibleDuration);
 
-    // Update progress bar
+    // Update progress bar - this will run for the full visible duration
     const updateProgressBar = () => {
       if (!progressRef.current) return;
 
       const elapsed = Date.now() - startTimeRef.current;
-      const remaining = Math.max(0, toast.duration - elapsed);
-      const progress = (remaining / toast.duration) * 100;
+      // Make sure progress bar finishes exactly when the visible duration ends
+      const remaining = Math.max(0, visibleDuration - elapsed);
+      const progress = (remaining / visibleDuration) * 100;
 
       progressRef.current.style.width = `${progress}%`;
 
-      if (progress > 0) {
+      if (elapsed < visibleDuration) {
         animationFrameRef.current = requestAnimationFrame(updateProgressBar);
+      } else if (progressRef.current) {
+        // Ensure we set to exactly 0% at the end
+        progressRef.current.style.width = '0%';
       }
     };
 
@@ -43,12 +51,12 @@ export default function Toast({ toast, onRemove }: ToastProps) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [toast.duration]);
+  }, [toastDuration]);
 
   // Once exit animation completes, call onRemove
   useEffect(() => {
     if (!visible) {
-      const timer = setTimeout(onRemove, 300);
+      const timer = setTimeout(onRemove, animationDuration);
       return () => clearTimeout(timer);
     }
   }, [visible, onRemove]);
@@ -106,8 +114,8 @@ export default function Toast({ toast, onRemove }: ToastProps) {
           <div className="h-1 w-full bg-black/10">
             <div
               ref={progressRef}
-              className={`h-full ${progressColor} transition-all`}
-              style={{ width: '100%' }}
+              className={`h-full ${progressColor}`}
+              style={{ width: '100%', transition: 'width linear' }}
             />
           </div>
         </motion.div>
