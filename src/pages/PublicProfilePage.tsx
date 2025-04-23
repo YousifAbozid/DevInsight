@@ -7,7 +7,7 @@ import {
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
-import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
+// import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
 import MostStarredRepos from '../components/MostStarredRepos';
 import DeveloperBadges from '../components/DeveloperBadges';
@@ -442,11 +442,11 @@ export default function PublicProfilePage({
           />
 
           {/* Language pie chart - For both users and organizations */}
-          {isReposLoading ? (
+          {/* {isReposLoading ? (
             <LanguageChartSkeleton />
-          ) : (
-            <LanguagePieChart data={languageData} loading={isReposLoading} />
-          )}
+          ) : ( */}
+          <LanguagePieChart data={languageData} loading={isReposLoading} />
+          {/* // )} */}
 
           {/* Contribution heatmap - Only for user profiles */}
           {detectedProfileType === 'user' && username && (
