@@ -10,6 +10,7 @@ import {
   getChartColorForPersona,
 } from '../hooks/useCoderPersona';
 import { useToast } from '../context/ToastContext';
+import CoderPersonaSkeleton from './shared/Skeletons/CoderPersonaSkeleton';
 
 interface CoderPersonaProps {
   user: GithubUser;
@@ -210,42 +211,6 @@ export default function CoderPersona({
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Skeleton loader component
-function CoderPersonaSkeleton() {
-  return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d animate-pulse">
-      <div className="flex justify-between items-center mb-4">
-        <div className="h-6 w-48 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-      </div>
-
-      <div className="bg-l-bg-1 dark:bg-d-bg-1 rounded-lg p-6 border border-border-l dark:border-border-d">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="md:w-1/3 flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-l-bg-3 dark:bg-d-bg-3 mb-4"></div>
-            <div className="h-6 w-32 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
-            <div className="h-4 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-          </div>
-
-          <div className="md:w-2/3 h-64 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        </div>
-
-        <div className="mt-6">
-          <div className="h-5 w-40 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
-          <div className="h-4 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
-          <div className="h-4 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded mb-2"></div>
-          <div className="h-4 w-2/3 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        </div>
-      </div>
-
-      <div className="mt-4 flex gap-3 justify-center">
-        <div className="h-10 w-32 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-        <div className="h-10 w-32 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
       </div>
     </div>
   );
