@@ -5,9 +5,7 @@ import {
   useBatchUserData, // Added batch data hook
 } from '../services/githubService';
 import GithubProfileCard from '../components/GithubProfileCard';
-import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
-// import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
 import MostStarredRepos from '../components/MostStarredRepos';
 import DeveloperBadges from '../components/DeveloperBadges';
@@ -17,6 +15,16 @@ import DevCardGenerator from '../components/DevCardGenerator';
 import CoderPersona from '../components/CoderPersona';
 import DevJourneyTimeline from '../components/DevJourneyTimeline';
 import ProfileErrorState from '../components/ProfileErrorState';
+
+// Import all skeleton components
+import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
+import PersonalizedSummarySkeleton from '../components/shared/Skeletons/PersonalizedSummarySkeleton';
+import DevJourneyTimelineSkeleton from '../components/shared/Skeletons/DevJourneyTimelineSkeleton';
+import CoderPersonaSkeleton from '../components/shared/Skeletons/CoderPersonaSkeleton';
+import DeveloperBadgesSkeleton from '../components/shared/Skeletons/DeveloperBadgesSkeleton';
+import MostStarredReposSkeleton from '../components/shared/Skeletons/MostStarredReposSkeleton';
+import LanguagePieChartSkeleton from '../components/shared/Skeletons/LanguagePieChartSkeleton';
+import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/ContributionHeatmapPageSkeleton';
 
 // Define interface for JSON-LD structured data
 interface StructuredData {
@@ -375,7 +383,31 @@ export default function PublicProfilePage({
       )}
 
       {isUserLoading ? (
-        <GithubProfileCardSkeleton />
+        // Show all skeleton components during loading
+        <div className="space-y-6 md:space-y-8">
+          <GithubProfileCardSkeleton />
+
+          {/* Personalized Summary Skeleton */}
+          <PersonalizedSummarySkeleton />
+
+          {/* Dev Journey Timeline Skeleton - Only for user profiles */}
+          <DevJourneyTimelineSkeleton />
+
+          {/* Coder Persona Skeleton - Only for user profiles */}
+          <CoderPersonaSkeleton />
+
+          {/* Developer Badges Skeleton - Only for user profiles */}
+          <DeveloperBadgesSkeleton />
+
+          {/* Most Starred Repos Skeleton */}
+          <MostStarredReposSkeleton />
+
+          {/* Language Chart Skeleton */}
+          <LanguagePieChartSkeleton />
+
+          {/* Contribution Heatmap Skeleton - Only for user profiles */}
+          <ContributionHeatmapPageSkeleton />
+        </div>
       ) : isUserError || !user ? (
         <ProfileErrorState
           username={username}
