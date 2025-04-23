@@ -9,7 +9,7 @@ import PersonasPage from './pages/PersonasPage';
 import BadgesPage from './pages/BadgesPage';
 import ToastDemoPage from './pages/ToastDemoPage';
 import RateLimitIndicator from './components/RateLimitIndicator';
-import { ToastProvider } from './components/shared/ToastContext';
+import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/shared/ToastContainer';
 
 function App() {
