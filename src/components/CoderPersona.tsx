@@ -173,57 +173,68 @@ export default function CoderPersona({
         </div>
       </div>
 
-      {/* Export Options - Clean & Simple Design */}
-      <div className="mt-5 flex flex-col border-t border-border-l dark:border-border-d pt-4">
-        <div className="flex items-center justify-between mb-2">
+      {/* Enhanced Export Options - Responsive & Mobile Friendly */}
+      <div className="mt-5 border-t border-border-l dark:border-border-d pt-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
           <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center">
-            <Icons.Share2 className="w-4 h-4 text-accent-1 mr-1.5" />
-            Share Your Persona
+            <Icons.Share2 className="w-4 h-4 text-accent-1 mr-2 flex-shrink-0" />
+            <span>Share Your Developer Profile</span>
           </h3>
 
-          <div className="flex gap-2">
+          <div className="flex w-full sm:w-auto gap-2.5">
             <button
               onClick={() => generateImage('png')}
               disabled={isExporting}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
+              bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
+              hover:border-accent-1/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
+              active:scale-95 disabled:opacity-60 disabled:pointer-events-none transition-all duration-200"
               title="Download as PNG image"
+              aria-label="Download as PNG image"
             >
               <Icons.Image className="w-3.5 h-3.5 text-accent-1" />
-              PNG
+              <span>PNG</span>
             </button>
 
             <button
               onClick={() => generateImage('svg')}
               disabled={isExporting}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d hover:bg-l-bg-hover dark:hover:bg-d-bg-hover transition-colors"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
+              bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
+              hover:border-accent-2/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
+              active:scale-95 disabled:opacity-60 disabled:pointer-events-none transition-all duration-200"
               title="Download as SVG vector"
+              aria-label="Download as SVG vector"
             >
               <Icons.FileCode className="w-3.5 h-3.5 text-accent-2" />
-              SVG
+              <span>SVG</span>
             </button>
           </div>
         </div>
 
-        {/* Status message area */}
-        <div className="h-6 flex justify-center items-center text-xs">
+        {/* Status message area with improved transitions */}
+        <div className="h-8 flex justify-center items-center text-xs">
           {isExporting && (
-            <div className="flex items-center gap-1.5 text-l-text-2 dark:text-d-text-2">
-              <Icons.Loader className="w-3.5 h-3.5 animate-spin" />
-              Exporting your persona...
+            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
+              <Icons.Loader
+                className="w-3.5 h-3.5 animate-spin"
+                aria-hidden="true"
+              />
+              <span>Creating your profile image...</span>
             </div>
           )}
 
           {exportSuccess && (
-            <div className="flex items-center gap-1.5 text-accent-success">
-              <Icons.Check className="w-3.5 h-3.5" />
-              Successfully exported!
+            <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
+              <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>File downloaded successfully!</span>
             </div>
           )}
 
           {copiedSnippet && (
-            <div className="flex items-center gap-1.5 text-accent-success">
-              <Icons.Check className="w-3.5 h-3.5" />
-              Copied to clipboard!
+            <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
+              <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Copied to clipboard!</span>
             </div>
           )}
         </div>
