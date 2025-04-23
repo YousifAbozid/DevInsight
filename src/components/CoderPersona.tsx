@@ -189,7 +189,7 @@ export default function CoderPersona({
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
               bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
               hover:border-accent-1/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
-              active:scale-95 transition-all duration-200"
+              active:scale-95 transition-all duration-200 cursor-pointer"
               title="Download as PNG image"
               aria-label="Download as PNG image"
             >
@@ -202,7 +202,7 @@ export default function CoderPersona({
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
               bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
               hover:border-accent-2/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
-              active:scale-95 transition-all duration-200"
+              active:scale-95 transition-all duration-200 cursor-pointer"
               title="Download as SVG vector"
               aria-label="Download as SVG vector"
             >

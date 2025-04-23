@@ -3,6 +3,7 @@ import DevCard from './DevCard';
 import * as htmlToImage from 'html-to-image';
 import SectionHeader from './shared/SectionHeader';
 import { Icons } from './shared/Icons';
+import { useToast } from '../context/ToastContext';
 
 interface DevCardGeneratorProps {
   user: GithubUser;
@@ -21,18 +22,24 @@ export default function DevCardGenerator({
 }: DevCardGeneratorProps) {
   const [selectedTheme, setSelectedTheme] = useState<ThemeVariant>('default');
   const [isExporting, setIsExporting] = useState(false);
-  const [exportSuccess, setExportSuccess] = useState(false);
-  const [copiedSnippet, setCopiedSnippet] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { notify } = useToast();
 
   // Generate the image using html-to-image
   const generateImage = async (format: 'png' | 'svg') => {
     if (!cardRef.current || !user) {
       console.error('Card reference not available');
+      notify(
+        'error',
+        'Could not generate image - card reference not available'
+      );
       return;
     }
 
     setIsExporting(true);
+
+    // Show loading toast
+    notify('info', `Generating ${format.toUpperCase()} image...`);
 
     try {
       // Add a small delay to ensure all styles are properly applied
@@ -74,46 +81,14 @@ export default function DevCardGenerator({
         link.click();
       }
 
-      setExportSuccess(true);
-      setTimeout(() => setExportSuccess(false), 3000);
+      // Show success toast
+      notify('success', `${format.toUpperCase()} downloaded successfully!`);
     } catch (error) {
       console.error(`Error generating ${format} image:`, error);
+      notify('error', `Error generating ${format.toUpperCase()} image`);
     } finally {
       setIsExporting(false);
     }
-  };
-
-  // Generate a markdown snippet for embedding
-  const generateMarkdownSnippet = () => {
-    const baseUrl = window.location.origin;
-    // In a real app, you would generate an actual image URL here
-    // For demo purposes, we'll just use a placeholder
-    const imageUrl = `${baseUrl}/api/devcard/${user.login}?theme=${selectedTheme}`;
-
-    const markdown = `[![${user.login}'s GitHub Stats](${imageUrl})](https://github.com/${user.login})`;
-
-    navigator.clipboard.writeText(markdown);
-    setCopiedSnippet(true);
-    setTimeout(() => setCopiedSnippet(false), 3000);
-  };
-
-  // Download markdown snippet as .md file
-  const downloadMarkdown = () => {
-    if (!user) return;
-
-    const baseUrl = window.location.origin;
-    const imageUrl = `${baseUrl}/api/devcard/${user.login}?theme=${selectedTheme}`;
-    const markdown = `[![${user.login}'s GitHub Stats](${imageUrl})](https://github.com/${user.login})`;
-
-    // Create blob and download link
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const link = document.createElement('a');
-    link.download = `${user.login}-github-card.md`;
-    link.href = URL.createObjectURL(blob);
-    link.click();
-
-    setExportSuccess(true);
-    setTimeout(() => setExportSuccess(false), 3000);
   };
 
   return (
@@ -170,153 +145,43 @@ export default function DevCardGenerator({
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-md font-semibold text-l-text-1 dark:text-d-text-1">
-              Export Options
-            </h3>
+          <div className="mt-5 border-t border-border-l dark:border-border-d pt-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
+              <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center">
+                <Icons.Share2 className="w-4 h-4 text-accent-1 mr-2 flex-shrink-0" />
+                <span>Export Your GitHub Card</span>
+              </h3>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => generateImage('png')}
-                disabled={isExporting}
-                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
+              <div className="flex w-full sm:w-auto gap-2.5">
+                <button
+                  onClick={() => generateImage('png')}
+                  disabled={isExporting}
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
+                  bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
+                  hover:border-accent-1/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
+                  active:scale-95 transition-all duration-200 cursor-pointer"
+                  title="Download as PNG image"
+                  aria-label="Download as PNG image"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Download as PNG
-              </button>
+                  <Icons.Image className="w-3.5 h-3.5 text-accent-1" />
+                  <span>PNG</span>
+                </button>
 
-              <button
-                onClick={() => generateImage('svg')}
-                disabled={isExporting}
-                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
+                <button
+                  onClick={() => generateImage('svg')}
+                  disabled={isExporting}
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
+                  bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
+                  hover:border-accent-2/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
+                  active:scale-95 transition-all duration-200 cursor-pointer"
+                  title="Download as SVG vector"
+                  aria-label="Download as SVG vector"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M14.447 3.027a.75.75 0 0 1 .527.92l-4.5 16.5a.75.75 0 0 1-1.448-.394l4.5-16.5a.75.75 0 0 1 .921-.526ZM16.72 6.22a.75.75 0 0 1 1.06 0l5.25 5.25a.75.75 0 0 1 0 1.06l-5.25 5.25a.75.75 0 1 1-1.06-1.06L21.44 12l-4.72-4.72a.75.75 0 0 1 0-1.06Zm-9.44 0a.75.75 0 0 1 0 1.06L2.56 12l4.72 4.72a.75.75 0 0 1-1.06 1.06L.97 12.53a.75.75 0 0 1 0-1.06l5.25-5.25a.75.75 0 0 1 1.06 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Download as SVG
-              </button>
-
-              <button
-                onClick={generateMarkdownSnippet}
-                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H16A1.5 1.5 0 0 1 17.5 6v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V6c0-.001 0-.001 0-.002a1.5 1.5 0 0 1 1.5-1.498H6A1.5 1.5 0 0 1 7.5 3H9a1.5 1.5 0 0 1 1.5 1.5h1.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Copy Markdown
-              </button>
-
-              <button
-                onClick={downloadMarkdown}
-                className="px-4 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Download .MD
-              </button>
+                  <Icons.FileCode className="w-3.5 h-3.5 text-accent-2" />
+                  <span>SVG</span>
+                </button>
+              </div>
             </div>
-
-            {/* Status messages */}
-            {isExporting && (
-              <div className="text-l-text-2 dark:text-d-text-2 text-sm flex items-center gap-2">
-                <svg
-                  className="animate-spin h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Generating image...
-              </div>
-            )}
-
-            {exportSuccess && (
-              <div className="text-accent-success text-sm flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Image downloaded successfully!
-              </div>
-            )}
-
-            {copiedSnippet && (
-              <div className="text-accent-success text-sm flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Markdown snippet copied to clipboard!
-              </div>
-            )}
 
             {/* Instructions */}
             <div className="mt-4 p-3 bg-l-bg-1 dark:bg-d-bg-1 rounded-md border border-border-l dark:border-border-d">
@@ -326,7 +191,6 @@ export default function DevCardGenerator({
               <ol className="list-decimal list-inside text-sm text-l-text-2 dark:text-d-text-2 space-y-1">
                 <li>Select a theme style that matches your GitHub profile</li>
                 <li>Download the card as PNG or SVG</li>
-                <li>Or copy the markdown to embed directly in your README</li>
                 <li>Add it to the top of your GitHub profile README.md file</li>
               </ol>
             </div>
