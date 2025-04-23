@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import SectionHeader from './shared/SectionHeader';
 import { Icons } from './shared/Icons';
+import LanguagePieChartSkeleton from './shared/Skeletons/LanguagePieChartSkeleton';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -27,13 +28,7 @@ export default function LanguagePieChart({
 
   // Loading and empty states
   if (loading) {
-    return (
-      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d h-80 flex items-center justify-center">
-        <div className="animate-pulse text-l-text-2 dark:text-d-text-2">
-          Loading language data...
-        </div>
-      </div>
-    );
+    return <LanguagePieChartSkeleton />;
   }
 
   if (!data || data.length === 0) {
