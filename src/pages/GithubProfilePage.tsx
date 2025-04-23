@@ -10,7 +10,6 @@ import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
 import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
 import LanguagePieChart from '../components/LanguagePieChart';
-import LanguageChartSkeleton from '../components/LanguageChartSkeleton';
 import ContributionHeatmap from '../components/ContributionHeatmap';
 import MostStarredRepos from '../components/MostStarredRepos';
 import DeveloperBadges from '../components/DeveloperBadges';
@@ -22,6 +21,16 @@ import DevJourneyTimeline from '../components/DevJourneyTimeline';
 import RepoRecommender from '../components/RepoRecommender';
 import ProfileErrorState from '../components/ProfileErrorState';
 import WelcomeScreen from '../components/WelcomeScreen';
+
+// Import all skeleton components
+import PersonalizedSummarySkeleton from '../components/shared/Skeletons/PersonalizedSummarySkeleton';
+import DevJourneyTimelineSkeleton from '../components/shared/Skeletons/DevJourneyTimelineSkeleton';
+import CoderPersonaSkeleton from '../components/shared/Skeletons/CoderPersonaSkeleton';
+import DeveloperBadgesSkeleton from '../components/shared/Skeletons/DeveloperBadgesSkeleton';
+import MostStarredReposSkeleton from '../components/shared/Skeletons/MostStarredReposSkeleton';
+import RepoRecommenderSkeleton from '../components/shared/Skeletons/RepoRecommenderSkeleton';
+import LanguagePieChartSkeleton from '../components/shared/Skeletons/LanguagePieChartSkeleton';
+import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/ContributionHeatmapPageSkeleton';
 
 export default function GithubProfilePage() {
   const [username, setUsername] = useState('');
@@ -155,7 +164,34 @@ export default function GithubProfilePage() {
       />
 
       {isUserLoading ? (
-        <GithubProfileCardSkeleton />
+        // Show all skeleton components during loading
+        <div className="space-y-8">
+          <GithubProfileCardSkeleton />
+
+          {/* Personalized Summary Skeleton */}
+          <PersonalizedSummarySkeleton />
+
+          {/* Dev Journey Timeline Skeleton - Only for regular users */}
+          <DevJourneyTimelineSkeleton />
+
+          {/* Coder Persona Skeleton - Only for regular users */}
+          <CoderPersonaSkeleton />
+
+          {/* Developer Badges Skeleton - Only for regular users */}
+          <DeveloperBadgesSkeleton />
+
+          {/* Most Starred Repos Skeleton */}
+          <MostStarredReposSkeleton />
+
+          {/* Repo Recommender Skeleton */}
+          <RepoRecommenderSkeleton />
+
+          {/* Language Chart Skeleton */}
+          <LanguagePieChartSkeleton />
+
+          {/* Contribution Heatmap Page Skeleton - Only for regular users */}
+          <ContributionHeatmapPageSkeleton />
+        </div>
       ) : errorMessage ? (
         <ProfileErrorState
           username={username}
@@ -176,6 +212,7 @@ export default function GithubProfilePage() {
               repositories && saveRepositoriesData(user.login, repositories)
             }
             hasRepositories={!!repositories && repositories.length > 0}
+            loading={isUserLoading}
           />
 
           {/* Personalized Summary - For both users and organizations */}
@@ -240,14 +277,10 @@ export default function GithubProfilePage() {
           />
 
           {/* Language pie chart - For both users and organizations */}
-          {isReposLoading ? (
-            <LanguageChartSkeleton />
-          ) : (
-            <LanguagePieChart data={languageData} loading={isReposLoading} />
-          )}
+          <LanguagePieChart data={languageData} loading={isReposLoading} />
 
           {/* Contribution heatmap - Only for user profiles */}
-          {username && user.type !== 'Organization' && (
+          {user.type !== 'Organization' && (
             <ContributionHeatmap
               username={username}
               token={token}
