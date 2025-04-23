@@ -174,8 +174,8 @@ export default function CoderPersona({
       </div>
 
       {/* Enhanced Export Options - Responsive & Mobile Friendly */}
-      <div className="mt-5 border-t border-border-l dark:border-border-d pt-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+      <div className="mt-5 border-t border-border-l dark:border-border-d pt-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
           <h3 className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center">
             <Icons.Share2 className="w-4 h-4 text-accent-1 mr-2 flex-shrink-0" />
             <span>Share Your Developer Profile</span>
@@ -212,32 +212,34 @@ export default function CoderPersona({
           </div>
         </div>
 
-        {/* Status message area with improved transitions */}
-        <div className="h-8 flex justify-center items-center text-xs">
-          {isExporting && (
-            <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
-              <Icons.Loader
-                className="w-3.5 h-3.5 animate-spin"
-                aria-hidden="true"
-              />
-              <span>Creating your profile image...</span>
-            </div>
-          )}
+        {/* Status message area - Fixed to only appear when needed */}
+        {(isExporting || exportSuccess || copiedSnippet) && (
+          <div className="mt-2 flex justify-center items-center text-xs">
+            {isExporting && (
+              <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1.5 rounded-full shadow-sm animate-pulse">
+                <Icons.Loader
+                  className="w-3.5 h-3.5 animate-spin"
+                  aria-hidden="true"
+                />
+                <span>Generating image...</span>
+              </div>
+            )}
 
-          {exportSuccess && (
-            <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
-              <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>File downloaded successfully!</span>
-            </div>
-          )}
+            {exportSuccess && (
+              <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
+                <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Success! Image downloaded</span>
+              </div>
+            )}
 
-          {copiedSnippet && (
-            <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
-              <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Copied to clipboard!</span>
-            </div>
-          )}
-        </div>
+            {copiedSnippet && (
+              <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
+                <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Copied to clipboard</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
