@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { ContributionData } from '../services/githubGraphQLService';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
@@ -64,22 +64,6 @@ export default function PersonalizedSummary({
     repositories || [],
     contributionData
   );
-
-  // Scroll filters into view when selecting a category
-  useEffect(() => {
-    if (activeCategory && filterScrollRef.current) {
-      const button = filterScrollRef.current.querySelector(
-        `[data-category="${activeCategory}"]`
-      );
-      if (button) {
-        button.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center',
-        });
-      }
-    }
-  }, [activeCategory]);
 
   if (loading) {
     return <PersonalizedSummarySkeleton />;
