@@ -355,9 +355,8 @@ const eventTypeInfo = {
 function TimelineEventItem({ event }: { event: TimelineEvent }) {
   return (
     <div className="ml-12 relative group">
-      {/* Timeline dot and icon */}
       <div
-        className={`absolute -left-12 p-2 rounded-full flex items-center justify-center
+        className={`absolute -left-10  p-2 rounded-full flex items-center justify-center
           ${
             event.highlight
               ? 'bg-accent-1 text-white shadow-md shadow-accent-1/20'
