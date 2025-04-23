@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useUserPullRequests, useUserIssues } from '../services/githubService';
 import { Icons } from './shared/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../context/ToastContext';
 
 interface GithubProfileCardProps {
   user: GithubUser;
@@ -22,15 +23,7 @@ export default function GithubProfileCard({
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dropdownButtonRef = useRef<HTMLButtonElement>(null);
-  const [exportStatus, setExportStatus] = useState<{
-    show: boolean;
-    message: string;
-    type: 'success' | 'error';
-  }>({
-    show: false,
-    message: '',
-    type: 'success',
-  });
+  const { notify } = useToast(); // Use our new toast notification system
 
   // Get token from localStorage for authenticated requests
   const token = localStorage.getItem('github_token') || undefined;
@@ -62,17 +55,6 @@ export default function GithubProfileCard({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Hide export notification after 3 seconds
-  useEffect(() => {
-    if (exportStatus.show) {
-      const timer = setTimeout(() => {
-        setExportStatus(prev => ({ ...prev, show: false }));
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [exportStatus]);
 
   const handleExportCSV = (userData: GithubUser) => {
     try {
@@ -126,18 +108,12 @@ export default function GithubProfileCard({
       link.click();
       document.body.removeChild(link);
 
-      setExportStatus({
-        show: true,
-        message: 'CSV file exported successfully!',
-        type: 'success',
-      });
+      // Show success notification using our toast system
+      notify('success', 'CSV file exported successfully!');
     } catch (error) {
       console.error('Error exporting CSV:', error);
-      setExportStatus({
-        show: true,
-        message: 'Failed to export CSV file',
-        type: 'error',
-      });
+      // Show error notification using our toast system
+      notify('error', 'Failed to export CSV file');
     }
   };
 
@@ -202,18 +178,12 @@ export default function GithubProfileCard({
       link.click();
       document.body.removeChild(link);
 
-      setExportStatus({
-        show: true,
-        message: 'Text summary exported successfully!',
-        type: 'success',
-      });
+      // Show success notification using our toast system
+      notify('success', 'Text summary exported successfully!');
     } catch (error) {
       console.error('Error exporting text:', error);
-      setExportStatus({
-        show: true,
-        message: 'Failed to export text summary',
-        type: 'error',
-      });
+      // Show error notification using our toast system
+      notify('error', 'Failed to export text summary');
     }
   };
 
@@ -224,18 +194,10 @@ export default function GithubProfileCard({
       // This is a placeholder function since we don't have direct access to the repos data
       // In a real implementation, you would use the repositories data passed to this component
       // For now, we'll just trigger a success notification
-      setExportStatus({
-        show: true,
-        message: 'Repository CSV exported successfully!',
-        type: 'success',
-      });
+      notify('success', 'Repository CSV exported successfully!');
     } catch (error) {
       console.error('Error exporting repos CSV:', error);
-      setExportStatus({
-        show: true,
-        message: 'Failed to export repositories CSV',
-        type: 'error',
-      });
+      notify('error', 'Failed to export repositories CSV');
     }
   };
 
@@ -316,32 +278,7 @@ export default function GithubProfileCard({
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d relative">
-      {/* Export Status Notification */}
-      <AnimatePresence>
-        {exportStatus.show && (
-          <motion.div
-            className={`fixed bottom-5 right-5 z-50 p-4 rounded-lg shadow-lg flex items-center gap-3 max-w-sm
-              ${
-                exportStatus.type === 'success'
-                  ? 'bg-accent-success/90 text-white'
-                  : 'bg-accent-danger/90 text-white'
-              }`}
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          >
-            <div className="p-2 bg-white/20 rounded-full">
-              {exportStatus.type === 'success' ? (
-                <Icons.Check className="w-5 h-5" />
-              ) : (
-                <Icons.AlertTriangle className="w-5 h-5" />
-              )}
-            </div>
-            <p className="font-medium">{exportStatus.message}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Remove legacy export status notification - using toast system instead */}
 
       {/* Save Options Dropdown */}
       {(onSaveUserData || onSaveReposData) && (
@@ -382,6 +319,7 @@ export default function GithubProfileCard({
                       <motion.button
                         onClick={() => {
                           onSaveUserData();
+                          notify('success', 'JSON file exported successfully!');
                           setShowDropdown(false);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 cursor-pointer group"
@@ -441,6 +379,10 @@ export default function GithubProfileCard({
                       <motion.button
                         onClick={() => {
                           onSaveReposData();
+                          notify(
+                            'success',
+                            'Repositories JSON file exported successfully!'
+                          );
                           setShowDropdown(false);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-l-text-1 dark:text-d-text-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center gap-2 cursor-pointer group"

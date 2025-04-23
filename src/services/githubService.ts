@@ -258,8 +258,6 @@ export function saveResponseAsJson(
 
   // Clean up the URL object
   URL.revokeObjectURL(url);
-
-  console.warn(`Data saved as ${filename}`);
 }
 
 /**
