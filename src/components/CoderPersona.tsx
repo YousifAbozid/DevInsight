@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ContributionData } from '../services/githubGraphQLService';
 import PersonaStrengthBars from './PersonaStrengthBars';
@@ -9,14 +9,7 @@ import {
   useCoderPersona,
   getChartColorForPersona,
 } from '../hooks/useCoderPersona';
-
-// Define a type for status messages
-interface StatusMessage {
-  id: string;
-  type: 'loading' | 'success';
-  text: string;
-  timestamp: number;
-}
+import { useToast } from '../context/ToastContext';
 
 interface CoderPersonaProps {
   user: GithubUser;
@@ -32,9 +25,7 @@ export default function CoderPersona({
   loading,
 }: CoderPersonaProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // Replace single state variables with a message queue
-  const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
+  const { notify } = useToast(); // Use our new toast notification system
 
   // Use the extracted hook to get persona data
   const { persona, personalityText } = useCoderPersona(
@@ -43,36 +34,19 @@ export default function CoderPersona({
     contributionData
   );
 
-  // Helper to add a message to the queue
-  const addStatusMessage = (type: 'loading' | 'success', text: string) => {
-    const id = `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    const message = { id, type, text, timestamp: Date.now() };
-
-    setStatusMessages(prev => [...prev, message]);
-
-    // For success messages, set a timeout to remove them
-    if (type === 'success') {
-      setTimeout(() => {
-        setStatusMessages(prev => prev.filter(m => m.id !== id));
-      }, 3000);
-    }
-
-    return id;
-  };
-
-  // Helper to remove a specific message
-  const removeStatusMessage = (id: string) => {
-    setStatusMessages(prev => prev.filter(message => message.id !== id));
-  };
-
   // Generate the image using html-to-image
   const generateImage = async (format: 'png' | 'svg') => {
     if (!cardRef.current || !user) {
       console.error('Card reference not available');
+      notify(
+        'error',
+        'Could not generate image - card reference not available'
+      );
       return;
     }
 
-    const loadingMsgId = addStatusMessage('loading', 'Generating image...');
+    // Show loading toast
+    notify('info', `Generating ${format.toUpperCase()} image...`);
 
     try {
       // Add a small delay to ensure all styles are properly applied
@@ -114,21 +88,13 @@ export default function CoderPersona({
         link.click();
       }
 
-      // Remove loading message and add success message
-      removeStatusMessage(loadingMsgId);
-      addStatusMessage(
-        'success',
-        `Success! ${format.toUpperCase()} downloaded`
-      );
+      // Show success toast
+      notify('success', `${format.toUpperCase()} downloaded successfully!`);
     } catch (error) {
       console.error(`Error generating ${format} image:`, error);
-      removeStatusMessage(loadingMsgId);
-      addStatusMessage('success', `Error generating ${format.toUpperCase()}`);
+      notify('error', `Error generating ${format.toUpperCase()} image`);
     }
   };
-
-  // Helper function to check if there are any loading messages
-  const isExporting = statusMessages.some(msg => msg.type === 'loading');
 
   if (loading) {
     return <CoderPersonaSkeleton />;
@@ -219,11 +185,10 @@ export default function CoderPersona({
           <div className="flex w-full sm:w-auto gap-2.5">
             <button
               onClick={() => generateImage('png')}
-              disabled={isExporting}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
               bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
               hover:border-accent-1/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
-              active:scale-95 disabled:opacity-60 disabled:pointer-events-none transition-all duration-200"
+              active:scale-95 transition-all duration-200"
               title="Download as PNG image"
               aria-label="Download as PNG image"
             >
@@ -233,11 +198,10 @@ export default function CoderPersona({
 
             <button
               onClick={() => generateImage('svg')}
-              disabled={isExporting}
               className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium rounded-md 
               bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d shadow-sm
               hover:border-accent-2/40 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover hover:shadow-md 
-              active:scale-95 disabled:opacity-60 disabled:pointer-events-none transition-all duration-200"
+              active:scale-95 transition-all duration-200"
               title="Download as SVG vector"
               aria-label="Download as SVG vector"
             >
@@ -246,33 +210,6 @@ export default function CoderPersona({
             </button>
           </div>
         </div>
-
-        {/* Status message area - Now showing multiple messages */}
-        {statusMessages.length > 0 && (
-          <div className="mt-2 flex flex-col gap-2">
-            {statusMessages.map(msg => (
-              <div
-                key={msg.id}
-                className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full shadow-sm mx-auto
-                  ${
-                    msg.type === 'loading'
-                      ? 'text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 animate-pulse'
-                      : 'text-accent-success bg-accent-success/10 animate-fade-in'
-                  }`}
-              >
-                {msg.type === 'loading' ? (
-                  <Icons.Loader
-                    className="w-3.5 h-3.5 animate-spin"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
-                )}
-                <span>{msg.text}</span>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
