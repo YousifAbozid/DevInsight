@@ -5,6 +5,14 @@ import SectionHeader from './shared/SectionHeader';
 import { Icons } from './shared/Icons';
 import { useToast } from '../context/ToastContext';
 
+export interface Badge {
+  id: string;
+  name: string;
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  icon: React.ComponentType<{ className?: string }>;
+  earned: boolean;
+}
+
 interface DevCardGeneratorProps {
   user: GithubUser;
   repositories?: Repository[];
@@ -199,13 +207,4 @@ export default function DevCardGenerator({
       </div>
     </div>
   );
-}
-
-// Export Badge interface for use in other components
-export interface Badge {
-  id: string;
-  name: string;
-  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
-  icon: React.ComponentType<{ className?: string }>;
-  earned: boolean;
 }
