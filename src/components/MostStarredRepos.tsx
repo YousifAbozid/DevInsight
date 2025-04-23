@@ -2,42 +2,11 @@ import { useState } from 'react';
 import { Icons } from './shared/Icons';
 import SectionHeader from './shared/SectionHeader';
 import FilterTabs, { FilterTab } from './shared/FilterTabs';
+import MostStarredReposSkeleton from './shared/Skeletons/MostStarredReposSkeleton';
 
 interface MostStarredReposProps {
   repositories: Repository[] | undefined;
   loading: boolean;
-}
-
-// Skeleton component for loading state
-function MostStarredReposSkeleton() {
-  return (
-    <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-      <div className="flex items-center justify-between mb-6">
-        <div className="h-6 w-1/3 bg-l-bg-3 dark:bg-d-bg-3 rounded animate-pulse"></div>
-        <div className="h-8 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded animate-pulse"></div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-lg p-4 animate-pulse"
-          >
-            <div className="flex justify-between items-start mb-3">
-              <div className="h-5 w-2/3 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-              <div className="h-5 w-10 bg-l-bg-3 dark:bg-d-bg-3 rounded"></div>
-            </div>
-            <div className="h-4 w-full bg-l-bg-3 dark:bg-d-bg-3 rounded mb-4"></div>
-            <div className="h-4 w-2/3 bg-l-bg-3 dark:bg-d-bg-3 rounded mb-4"></div>
-            <div className="flex gap-2 mt-4">
-              <div className="h-6 w-16 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
-              <div className="h-6 w-20 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
-              <div className="h-6 w-24 bg-l-bg-3 dark:bg-d-bg-3 rounded-full"></div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default function MostStarredRepos({
