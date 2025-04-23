@@ -10,6 +10,14 @@ import {
   getChartColorForPersona,
 } from '../hooks/useCoderPersona';
 
+// Define a type for status messages
+interface StatusMessage {
+  id: string;
+  type: 'loading' | 'success';
+  text: string;
+  timestamp: number;
+}
+
 interface CoderPersonaProps {
   user: GithubUser;
   repositories?: Repository[];
@@ -25,10 +33,8 @@ export default function CoderPersona({
 }: CoderPersonaProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // New state variables for export functionality
-  const [isExporting, setIsExporting] = useState(false);
-  const [exportSuccess, setExportSuccess] = useState(false);
-  const [copiedSnippet] = useState(false);
+  // Replace single state variables with a message queue
+  const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
 
   // Use the extracted hook to get persona data
   const { persona, personalityText } = useCoderPersona(
@@ -37,6 +43,28 @@ export default function CoderPersona({
     contributionData
   );
 
+  // Helper to add a message to the queue
+  const addStatusMessage = (type: 'loading' | 'success', text: string) => {
+    const id = `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const message = { id, type, text, timestamp: Date.now() };
+
+    setStatusMessages(prev => [...prev, message]);
+
+    // For success messages, set a timeout to remove them
+    if (type === 'success') {
+      setTimeout(() => {
+        setStatusMessages(prev => prev.filter(m => m.id !== id));
+      }, 3000);
+    }
+
+    return id;
+  };
+
+  // Helper to remove a specific message
+  const removeStatusMessage = (id: string) => {
+    setStatusMessages(prev => prev.filter(message => message.id !== id));
+  };
+
   // Generate the image using html-to-image
   const generateImage = async (format: 'png' | 'svg') => {
     if (!cardRef.current || !user) {
@@ -44,7 +72,7 @@ export default function CoderPersona({
       return;
     }
 
-    setIsExporting(true);
+    const loadingMsgId = addStatusMessage('loading', 'Generating image...');
 
     try {
       // Add a small delay to ensure all styles are properly applied
@@ -86,14 +114,21 @@ export default function CoderPersona({
         link.click();
       }
 
-      setExportSuccess(true);
-      setTimeout(() => setExportSuccess(false), 3000);
+      // Remove loading message and add success message
+      removeStatusMessage(loadingMsgId);
+      addStatusMessage(
+        'success',
+        `Success! ${format.toUpperCase()} downloaded`
+      );
     } catch (error) {
       console.error(`Error generating ${format} image:`, error);
-    } finally {
-      setIsExporting(false);
+      removeStatusMessage(loadingMsgId);
+      addStatusMessage('success', `Error generating ${format.toUpperCase()}`);
     }
   };
+
+  // Helper function to check if there are any loading messages
+  const isExporting = statusMessages.some(msg => msg.type === 'loading');
 
   if (loading) {
     return <CoderPersonaSkeleton />;
@@ -212,32 +247,30 @@ export default function CoderPersona({
           </div>
         </div>
 
-        {/* Status message area - Fixed to only appear when needed */}
-        {(isExporting || exportSuccess || copiedSnippet) && (
-          <div className="mt-2 flex justify-center items-center text-xs">
-            {isExporting && (
-              <div className="flex items-center gap-2 text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 px-3 py-1.5 rounded-full shadow-sm animate-pulse">
-                <Icons.Loader
-                  className="w-3.5 h-3.5 animate-spin"
-                  aria-hidden="true"
-                />
-                <span>Generating image...</span>
+        {/* Status message area - Now showing multiple messages */}
+        {statusMessages.length > 0 && (
+          <div className="mt-2 flex flex-col gap-2">
+            {statusMessages.map(msg => (
+              <div
+                key={msg.id}
+                className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full shadow-sm mx-auto
+                  ${
+                    msg.type === 'loading'
+                      ? 'text-l-text-2 dark:text-d-text-2 bg-l-bg-1 dark:bg-d-bg-1 animate-pulse'
+                      : 'text-accent-success bg-accent-success/10 animate-fade-in'
+                  }`}
+              >
+                {msg.type === 'loading' ? (
+                  <Icons.Loader
+                    className="w-3.5 h-3.5 animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
+                )}
+                <span>{msg.text}</span>
               </div>
-            )}
-
-            {exportSuccess && (
-              <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
-                <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Success! Image downloaded</span>
-              </div>
-            )}
-
-            {copiedSnippet && (
-              <div className="flex items-center gap-2 text-accent-success bg-accent-success/10 px-3 py-1.5 rounded-full shadow-sm animate-fade-in">
-                <Icons.Check className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Copied to clipboard</span>
-              </div>
-            )}
+            ))}
           </div>
         )}
       </div>
