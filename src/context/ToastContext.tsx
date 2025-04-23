@@ -41,7 +41,7 @@ const ToastContext = createContext<ToastContextProps | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [position, setPosition] = useState<ToastPosition>('bottom-center');
+  const [position, setPosition] = useState<ToastPosition>('bottom-right');
 
   const notify = useCallback(
     (
@@ -57,7 +57,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         type,
         message,
         createdAt: Date.now(),
-        position: position || 'bottom-center',
+        position: position || 'bottom-right',
         duration,
       };
 

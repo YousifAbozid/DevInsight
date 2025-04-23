@@ -102,12 +102,18 @@ export default function Toast({ toast, onRemove }: ToastProps) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.9 }}
           transition={{ duration: 0.2 }}
-          className={`${bgColor} rounded-lg shadow-lg flex flex-col max-w-md w-full overflow-hidden`}
+          className={`${bgColor} rounded-lg shadow-lg flex flex-col w-full max-w-md mx-auto overflow-hidden md:mx-0`}
+          style={{
+            minWidth: '280px',
+            maxWidth: '100%',
+          }}
           role="alert"
         >
-          <div className="p-3 flex items-center gap-3">
-            {icon}
-            <p className="text-sm font-medium flex-1">{toast.message}</p>
+          <div className="p-3 md:p-3 flex items-center gap-2 md:gap-3">
+            <div className="shrink-0">{icon}</div>
+            <p className="text-sm md:text-sm font-medium flex-1 break-words">
+              {toast.message}
+            </p>
           </div>
 
           {/* Progress indicator */}
