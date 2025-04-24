@@ -219,7 +219,7 @@ export default function Footer() {
               </motion.a>
             </motion.div>
 
-            {/* Newsletter subscribe or call to action - enhanced with pulsing animation */}
+            {/* Newsletter subscribe or call to action with enhanced interactive effects */}
             <motion.div
               className="mt-2 p-3 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d"
               whileHover={{
@@ -236,29 +236,95 @@ export default function Footer() {
                 Star the repository to get updates and new features
               </p>
               <motion.div className="relative">
-                {/* Pulse effect layer (behind the button) */}
+                {/* Multiple layered effects for a more striking appearance */}
                 <motion.div
-                  className="absolute inset-0 rounded-md bg-accent-1 opacity-30"
+                  className="absolute inset-0 rounded-md bg-gradient-to-r from-accent-1/30 to-accent-2/40"
                   animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.3, 0.1, 0.3],
+                    scale: [1, 1.05, 1],
+                    opacity: [0.7, 0.4, 0.7],
                   }}
                   transition={{
-                    duration: 2,
+                    duration: 2.5,
                     repeat: Infinity,
                     ease: 'easeInOut',
+                    times: [0, 0.5, 1],
                   }}
                 />
-                {/* Actual button */}
+                {/* Second pulse layer with offset timing for wave effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-md bg-gradient-to-r from-accent-2/20 to-accent-1/30"
+                  animate={{
+                    scale: [1.05, 1, 1.05],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    times: [0, 0.5, 1],
+                    delay: 0.5,
+                  }}
+                />
+                {/* Sparkle effects */}
+                <motion.div
+                  className="absolute top-0 left-1/4 w-1 h-1 bg-white rounded-full"
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: 0.2,
+                  }}
+                />
+                <motion.div
+                  className="absolute bottom-0 right-1/4 w-1 h-1 bg-white rounded-full"
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: 1,
+                  }}
+                />
+                <motion.div
+                  className="absolute top-1/3 right-1/6 w-0.5 h-0.5 bg-white rounded-full"
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1, 0.5],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: 1.5,
+                  }}
+                />
+                {/* Actual button with enhanced hover effect */}
                 <motion.a
                   href="https://github.com/YousifAbozid/DevInsight"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-accent-1 hover:bg-accent-2 text-white py-1.5 px-2 rounded-md text-sm transition-colors relative z-10"
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{
+                    scale: 1.03,
+                    boxShadow: '0 0 8px rgba(99, 102, 241, 0.6)',
+                  }}
                   whileTap={{ scale: 0.97 }}
                 >
-                  <Icons.Star className="w-4 h-4" />
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      times: [0, 0.3, 0.6, 1],
+                    }}
+                  >
+                    <Icons.Star className="w-4 h-4" />
+                  </motion.div>
                   <span>Star on GitHub</span>
                 </motion.a>
               </motion.div>
