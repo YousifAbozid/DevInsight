@@ -74,7 +74,7 @@ export default function ContributionHeatmap({
 
         // Only include days in the selected year
         const startDate = new Date(selectedYear, 0, 1); // January 1st
-        const endDate = new Date(selectedYear, 11, 31); // December 31st
+        const endDate = new Date(selectedYear, 11, 31, 23, 59, 59); // December 31st (with time set to end of day)
         const now = new Date();
 
         // Build calendar days for the entire year
@@ -124,7 +124,8 @@ export default function ContributionHeatmap({
 
         // Start with the first day of the year
         const firstDate = calendar[0].date;
-        const firstDay = firstDate.getDay();
+        // Fix: Calculate day of week correctly (GitHub starts weeks on Sunday - 0)
+        const firstDay = firstDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
         // Fill in the actual days data
         calendar.forEach(day => {
@@ -132,8 +133,10 @@ export default function ContributionHeatmap({
           const dayOfYear = Math.floor(
             (day.date.getTime() - firstDate.getTime()) / (24 * 60 * 60 * 1000)
           );
+
+          // Calculate week index and day index correctly
           const weekIndex = Math.floor((dayOfYear + firstDay) / 7);
-          const dayIndex = day.date.getDay();
+          const dayIndex = day.date.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
           // Make sure we don't exceed array bounds
           if (weekIndex < 53) {
@@ -252,30 +255,6 @@ export default function ContributionHeatmap({
       </div>
     );
   }
-
-  // if (error) {
-  //   return (
-  //     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-  //       <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4">
-  //         Contribution Heatmap
-  //       </h2>
-  //       <div className="bg-accent-danger/10 border-l-4 border-accent-danger p-4 rounded">
-  //         <p className="text-accent-danger font-medium">
-  //           Unable to load contribution data for {selectedYear}
-  //         </p>
-  //         <p className="text-sm text-l-text-2 dark:text-d-text-2 mt-2">
-  //           {error instanceof Error
-  //             ? error.message
-  //             : 'Failed to fetch GitHub contribution data for this year. This may be due to rate limits or API restrictions.'}
-  //         </p>
-  //         <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-1">
-  //           Try selecting a different year or checking your GitHub token
-  //           permissions.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   // Function to get color based on contribution count and theme
   const getColorClass = (count: number) => {
