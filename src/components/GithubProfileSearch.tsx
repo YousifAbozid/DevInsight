@@ -20,6 +20,7 @@ interface GithubProfileSearchProps {
   isLoading: boolean;
   initialUsername?: string;
   initialToken?: string;
+  defaultUsername?: string; // Add defaultUsername prop
 }
 
 // Add ref for external control
@@ -30,10 +31,13 @@ const GithubProfileSearch = forwardRef(
       isLoading,
       initialUsername = '',
       initialToken = '',
+      defaultUsername = '', // Use the defaultUsername prop
     }: GithubProfileSearchProps,
     ref
   ) => {
-    const [username, setUsername] = useState(initialUsername);
+    const [username, setUsername] = useState(
+      defaultUsername || initialUsername
+    );
     const [token, setToken] = useState(initialToken);
     const [showTokenInput, setShowTokenInput] = useState(false); // Always closed by default
     const [recentUsers, setRecentUsers] = useState<string[]>([]);
@@ -42,7 +46,9 @@ const GithubProfileSearch = forwardRef(
     const usernameTimeoutRef = useRef<number | null>(null);
 
     // Track the last searched username to detect changes
-    const [lastSearchedUsername, setLastSearchedUsername] = useState('');
+    const [lastSearchedUsername, setLastSearchedUsername] = useState(
+      defaultUsername || ''
+    );
 
     // Check if there are changes to search
     const hasUsernameChanges = username.trim() !== lastSearchedUsername;
@@ -57,7 +63,8 @@ const GithubProfileSearch = forwardRef(
 
     // Load saved values from localStorage on initial render
     useEffect(() => {
-      const savedUsername = localStorage.getItem('github_username');
+      const savedUsername =
+        defaultUsername || localStorage.getItem('github_username');
       const savedToken = localStorage.getItem('github_token');
       const savedRecentUsers = localStorage.getItem('recent_github_users');
 
@@ -84,7 +91,15 @@ const GithubProfileSearch = forwardRef(
       if (savedUsername) {
         onSearch(savedUsername, savedToken || undefined);
       }
-    }, [onSearch]);
+    }, [onSearch, defaultUsername]);
+
+    // Update when defaultUsername changes
+    useEffect(() => {
+      if (defaultUsername && defaultUsername !== username) {
+        setUsername(defaultUsername);
+        setLastSearchedUsername(defaultUsername);
+      }
+    }, [defaultUsername, username]);
 
     // Debounced token saving
     useEffect(() => {

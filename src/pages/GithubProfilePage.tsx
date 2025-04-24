@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   aggregateLanguageData,
@@ -33,8 +33,12 @@ import LanguagePieChartSkeleton from '../components/shared/Skeletons/LanguagePie
 import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/ContributionHeatmapPageSkeleton';
 
 export default function GithubProfilePage() {
-  const [username, setUsername] = useState('');
+  // Initialize username from localStorage if available
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('github_username') || '';
+  });
   const [token, setToken] = useState<string | undefined>();
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const searchRef = useRef<{
     setRecentUsers: (users: string[]) => void;
   } | null>(null);
@@ -57,6 +61,12 @@ export default function GithubProfilePage() {
 
   const { data: contributionData, isLoading: isContributionLoading } =
     useContributionData(username, token);
+
+  // Mark when initial load is complete
+  useEffect(() => {
+    // Set initialLoadComplete to true after the component mounts
+    setInitialLoadComplete(true);
+  }, []);
 
   const handleSearch = (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
@@ -112,6 +122,9 @@ export default function GithubProfilePage() {
 
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
 
+  // Don't show welcome screen during initial load if username exists
+  const showWelcomeScreen = !username && initialLoadComplete;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
@@ -161,6 +174,7 @@ export default function GithubProfilePage() {
         onSearch={handleSearch}
         isLoading={isUserLoading}
         ref={searchRef}
+        defaultUsername={username} // Pass the initial username
       />
 
       {isUserLoading ? (
@@ -288,8 +302,21 @@ export default function GithubProfilePage() {
             />
           )}
         </div>
-      ) : (
+      ) : showWelcomeScreen ? (
         <WelcomeScreen onSuggestionClick={handleSuggestionClick} />
+      ) : (
+        // Show loading state instead of welcome screen during initial load with stored username
+        <div className="space-y-8">
+          <GithubProfileCardSkeleton />
+          <PersonalizedSummarySkeleton />
+          <DevJourneyTimelineSkeleton />
+          <CoderPersonaSkeleton />
+          <DeveloperBadgesSkeleton />
+          <MostStarredReposSkeleton />
+          <RepoRecommenderSkeleton />
+          <LanguagePieChartSkeleton />
+          <ContributionHeatmapPageSkeleton />
+        </div>
       )}
     </div>
   );
