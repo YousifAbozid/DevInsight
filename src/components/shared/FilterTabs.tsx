@@ -37,10 +37,25 @@ export default function FilterTabs({
   const tabsScrollRef = externalScrollRef || internalScrollRef;
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
+  const [prevActiveTabId, setPrevActiveTabId] = useState<
+    string | null | undefined
+  >(activeTabId);
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
-  // Scroll active tab into view when selected
+  // Scroll active tab into view only when active tab changes, not on initial mount
   useEffect(() => {
-    if (tabsScrollRef.current && activeTabId !== undefined) {
+    // Skip the initial mount effect
+    if (isInitialMount) {
+      setIsInitialMount(false);
+      return;
+    }
+
+    // Only scroll into view if the active tab actually changed
+    if (
+      tabsScrollRef.current &&
+      activeTabId !== undefined &&
+      prevActiveTabId !== activeTabId
+    ) {
       const activeTabElement = tabsScrollRef.current.querySelector(
         `[data-tab-id="${activeTabId}"]`
       );
@@ -51,8 +66,10 @@ export default function FilterTabs({
           inline: 'center',
         });
       }
+      // Update the previous active tab
+      setPrevActiveTabId(activeTabId);
     }
-  }, [activeTabId, tabsScrollRef]);
+  }, [activeTabId, tabsScrollRef, isInitialMount, prevActiveTabId]);
 
   // Check if shadows should be displayed based on scroll position
   useEffect(() => {
