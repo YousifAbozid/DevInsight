@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   aggregateLanguageData,
@@ -35,15 +35,19 @@ import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/Cont
 export default function GithubProfilePage() {
   // Initialize username from localStorage if available
   const [username, setUsername] = useState(() => {
-    return localStorage.getItem('github_username') || '';
+    // If there's no username in localStorage, return empty string
+    const storedUsername = localStorage.getItem('github_username') || '';
+    return storedUsername;
   });
-  const [token, setToken] = useState<string | undefined>();
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  const [token, setToken] = useState<string | undefined>(() => {
+    return localStorage.getItem('github_token') || undefined;
+  });
+
   const searchRef = useRef<{
     setRecentUsers: (users: string[]) => void;
   } | null>(null);
 
-  // Use batch data fetching instead of separate requests
   const {
     data: batchData,
     isLoading: isBatchLoading,
@@ -54,19 +58,20 @@ export default function GithubProfilePage() {
   // For backwards compatibility, keep these variables but derive them from batch data
   const user = batchData?.userData;
   const repositories = batchData?.repositories;
-  const isUserLoading = isBatchLoading;
-  const isReposLoading = isBatchLoading;
+
+  // Only show loading state when we have a username
+  const isUserLoading = isBatchLoading && !!username;
+  const isReposLoading = isUserLoading;
+
   const userError = batchError;
   const isUserError = isBatchError;
 
+  // Fetch contribution data only if we have a username and token
   const { data: contributionData, isLoading: isContributionLoading } =
     useContributionData(username, token);
 
-  // Mark when initial load is complete
-  useEffect(() => {
-    // Set initialLoadComplete to true after the component mounts
-    setInitialLoadComplete(true);
-  }, []);
+  // Show welcome screen immediately if there's no username
+  const showWelcomeScreen = !username;
 
   const handleSearch = (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
@@ -121,9 +126,6 @@ export default function GithubProfilePage() {
     : null;
 
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
-
-  // Don't show welcome screen during initial load if username exists
-  const showWelcomeScreen = !username && initialLoadComplete;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
