@@ -304,7 +304,7 @@ export default function Footer() {
                 />
                 {/* Actual button with enhanced hover effect */}
                 <motion.a
-                  href="https://github.com/YousifAbozid/DevInsight"
+                  href="https://github.com/YousifAbozid/DevInsight?star=1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full bg-accent-1 hover:bg-accent-2 text-white py-1.5 px-2 rounded-md text-sm transition-colors relative z-10"
