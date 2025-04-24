@@ -235,31 +235,33 @@ export default function Footer() {
               <p className="text-xs text-l-text-2 dark:text-d-text-2 mb-2">
                 Star the repository to get updates and new features
               </p>
-              <motion.a
-                href="https://github.com/YousifAbozid/DevInsight"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full bg-accent-1 hover:bg-accent-2 text-white py-1.5 px-2 rounded-md text-sm transition-colors"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                initial={{ boxShadow: '0 0 0 0 rgba(0, 0, 0, 0.2)' }}
-                animate={{
-                  boxShadow: [
-                    '0 0 0 0 rgba(79, 70, 229, 0.1)',
-                    '0 0 0 10px rgba(79, 70, 229, 0)',
-                    '0 0 0 0 rgba(79, 70, 229, 0)',
-                  ],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  repeatType: 'loop',
-                  duration: 2,
-                  ease: 'easeInOut',
-                }}
-              >
-                <Icons.Star className="w-4 h-4" />
-                <span>Star on GitHub</span>
-              </motion.a>
+              <motion.div className="relative">
+                {/* Pulse effect layer (behind the button) */}
+                <motion.div
+                  className="absolute inset-0 rounded-md bg-accent-1 opacity-30"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.3, 0.1, 0.3],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                />
+                {/* Actual button */}
+                <motion.a
+                  href="https://github.com/YousifAbozid/DevInsight"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-accent-1 hover:bg-accent-2 text-white py-1.5 px-2 rounded-md text-sm transition-colors relative z-10"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Icons.Star className="w-4 h-4" />
+                  <span>Star on GitHub</span>
+                </motion.a>
+              </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>
