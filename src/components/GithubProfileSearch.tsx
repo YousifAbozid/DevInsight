@@ -202,7 +202,10 @@ const GithubProfileSearch = forwardRef(
     const handleUsernameClear = () => {
       setUsername('');
       localStorage.removeItem('github_username');
-      // Don't reset lastSearchedUsername here - we want to detect the change
+      // Update the last searched username to empty string
+      setLastSearchedUsername('');
+      // Tell the parent component the username has been cleared
+      onSearch('', token || undefined);
     };
 
     // Handle removing specific user from recent searches
