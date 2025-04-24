@@ -429,13 +429,13 @@ export default function ContributionHeatmap({
 
               {/* Day of week labels - Updated to align right with grid cells */}
               <div className="grid grid-rows-7 gap-y-2 -translate-y-1 text-xs text-l-text-3 dark:text-d-text-3 pr-2 justify-items-end">
+                <span className="h-3 flex items-center">Sun</span>
                 <span className="h-3 flex items-center">Mon</span>
                 <span className="h-3 flex items-center">Tue</span>
                 <span className="h-3 flex items-center">Wed</span>
                 <span className="h-3 flex items-center">Thu</span>
                 <span className="h-3 flex items-center">Fri</span>
                 <span className="h-3 flex items-center">Sat</span>
-                <span className="h-3 flex items-center">Sun</span>
               </div>
 
               {/* Contribution grid */}
