@@ -93,13 +93,27 @@ const GithubProfileSearch = forwardRef(
       }
     }, [onSearch, defaultUsername]);
 
-    // Update when defaultUsername changes
+    // Update when defaultUsername changes but only on initial render or when defaultUsername changes
+    // Add a ref to track if we're in an edit state
+    const isEditingRef = useRef(false);
+
     useEffect(() => {
-      if (defaultUsername && defaultUsername !== username) {
+      // Only update if not currently being edited by user
+      if (
+        defaultUsername &&
+        defaultUsername !== username &&
+        !isEditingRef.current
+      ) {
         setUsername(defaultUsername);
         setLastSearchedUsername(defaultUsername);
       }
     }, [defaultUsername, username]);
+
+    // Track when user is editing the input
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      isEditingRef.current = true;
+      setUsername(e.target.value);
+    };
 
     // Debounced token saving
     useEffect(() => {
@@ -237,7 +251,7 @@ const GithubProfileSearch = forwardRef(
               <input
                 type="text"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={handleUsernameChange}
                 placeholder="Enter GitHub username"
                 className="w-full pl-8 pr-10 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
                 disabled={isLoading}
