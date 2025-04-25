@@ -11,13 +11,14 @@ import ToastDemoPage from './pages/ToastDemoPage';
 import RateLimitIndicator from './components/RateLimitIndicator';
 import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/shared/ToastContainer';
+import { tokenStorage } from './utils/storageUtils';
 
 function App() {
   const [token, setToken] = useState<string | undefined>(undefined);
 
-  // Load token from localStorage
+  // Load token from secure storage
   useEffect(() => {
-    const storedToken = localStorage.getItem('github_token');
+    const storedToken = tokenStorage.getGithubToken();
     if (storedToken) {
       setToken(storedToken);
     }
@@ -26,8 +27,9 @@ function App() {
   // Update token when it changes in storage
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'github_token') {
-        setToken(e.newValue || undefined);
+      if (e.key === tokenStorage.GITHUB_TOKEN_KEY) {
+        const newToken = tokenStorage.getGithubToken();
+        setToken(newToken || undefined);
       }
     };
 
