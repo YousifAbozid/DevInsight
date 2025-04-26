@@ -4,7 +4,8 @@ import {
   useSecureStorage,
   useGithubToken,
   useUserPreferences,
-  useRecentItems,
+  // useRecentItems,
+  useRecentGithubUsers, // Import the correct hook
 } from '../hooks/useStorage';
 
 export default function StorageHooksDemo() {
@@ -46,9 +47,14 @@ export default function StorageHooksDemo() {
   });
 
   // Recent items demo
-  const [recentItems, addRecentItem, clearRecentItems] =
-    useRecentItems<string>(5);
-  const [newRecentItem, setNewRecentItem] = useState('');
+  // const [recentItems, addRecentItem, removeRecentItem, clearRecentItems] =
+  //   useRecentItems<string>('recent_items', 5);
+  // const [newRecentItem, setNewRecentItem] = useState('');
+
+  // Recent GitHub users demo - using the specialized hook
+  const [recentUsers, addRecentUser, removeRecentUser, clearRecentUsers] =
+    useRecentGithubUsers(5);
+  const [newGithubUser, setNewGithubUser] = useState('');
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -381,29 +387,38 @@ export default function StorageHooksDemo() {
           </p>
         </div>
 
-        {/* Recent Items Demo */}
+        {/* Recent GitHub Users Demo */}
         <div className="bg-l-bg-2 dark:bg-d-bg-2 p-5 rounded-lg border border-border-l dark:border-border-d">
           <h2 className="text-xl font-semibold mb-4 text-l-text-1 dark:text-d-text-1">
-            Recent Items List
+            Recent GitHub Users
           </h2>
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-l-text-2 dark:text-d-text-2 mb-1">
-              Recently Added Items
+              Recently Searched GitHub Users
             </label>
 
             <div className="px-3 py-2 bg-l-bg-1 dark:bg-d-bg-1 border border-border-l dark:border-border-d rounded-md mb-4 min-h-[80px]">
-              {recentItems.length > 0 ? (
+              {recentUsers.length > 0 ? (
                 <ul className="list-disc list-inside text-sm">
-                  {recentItems.map((item, index) => (
-                    <li key={index} className="mb-1">
-                      {item}
+                  {recentUsers.map((user, index) => (
+                    <li
+                      key={index}
+                      className="mb-1 flex justify-between items-center"
+                    >
+                      <span>{user}</span>
+                      <button
+                        onClick={() => removeRecentUser(user)}
+                        className="text-xs text-accent-danger hover:text-accent-danger/80 transition-colors"
+                      >
+                        Remove
+                      </button>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <span className="text-l-text-3 dark:text-d-text-3 text-sm">
-                  No items added yet
+                  No recent users
                 </span>
               )}
             </div>
@@ -411,39 +426,38 @@ export default function StorageHooksDemo() {
             <div className="flex space-x-3 mb-3">
               <input
                 type="text"
-                value={newRecentItem}
-                onChange={e => setNewRecentItem(e.target.value)}
+                value={newGithubUser}
+                onChange={e => setNewGithubUser(e.target.value)}
                 className="flex-grow px-3 py-2 text-sm rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d"
-                placeholder="Add new item"
+                placeholder="Enter GitHub username"
               />
 
               <button
                 onClick={() => {
-                  if (newRecentItem.trim()) {
-                    addRecentItem(newRecentItem.trim());
-                    setNewRecentItem('');
+                  if (newGithubUser.trim()) {
+                    addRecentUser(newGithubUser.trim());
+                    setNewGithubUser('');
                   }
                 }}
-                disabled={!newRecentItem.trim()}
+                disabled={!newGithubUser.trim()}
                 className="px-3 py-2 bg-accent-1 text-white rounded-md text-sm hover:bg-accent-2 transition-colors disabled:opacity-50"
               >
-                Add Item
+                Add User
               </button>
             </div>
 
-            {recentItems.length > 0 && (
+            {recentUsers.length > 0 && (
               <button
-                onClick={clearRecentItems}
+                onClick={clearRecentUsers}
                 className="px-3 py-2 bg-accent-danger text-white rounded-md text-sm hover:bg-accent-danger/80 transition-colors"
               >
-                Clear All Items
+                Clear History
               </button>
             )}
           </div>
 
           <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
-            Maintains an ordered list of recently used items, removing
-            duplicates and limiting the list size.
+            Specialized hook for managing GitHub username search history.
           </p>
         </div>
       </div>
@@ -484,10 +498,25 @@ const [prefs, setPrefs, clearPrefs] = useUserPreferences({
 setPrefs({...prefs, theme: 'dark'});
 
 // Recent items list with automatic deduplication
-const [recentItems, addItem, clearItems] = useRecentItems<string>(5);
+const [recentItems, addItem, removeItem, clearItems] = useRecentItems('my_items', 3);
 
 // Add a new item to the front (duplicates are removed)
-addItem('New Item');`}
+addItem('New Item');
+
+// Remove a specific item
+removeItem('New Item');
+
+// GitHub recent users hook with removal capability
+const [recentUsers, addUser, removeUser, clearUsers] = useRecentGithubUsers(5);
+
+// Add a new username (duplicates are automatically removed)
+addUser('octocat');
+
+// Remove a specific user
+removeUser('octocat');
+
+// Clear the history
+clearUsers();`}
           </pre>
         </div>
       </div>
