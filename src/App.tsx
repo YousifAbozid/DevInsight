@@ -8,51 +8,22 @@ import GitHubBattlePage from './pages/GitHubBattlePage';
 import PersonasPage from './pages/PersonasPage';
 import BadgesPage from './pages/BadgesPage';
 import ToastDemoPage from './pages/ToastDemoPage';
-import StorageUtilsDemo from './pages/StorageUtilsDemo'; // Import the new demo page
+import StorageHooksDemo from './pages/StorageHooksDemo';
 import RateLimitIndicator from './components/RateLimitIndicator';
 import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/shared/ToastContainer';
-import { tokenStorage, enhancedTokenStorage } from './utils/storageUtils';
+import { useGithubToken } from './hooks/useStorage';
 
 function App() {
   const [token, setToken] = useState<string | undefined>(undefined);
+  const [storedToken, isLoading] = useGithubToken();
 
-  // Load token from secure storage
+  // Set token once loaded
   useEffect(() => {
-    const loadToken = async () => {
-      // Try to get token from enhanced storage first, fall back to regular storage
-      const storedToken =
-        (await enhancedTokenStorage.getGithubToken()) ||
-        tokenStorage.getGithubToken();
-      if (storedToken) {
-        setToken(storedToken);
-      }
-    };
-
-    loadToken();
-  }, []);
-
-  // Update token when it changes in storage
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (
-        e.key === enhancedTokenStorage.GITHUB_TOKEN_KEY ||
-        e.key === tokenStorage.GITHUB_TOKEN_KEY
-      ) {
-        const loadToken = async () => {
-          const newToken =
-            (await enhancedTokenStorage.getGithubToken()) ||
-            tokenStorage.getGithubToken();
-          setToken(newToken || undefined);
-        };
-
-        loadToken();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+    if (!isLoading && storedToken) {
+      setToken(storedToken);
+    }
+  }, [isLoading, storedToken]);
 
   return (
     <ToastProvider>
@@ -66,14 +37,13 @@ function App() {
 
             <Routes>
               <Route path="/" element={<GithubProfilePage />} />
-              {/* Place the specific routes before the dynamic routes */}
+
               <Route path="/battle" element={<GitHubBattlePage />} />
               <Route path="/personas" element={<PersonasPage />} />
               <Route path="/badges" element={<BadgesPage />} />
               <Route path="/toast-demo" element={<ToastDemoPage />} />
-              <Route path="/storage-demo" element={<StorageUtilsDemo />} />{' '}
-              {/* Add new route */}
-              {/* New separate routes for users and organizations */}
+              <Route path="/storage-demo" element={<StorageHooksDemo />} />
+
               <Route
                 path="/user/:username"
                 element={<PublicProfilePage profileType="user" />}
