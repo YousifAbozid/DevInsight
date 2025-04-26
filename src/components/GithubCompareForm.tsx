@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User,
   Swords,
@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Loader,
 } from 'lucide-react';
+import { useGithubToken } from '../hooks/useStorage';
 
 interface GithubCompareFormProps {
   onCompare: (user1: string, user2: string, token?: string) => void;
@@ -19,21 +20,22 @@ interface GithubCompareFormProps {
 export default function GithubCompareForm({
   onCompare,
   isLoading,
-  initialToken = '',
+  // initialToken = '',
 }: GithubCompareFormProps) {
   const [user1, setUser1] = useState('');
   const [user2, setUser2] = useState('');
-  const [token, setToken] = useState(initialToken);
+
+  // Use the secure hook for token management
+  const [token, setToken, removeToken, isTokenLoading] = useGithubToken();
   const [showTokenInput, setShowTokenInput] = useState(false);
   const [recentUsers, setRecentUsers] = useState<string[]>([]);
   const [showTokenSaved, setShowTokenSaved] = useState(false);
-  const tokenTimeoutRef = useRef<number | null>(null);
 
   // Track current comparison state to detect changes
   const [currentComparison, setCurrentComparison] = useState({
     user1: '',
     user2: '',
-    token: initialToken || '',
+    token: '',
   });
 
   // Check if current inputs differ from what's currently being compared
@@ -55,56 +57,31 @@ export default function GithubCompareForm({
         console.error('Error parsing recent users:', e);
       }
     }
-
-    // Set token from localStorage if available
-    const savedToken = localStorage.getItem('github_token');
-    if (savedToken) {
-      setToken(savedToken);
-    }
   }, []);
 
-  // Debounced token saving with auto-comparison
-  useEffect(() => {
-    // Clear any existing timeout
-    if (tokenTimeoutRef.current) {
-      clearTimeout(tokenTimeoutRef.current);
-    }
+  // Handle token changes with feedback
+  const handleTokenChange = async (newToken: string) => {
+    try {
+      await setToken(newToken);
 
-    const storedToken = localStorage.getItem('github_token') || '';
+      // Show saved feedback
+      setShowTokenSaved(true);
+      setTimeout(() => setShowTokenSaved(false), 3000);
 
-    // Handle both token changes and token clearing
-    if (token !== storedToken) {
-      tokenTimeoutRef.current = window.setTimeout(() => {
-        // Update localStorage (set or remove token)
-        if (token.trim()) {
-          localStorage.setItem('github_token', token.trim());
-        } else {
-          localStorage.removeItem('github_token');
-        }
-
-        // Show saved feedback
-        setShowTokenSaved(true);
-        setTimeout(() => setShowTokenSaved(false), 3000);
-
-        // Auto-trigger comparison if both usernames are filled
-        if (user1.trim() && user2.trim()) {
-          onCompare(user1.trim(), user2.trim(), token.trim() || undefined);
-          // Update current comparison state after comparison is triggered
-          setCurrentComparison({
-            user1: user1.trim(),
-            user2: user2.trim(),
-            token: token.trim(),
-          });
-        }
-      }, 1000); // 1 second debounce
-    }
-
-    return () => {
-      if (tokenTimeoutRef.current) {
-        clearTimeout(tokenTimeoutRef.current);
+      // Auto-trigger comparison if both usernames are filled
+      if (user1.trim() && user2.trim()) {
+        onCompare(user1.trim(), user2.trim(), newToken.trim() || undefined);
+        // Update current comparison state
+        setCurrentComparison({
+          user1: user1.trim(),
+          user2: user2.trim(),
+          token: newToken.trim(),
+        });
       }
-    };
-  }, [token, user1, user2, onCompare]);
+    } catch (error) {
+      console.error('Error saving token:', error);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,13 +98,13 @@ export default function GithubCompareForm({
       );
       setRecentUsers(updatedRecentUsers);
 
-      onCompare(user1.trim(), user2.trim(), token.trim() || undefined);
+      onCompare(user1.trim(), user2.trim(), token || undefined);
 
       // Update current comparison state
       setCurrentComparison({
         user1: user1.trim(),
         user2: user2.trim(),
-        token: token.trim() || '',
+        token: token || '',
       });
     }
   };
@@ -148,23 +125,25 @@ export default function GithubCompareForm({
     }
   };
 
-  const handleTokenClear = () => {
-    // Instead of directly calling onCompare here, we'll rely on the effect above
-    localStorage.removeItem('github_token');
-    setToken('');
-    setShowTokenSaved(true);
-    setTimeout(() => setShowTokenSaved(false), 3000);
+  const handleTokenClear = async () => {
+    try {
+      removeToken();
 
-    // Immediately update current comparison state to reflect token clearing
-    // This helps properly calculate hasChanges
-    if (user1.trim() && user2.trim()) {
-      // Force immediate compare instead of waiting for the effect
-      onCompare(user1.trim(), user2.trim(), undefined);
-      setCurrentComparison({
-        user1: user1.trim(),
-        user2: user2.trim(),
-        token: '',
-      });
+      // Show cleared feedback
+      setShowTokenSaved(true);
+      setTimeout(() => setShowTokenSaved(false), 3000);
+
+      // Force immediate compare instead of waiting for the effect if we have users
+      if (user1.trim() && user2.trim()) {
+        onCompare(user1.trim(), user2.trim(), undefined);
+        setCurrentComparison({
+          user1: user1.trim(),
+          user2: user2.trim(),
+          token: '',
+        });
+      }
+    } catch (error) {
+      console.error('Error clearing token:', error);
     }
   };
 
@@ -360,10 +339,10 @@ export default function GithubCompareForm({
               <input
                 type="password"
                 value={token}
-                onChange={e => setToken(e.target.value)}
+                onChange={e => handleTokenChange(e.target.value)}
                 placeholder="GitHub Personal Access Token (optional)"
                 className="w-full pl-8 pr-16 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
-                disabled={isLoading}
+                disabled={isLoading || isTokenLoading}
               />
               {token && (
                 <button
@@ -380,7 +359,7 @@ export default function GithubCompareForm({
               <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
               <p className="text-xs">
                 The token is required to fetch contribution data. It&apos;s
-                stored only in your browser and never sent to our servers.
+                stored securely in your browser and never sent to our servers.
               </p>
             </div>
           </div>

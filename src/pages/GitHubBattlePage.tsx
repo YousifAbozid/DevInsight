@@ -4,6 +4,7 @@ import GithubBattleResults from '../components/GithubBattleResults';
 import { useGithubUser, useUserRepositories } from '../services/githubService';
 import { useContributionData } from '../services/githubGraphQLService';
 import { Icons } from '../components/shared/Icons';
+import { useGithubToken } from '../hooks/useStorage';
 
 export default function GitHubBattlePage() {
   // Set page title
@@ -20,9 +21,9 @@ export default function GitHubBattlePage() {
     user1: string;
     user2: string;
   } | null>(null);
-  const [token, setToken] = useState<string | undefined>(
-    localStorage.getItem('github_token') || undefined
-  );
+
+  // Use the secure hook for token management
+  const [token, setToken] = useGithubToken();
 
   // User 1 data queries
   const {
@@ -50,15 +51,18 @@ export default function GitHubBattlePage() {
   const { data: user2ContributionData, isLoading: isUser2ContributionLoading } =
     useContributionData(usernames?.user2 || '', token);
 
-  const handleCompare = (
+  const handleCompare = async (
     user1: string,
     user2: string,
     accessToken?: string
   ) => {
     setUsernames({ user1, user2 });
     if (accessToken) {
-      setToken(accessToken);
-      localStorage.setItem('github_token', accessToken);
+      try {
+        await setToken(accessToken);
+      } catch (error) {
+        console.error('Error saving token:', error);
+      }
     }
   };
 

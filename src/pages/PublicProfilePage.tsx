@@ -1,9 +1,10 @@
 import { useParams, Navigate, useNavigate } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   aggregateLanguageData,
   useBatchUserData, // Added batch data hook
 } from '../services/githubService';
+import { useGithubToken } from '../hooks/useStorage';
 import GithubProfileCard from '../components/GithubProfileCard';
 import LanguagePieChart from '../components/LanguagePieChart';
 import ContributionHeatmap from '../components/ContributionHeatmap';
@@ -53,56 +54,15 @@ export default function PublicProfilePage({
   const { username = '' } = useParams<{ username: string }>();
   const navigate = useNavigate();
 
-  // Add token state and UI controls
-  const [token, setToken] = useState<string>('');
+  // Replace token storage with useGithubToken hook
+  const [token, setToken, removeToken] = useGithubToken();
   const [showTokenInput, setShowTokenInput] = useState(false);
-  const [savedToken, setSavedToken] = useState<string | null>(null);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
-  const tokenTimeoutRef = useRef<number | null>(null);
 
   // Add state for detected profile type
   const [detectedProfileType, setDetectedProfileType] = useState<
     'user' | 'organization' | null
   >(profileType || null);
-
-  // Load token from localStorage on component mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem('github_token');
-    if (storedToken) {
-      setToken(storedToken);
-      setSavedToken(storedToken);
-    }
-  }, []);
-
-  // Debounced token saving with feedback
-  useEffect(() => {
-    if (token === savedToken) return;
-
-    // Clear previous timeout if it exists
-    if (tokenTimeoutRef.current) {
-      clearTimeout(tokenTimeoutRef.current);
-    }
-
-    // Only save if token changes and isn't empty
-    if (token.trim()) {
-      tokenTimeoutRef.current = setTimeout(() => {
-        localStorage.setItem('github_token', token.trim());
-        setSavedToken(token);
-        setShowSaveMessage(true);
-
-        // Hide message after 3 seconds
-        setTimeout(() => {
-          setShowSaveMessage(false);
-        }, 3000);
-      }, 1000); // 1 second debounce
-    }
-
-    return () => {
-      if (tokenTimeoutRef.current) {
-        clearTimeout(tokenTimeoutRef.current);
-      }
-    };
-  }, [token, savedToken]);
 
   // Use batch data fetching instead of separate requests
   const {
@@ -110,7 +70,7 @@ export default function PublicProfilePage({
     isLoading: isBatchLoading,
     error: batchError,
     isError: isBatchError,
-  } = useBatchUserData(username, savedToken || undefined);
+  } = useBatchUserData(username, token || undefined);
 
   // For backwards compatibility, keep these variables but derive them from batch data
   const user = batchData?.userData;
@@ -121,7 +81,7 @@ export default function PublicProfilePage({
   const isUserError = isBatchError;
 
   const { data: contributionData, isLoading: isContributionLoading } =
-    useContributionData(username, savedToken || undefined);
+    useContributionData(username, token || undefined);
 
   // Detect if the profile is a user or organization based on the API response
   useEffect(() => {
@@ -298,13 +258,26 @@ export default function PublicProfilePage({
 
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
 
+  // Handle token saving with feedback
+  const handleTokenChange = async (newToken: string) => {
+    try {
+      await setToken(newToken.trim());
+      setShowSaveMessage(true);
+      setTimeout(() => setShowSaveMessage(false), 3000);
+    } catch (error) {
+      console.error('Error saving token:', error);
+    }
+  };
+
   // Handle token clearing
-  const handleClearToken = () => {
-    localStorage.removeItem('github_token');
-    setToken('');
-    setSavedToken(null);
-    setShowSaveMessage(true);
-    setTimeout(() => setShowSaveMessage(false), 3000);
+  const handleClearToken = async () => {
+    try {
+      removeToken();
+      setShowSaveMessage(true);
+      setTimeout(() => setShowSaveMessage(false), 3000);
+    } catch (error) {
+      console.error('Error clearing token:', error);
+    }
   };
 
   // If we're on the legacy route and have detected the profile type, redirect
@@ -340,7 +313,7 @@ export default function PublicProfilePage({
           >
             {showTokenInput ? 'Hide token input' : 'Show token input'}
             <span className="text-xs">(for enhanced data access)</span>
-            {!showTokenInput && savedToken && (
+            {!showTokenInput && token && (
               <span className="ml-1 text-xs px-2 py-0.5 bg-accent-success/10 text-accent-success rounded-full">
                 Token active
               </span>
@@ -358,7 +331,7 @@ export default function PublicProfilePage({
                 <input
                   type="password"
                   value={token}
-                  onChange={e => setToken(e.target.value)}
+                  onChange={e => handleTokenChange(e.target.value)}
                   placeholder="GitHub Personal Access Token"
                   className="w-full px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
                 />
@@ -374,8 +347,8 @@ export default function PublicProfilePage({
               </div>
               <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
                 The token enables fetching contribution data. Changes are
-                automatically saved after typing. Your token is stored only in
-                your browser.
+                automatically saved after typing. Your token is stored securely
+                in your browser.
               </p>
             </div>
           )}
@@ -474,17 +447,13 @@ export default function PublicProfilePage({
           />
 
           {/* Language pie chart - For both users and organizations */}
-          {/* {isReposLoading ? (
-            <LanguageChartSkeleton />
-          ) : ( */}
           <LanguagePieChart data={languageData} loading={isReposLoading} />
-          {/* // )} */}
 
           {/* Contribution heatmap - Only for user profiles */}
           {detectedProfileType === 'user' && username && (
             <ContributionHeatmap
               username={username}
-              token={savedToken || undefined}
+              token={token || undefined}
               userCreatedAt={user?.created_at}
             />
           )}

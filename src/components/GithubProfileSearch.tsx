@@ -14,6 +14,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react';
+import { useGithubToken } from '../hooks/useStorage';
 
 interface GithubProfileSearchProps {
   onSearch: (username: string, token?: string) => void;
@@ -30,7 +31,7 @@ const GithubProfileSearch = forwardRef(
       onSearch,
       isLoading,
       initialUsername = '',
-      initialToken = '',
+      // initialToken = '',
       defaultUsername = '', // Use the defaultUsername prop
     }: GithubProfileSearchProps,
     ref
@@ -38,11 +39,12 @@ const GithubProfileSearch = forwardRef(
     const [username, setUsername] = useState(
       defaultUsername || initialUsername
     );
-    const [token, setToken] = useState(initialToken);
-    const [showTokenInput, setShowTokenInput] = useState(false); // Always closed by default
+
+    // Use the secure hook for token management
+    const [token, setToken, removeToken, isTokenLoading] = useGithubToken();
+    const [showTokenInput, setShowTokenInput] = useState(false);
     const [recentUsers, setRecentUsers] = useState<string[]>([]);
     const [showTokenSaved, setShowTokenSaved] = useState(false);
-    const tokenTimeoutRef = useRef<number | null>(null);
     const usernameTimeoutRef = useRef<number | null>(null);
 
     // Track the last searched username to detect changes
@@ -56,7 +58,13 @@ const GithubProfileSearch = forwardRef(
     // Expose methods for parent component to use
     useImperativeHandle(ref, () => ({
       setUsername,
-      setToken,
+      setToken: async (newToken: string) => {
+        try {
+          await setToken(newToken);
+        } catch (error) {
+          console.error('Error setting token:', error);
+        }
+      },
       setRecentUsers,
       handleQuickFill,
     }));
@@ -65,18 +73,12 @@ const GithubProfileSearch = forwardRef(
     useEffect(() => {
       const savedUsername =
         defaultUsername || localStorage.getItem('github_username');
-      const savedToken = localStorage.getItem('github_token');
       const savedRecentUsers = localStorage.getItem('recent_github_users');
 
       if (savedUsername) {
         setUsername(savedUsername);
         // Also set as last searched username since we're auto-searching with it
         setLastSearchedUsername(savedUsername);
-      }
-
-      if (savedToken) {
-        setToken(savedToken);
-        // Don't set showTokenInput to true here to keep it closed by default
       }
 
       if (savedRecentUsers) {
@@ -87,11 +89,11 @@ const GithubProfileSearch = forwardRef(
         }
       }
 
-      // Auto-search with saved credentials
+      // Auto-search with saved credentials (token is already loaded by the hook)
       if (savedUsername) {
-        onSearch(savedUsername, savedToken || undefined);
+        onSearch(savedUsername, token || undefined);
       }
-    }, [onSearch, defaultUsername]);
+    }, [onSearch, defaultUsername, token]);
 
     // Update when defaultUsername changes but only on initial render or when defaultUsername changes
     // Add a ref to track if we're in an edit state
@@ -114,36 +116,6 @@ const GithubProfileSearch = forwardRef(
       isEditingRef.current = true;
       setUsername(e.target.value);
     };
-
-    // Debounced token saving
-    useEffect(() => {
-      // Clear any existing timeout
-      if (tokenTimeoutRef.current) {
-        clearTimeout(tokenTimeoutRef.current);
-      }
-
-      // Only save if not empty and different from what's in localStorage
-      if (token.trim() && token !== localStorage.getItem('github_token')) {
-        tokenTimeoutRef.current = window.setTimeout(() => {
-          localStorage.setItem('github_token', token.trim());
-
-          // Show saved feedback
-          setShowTokenSaved(true);
-          setTimeout(() => setShowTokenSaved(false), 3000);
-
-          // If we already have a username, refresh the search with the new token
-          if (username.trim()) {
-            onSearch(username.trim(), token.trim());
-          }
-        }, 1000); // 1 second debounce
-      }
-
-      return () => {
-        if (tokenTimeoutRef.current) {
-          clearTimeout(tokenTimeoutRef.current);
-        }
-      };
-    }, [token, username, onSearch]);
 
     // Debounced username saving/removing
     useEffect(() => {
@@ -184,29 +156,53 @@ const GithubProfileSearch = forwardRef(
         );
         setRecentUsers(updatedRecentUsers);
 
-        onSearch(username.trim(), token.trim() || undefined);
+        onSearch(username.trim(), token || undefined);
 
         // Update the last searched username
         setLastSearchedUsername(username.trim());
       }
     };
 
-    const handleTokenClear = () => {
-      localStorage.removeItem('github_token');
-      setToken('');
-      setShowTokenSaved(true);
-      setTimeout(() => setShowTokenSaved(false), 3000);
+    // Handle token changes
+    const handleTokenChange = async (newToken: string) => {
+      try {
+        await setToken(newToken);
 
-      // Refresh search without token if we have a username
-      if (username.trim()) {
-        onSearch(username.trim(), undefined);
+        // Show saved feedback
+        setShowTokenSaved(true);
+        setTimeout(() => setShowTokenSaved(false), 3000);
+
+        // If we already have a username, refresh the search with the new token
+        if (username.trim()) {
+          onSearch(username.trim(), newToken.trim());
+        }
+      } catch (error) {
+        console.error('Error saving token:', error);
+      }
+    };
+
+    // Handle token clearing
+    const handleTokenClear = async () => {
+      try {
+        removeToken();
+
+        // Show cleared feedback
+        setShowTokenSaved(true);
+        setTimeout(() => setShowTokenSaved(false), 3000);
+
+        // Refresh search without token if we have a username
+        if (username.trim()) {
+          onSearch(username.trim(), undefined);
+        }
+      } catch (error) {
+        console.error('Error clearing token:', error);
       }
     };
 
     const handleQuickFill = (selectedUsername: string) => {
       setUsername(selectedUsername);
       localStorage.setItem('github_username', selectedUsername);
-      onSearch(selectedUsername, token.trim() || undefined);
+      onSearch(selectedUsername, token || undefined);
 
       // Update the last searched username
       setLastSearchedUsername(selectedUsername);
@@ -366,10 +362,10 @@ const GithubProfileSearch = forwardRef(
                   <input
                     type="password"
                     value={token}
-                    onChange={e => setToken(e.target.value)}
+                    onChange={e => handleTokenChange(e.target.value)}
                     placeholder="GitHub Personal Access Token (optional)"
                     className="w-full pl-8 pr-16 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
-                    disabled={isLoading}
+                    disabled={isLoading || isTokenLoading}
                   />
                   {token && (
                     <button
@@ -386,8 +382,8 @@ const GithubProfileSearch = forwardRef(
                   <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
                   <p className="text-xs">
                     The token is required to fetch contribution data. It&apos;s
-                    stored only in your browser and never sent to our servers.
-                    Create a token with the &apos;user&apos; scope at{' '}
+                    stored securely in your browser and never sent to our
+                    servers. Create a token with the &apos;user&apos; scope at{' '}
                     <a
                       href="https://github.com/settings/tokens"
                       target="_blank"
