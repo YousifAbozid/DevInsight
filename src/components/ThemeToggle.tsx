@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import useLocalStorage from 'use-local-storage';
-import { Sun, Moon } from 'lucide-react';
+import { Icons } from './shared/Icons';
 
 const ThemeToggle = () => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -36,15 +36,9 @@ const ThemeToggle = () => {
       {/* Icons with animated swap */}
       <span className="relative z-10 flex items-center justify-center transition-all duration-300">
         {darkMode === 'dark' ? (
-          <Sun
-            size={18}
-            className="text-accent-1 dark:text-accent-1 animate-fade-in-down"
-          />
+          <Icons.Sun className="w-[18px] h-[18px] text-accent-1 dark:text-accent-1 animate-fade-in-down" />
         ) : (
-          <Moon
-            size={18}
-            className="text-accent-2 dark:text-accent-2 animate-fade-in-down"
-          />
+          <Icons.Moon className="w-[18px] h-[18px] text-accent-2 dark:text-accent-2 animate-fade-in-down" />
         )}
       </span>
     </button>
