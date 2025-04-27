@@ -31,6 +31,10 @@ export default function GithubCompareForm({
 
   const recentUsersRef2 = useRef<typeof recentUsersRef1.current>(null);
 
+  // Add timeout refs for debounced saving of usernames
+  const user1TimeoutRef = useRef<number | null>(null);
+  const user2TimeoutRef = useRef<number | null>(null);
+
   // Track current comparison state to detect changes
   const [currentComparison, setCurrentComparison] = useState({
     user1: '',
@@ -139,6 +143,46 @@ export default function GithubCompareForm({
       console.error('Error clearing token:', error);
     }
   };
+
+  // Debounced saving of user1 to recent users
+  useEffect(() => {
+    // Clear any existing timeout
+    if (user1TimeoutRef.current) {
+      clearTimeout(user1TimeoutRef.current);
+    }
+
+    user1TimeoutRef.current = window.setTimeout(() => {
+      if (user1.trim()) {
+        recentUsersRef1.current?.addUser(user1.trim());
+      }
+    }, 800); // 800ms debounce
+
+    return () => {
+      if (user1TimeoutRef.current) {
+        clearTimeout(user1TimeoutRef.current);
+      }
+    };
+  }, [user1]);
+
+  // Debounced saving of user2 to recent users
+  useEffect(() => {
+    // Clear any existing timeout
+    if (user2TimeoutRef.current) {
+      clearTimeout(user2TimeoutRef.current);
+    }
+
+    user2TimeoutRef.current = window.setTimeout(() => {
+      if (user2.trim()) {
+        recentUsersRef2.current?.addUser(user2.trim());
+      }
+    }, 800); // 800ms debounce
+
+    return () => {
+      if (user2TimeoutRef.current) {
+        clearTimeout(user2TimeoutRef.current);
+      }
+    };
+  }, [user2]);
 
   return (
     <form
