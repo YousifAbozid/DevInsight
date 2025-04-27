@@ -33,10 +33,20 @@ export default function LanguagePieChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d h-80 flex items-center justify-center">
-        <p className="text-l-text-2 dark:text-d-text-2">
-          No language data available
-        </p>
+      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
+        <SectionHeader title="Language Distribution" icon={Icons.Languages} />
+        <div className="text-center py-12 mt-4 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
+          <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-1 dark:bg-d-bg-1">
+            <Icons.Languages className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+          </div>
+          <h3 className="text-lg font-semibold text-l-text-2 dark:text-d-text-2 mb-2">
+            No language data available
+          </h3>
+          <p className="text-l-text-3 dark:text-d-text-3 max-w-md mx-auto">
+            Create repositories with detected programming languages to see your
+            language distribution.
+          </p>
+        </div>
       </div>
     );
   }
