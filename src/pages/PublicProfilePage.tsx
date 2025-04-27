@@ -2,9 +2,10 @@ import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   aggregateLanguageData,
-  useBatchUserData, // Added batch data hook
+  useBatchUserData,
 } from '../services/githubService';
 import { useGithubToken } from '../hooks/useStorage';
+import GitHubTokenSection from '../components/shared/GitHubTokenSection';
 import GithubProfileCard from '../components/GithubProfileCard';
 import LanguagePieChart from '../components/LanguagePieChart';
 import ContributionHeatmap from '../components/ContributionHeatmap';
@@ -56,7 +57,6 @@ export default function PublicProfilePage({
 
   // Replace token storage with useGithubToken hook
   const [token, setToken, removeToken] = useGithubToken();
-  const [showTokenInput, setShowTokenInput] = useState(false);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
 
   // Add state for detected profile type
@@ -306,52 +306,12 @@ export default function PublicProfilePage({
       {/* Enhanced Token Input Section - Only show for user profiles where contribution data is relevant */}
       {(detectedProfileType === 'user' || !detectedProfileType) && (
         <div className="mb-6">
-          <button
-            type="button"
-            onClick={() => setShowTokenInput(!showTokenInput)}
-            className="text-sm text-accent-1 hover:text-accent-2 flex items-center gap-1 mb-2"
-          >
-            {showTokenInput ? 'Hide token input' : 'Show token input'}
-            <span className="text-xs">(for enhanced data access)</span>
-            {!showTokenInput && token && (
-              <span className="ml-1 text-xs px-2 py-0.5 bg-accent-success/10 text-accent-success rounded-full">
-                Token active
-              </span>
-            )}
-          </button>
-
-          {showTokenInput && (
-            <div className="relative bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 border border-border-l dark:border-border-d">
-              {showSaveMessage && (
-                <div className="absolute -top-2 right-4 px-3 py-1 bg-accent-success/10 text-accent-success text-xs rounded-full transform translate-y-0 animate-fade-in-down">
-                  {token ? 'Token saved!' : 'Token cleared!'}
-                </div>
-              )}
-              <div className="relative">
-                <input
-                  type="password"
-                  value={token}
-                  onChange={e => handleTokenChange(e.target.value)}
-                  placeholder="GitHub Personal Access Token"
-                  className="w-full px-4 py-2 rounded-lg bg-l-bg-1 dark:bg-d-bg-1 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none"
-                />
-                {token && (
-                  <button
-                    type="button"
-                    onClick={handleClearToken}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-1 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-              <p className="text-xs text-l-text-3 dark:text-d-text-3 mt-2">
-                The token enables fetching contribution data. Changes are
-                automatically saved after typing. Your token is stored securely
-                in your browser.
-              </p>
-            </div>
-          )}
+          <GitHubTokenSection
+            token={token}
+            onTokenChange={handleTokenChange}
+            onTokenClear={handleClearToken}
+            showTokenSaved={showSaveMessage}
+          />
         </div>
       )}
 
