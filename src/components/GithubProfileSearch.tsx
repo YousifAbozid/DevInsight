@@ -5,15 +5,7 @@ import {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {
-  User,
-  Search,
-  X,
-  Key,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
+import { Icons } from './shared/Icons';
 import { useGithubToken } from '../hooks/useStorage';
 
 interface GithubProfileSearchProps {
@@ -242,7 +234,7 @@ const GithubProfileSearch = forwardRef(
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-grow">
               <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
-                <User size={16} />
+                <Icons.User className="w-4 h-4" />
               </div>
               <input
                 type="text"
@@ -259,7 +251,7 @@ const GithubProfileSearch = forwardRef(
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger cursor-pointer transition-colors duration-200"
                   aria-label="Clear username"
                 >
-                  <X size={14} />
+                  <Icons.Close className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -275,7 +267,7 @@ const GithubProfileSearch = forwardRef(
                 </>
               ) : (
                 <>
-                  <Search size={16} />
+                  <Icons.Search className="w-4 h-4" />
                   <span>Search</span>
                 </>
               )}
@@ -286,7 +278,7 @@ const GithubProfileSearch = forwardRef(
           {recentUsers.length > 0 && (
             <div className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-2.5 rounded-lg">
               <div className="flex items-center gap-2 mb-1.5 text-xs text-l-text-2 dark:text-d-text-2">
-                <Clock size={14} />
+                <Icons.Clock className="w-3.5 h-3.5" />
                 <span>Recent searches:</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -305,7 +297,7 @@ const GithubProfileSearch = forwardRef(
                       className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-40 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200"
                       aria-label={`Remove ${user} from recent searches`}
                     >
-                      <X size={12} />
+                      <Icons.Close className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -331,7 +323,7 @@ const GithubProfileSearch = forwardRef(
               className="flex flex-wrap items-center gap-1.5 text-accent-1 hover:text-accent-2 transition-colors mb-2 cursor-pointer text-sm w-full"
             >
               <div className="flex items-center">
-                <Key size={14} className="flex-shrink-0" />
+                <Icons.Key className="w-3.5 h-3.5 flex-shrink-0" />
                 <span className="font-medium ml-1.5">
                   {showTokenInput ? 'Hide token' : 'GitHub Token'}
                 </span>
@@ -341,13 +333,13 @@ const GithubProfileSearch = forwardRef(
               </span>
               {token && !showTokenInput && !showTokenSaved && (
                 <span className="text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 ml-0 sm:ml-1.5">
-                  <CheckCircle size={12} />
+                  <Icons.Check className="w-3 h-3" />
                   <span>Active</span>
                 </span>
               )}
               {showTokenSaved && (
                 <span className="text-xs px-1.5 py-0.5 rounded-full bg-accent-success/10 text-accent-success flex items-center gap-1 animate-pulse ml-0 sm:ml-1.5">
-                  <CheckCircle size={12} />
+                  <Icons.Check className="w-3 h-3" />
                   <span>{token ? 'Saved' : 'Cleared'}</span>
                 </span>
               )}
@@ -357,7 +349,7 @@ const GithubProfileSearch = forwardRef(
               <div className="bg-l-bg-3 dark:bg-d-bg-3 p-3 rounded-lg border border-border-l dark:border-border-d animate-fade-in-down">
                 <div className="relative">
                   <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3">
-                    <Key size={16} />
+                    <Icons.Key className="w-4 h-4" />
                   </div>
                   <input
                     type="password"
@@ -373,13 +365,13 @@ const GithubProfileSearch = forwardRef(
                       onClick={handleTokenClear}
                       className="absolute right-2 top-1/2 -translate-y-1/2 text-xs px-2 py-0.5 bg-accent-danger/10 text-accent-danger rounded hover:bg-accent-danger/20 flex items-center gap-1 transition-colors duration-200"
                     >
-                      <X size={12} />
+                      <Icons.Close className="w-3 h-3" />
                       <span>Clear</span>
                     </button>
                   )}
                 </div>
                 <div className="flex items-start gap-1.5 mt-2 text-xs text-l-text-3 dark:text-d-text-3">
-                  <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                  <Icons.AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
                   <p className="text-xs">
                     The token is required to fetch contribution data. It&apos;s
                     stored securely in your browser and never sent to our
