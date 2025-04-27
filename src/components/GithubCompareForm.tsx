@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Icons } from './shared/Icons';
 import { useGithubToken } from '../hooks/useStorage';
 import GitHubTokenSection from './shared/GitHubTokenSection';
+import RecentGithubUsers from './shared/RecentGithubUsers';
 
 interface GithubCompareFormProps {
   onCompare: (user1: string, user2: string, token?: string) => void;
@@ -12,15 +13,23 @@ interface GithubCompareFormProps {
 export default function GithubCompareForm({
   onCompare,
   isLoading,
-  // initialToken = '',
 }: GithubCompareFormProps) {
   const [user1, setUser1] = useState('');
   const [user2, setUser2] = useState('');
 
   // Use the secure hook for token management
   const [token, setToken, removeToken, isTokenLoading] = useGithubToken();
-  const [recentUsers, setRecentUsers] = useState<string[]>([]);
   const [showTokenSaved, setShowTokenSaved] = useState(false);
+
+  // References for recent users functionality
+  const recentUsersRef1 = useRef<{
+    addUser: (username: string) => void;
+    removeUser: (username: string) => void;
+    clearUsers: () => void;
+    getUsers: () => string[];
+  } | null>(null);
+
+  const recentUsersRef2 = useRef<typeof recentUsersRef1.current>(null);
 
   // Track current comparison state to detect changes
   const [currentComparison, setCurrentComparison] = useState({
@@ -42,7 +51,7 @@ export default function GithubCompareForm({
       try {
         const parsedUsers = JSON.parse(savedUsers);
         if (Array.isArray(parsedUsers)) {
-          setRecentUsers(parsedUsers.slice(0, 5)); // Limit to 5 recent users
+          // setRecentUsers(parsedUsers.slice(0, 5)); // Limit to 5 recent users
         }
       } catch (e) {
         console.error('Error parsing recent users:', e);
@@ -78,16 +87,9 @@ export default function GithubCompareForm({
     e.preventDefault();
 
     if (user1.trim() && user2.trim()) {
-      // Save users to recent list
-      const updatedRecentUsers = [
-        ...new Set([user1.trim(), user2.trim(), ...recentUsers]),
-      ].slice(0, 5);
-
-      localStorage.setItem(
-        'recent_github_users',
-        JSON.stringify(updatedRecentUsers)
-      );
-      setRecentUsers(updatedRecentUsers);
+      // Add users to recent users lists
+      recentUsersRef1.current?.addUser(user1.trim());
+      recentUsersRef2.current?.addUser(user2.trim());
 
       onCompare(user1.trim(), user2.trim(), token || undefined);
 
@@ -100,7 +102,7 @@ export default function GithubCompareForm({
     }
   };
 
-  const handleQuickFill = (username: string, field: 'user1' | 'user2') => {
+  const handleQuickFill = (username: string, field: string = 'user1') => {
     if (field === 'user1') {
       setUser1(username);
     } else {
@@ -136,23 +138,6 @@ export default function GithubCompareForm({
     } catch (error) {
       console.error('Error clearing token:', error);
     }
-  };
-
-  // Handle removing specific user from recent searches
-  const handleRemoveRecentUser = (
-    userToRemove: string,
-    e: React.MouseEvent
-  ) => {
-    e.stopPropagation(); // Prevent triggering parent button
-
-    const updatedRecentUsers = recentUsers.filter(
-      user => user !== userToRemove
-    );
-    setRecentUsers(updatedRecentUsers);
-    localStorage.setItem(
-      'recent_github_users',
-      JSON.stringify(updatedRecentUsers)
-    );
   };
 
   return (
@@ -195,35 +180,13 @@ export default function GithubCompareForm({
             )}
           </div>
 
-          {recentUsers.length > 0 && (
-            <div className="mt-2">
-              <div className="flex items-center gap-1.5 mb-1 text-xs text-l-text-2 dark:text-d-text-2">
-                <Icons.Clock className="w-3.5 h-3.5" />
-                <span>Recent users:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {recentUsers.map(username => (
-                  <div key={`user1-${username}`} className="relative group">
-                    <button
-                      type="button"
-                      onClick={() => handleQuickFill(username, 'user1')}
-                      className="pl-2.5 pr-7 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-all duration-200 cursor-pointer"
-                    >
-                      {username}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={e => handleRemoveRecentUser(username, e)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-40 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200"
-                      aria-label={`Remove ${username} from recent searches`}
-                    >
-                      <Icons.Close className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Recent users for user1 */}
+          <RecentGithubUsers
+            onSelectUser={handleQuickFill}
+            field="user1"
+            className="mt-2"
+            recentUsersRef={recentUsersRef1}
+          />
         </div>
 
         <div>
@@ -260,40 +223,18 @@ export default function GithubCompareForm({
             )}
           </div>
 
-          {recentUsers.length > 0 && (
-            <div className="mt-2">
-              <div className="flex items-center gap-1.5 mb-1 text-xs text-l-text-2 dark:text-d-text-2">
-                <Icons.Clock className="w-3.5 h-3.5" />
-                <span>Recent users:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {recentUsers.map(username => (
-                  <div key={`user2-${username}`} className="relative group">
-                    <button
-                      type="button"
-                      onClick={() => handleQuickFill(username, 'user2')}
-                      className="pl-2.5 pr-7 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-all duration-200 cursor-pointer"
-                    >
-                      {username}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={e => handleRemoveRecentUser(username, e)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-40 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200"
-                      aria-label={`Remove ${username} from recent searches`}
-                    >
-                      <Icons.Close className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Recent users for user2 */}
+          <RecentGithubUsers
+            onSelectUser={handleQuickFill}
+            field="user2"
+            className="mt-2"
+            recentUsersRef={recentUsersRef2}
+          />
         </div>
       </div>
 
       <div className="mt-4">
-        {/* Token section - replaced with the reusable component */}
+        {/* Token section */}
         <GitHubTokenSection
           token={token}
           onTokenChange={handleTokenChange}

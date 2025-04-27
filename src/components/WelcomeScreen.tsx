@@ -2,11 +2,31 @@ import { Icons } from './shared/Icons';
 
 interface WelcomeScreenProps {
   onSuggestionClick: (suggestion: string) => void;
+  addToRecentUsers?: (username: string) => void; // Add this prop
 }
 
 export default function WelcomeScreen({
   onSuggestionClick,
+  addToRecentUsers, // New prop
 }: WelcomeScreenProps) {
+  // Handle suggestion click with recent users update
+  const handleSuggestionClick = (username: string) => {
+    // Add to recent users if the function is provided
+    if (addToRecentUsers) {
+      addToRecentUsers(username);
+    }
+
+    // Call the original handler
+    onSuggestionClick(username);
+
+    // Dispatch custom event as a backup
+    window.dispatchEvent(
+      new CustomEvent('recent_users_added', {
+        detail: { username },
+      })
+    );
+  };
+
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-8 border border-border-l dark:border-border-d">
       <div className="flex flex-col items-center justify-center text-center space-y-6">
@@ -51,7 +71,7 @@ export default function WelcomeScreen({
               ].map((suggestion, index) => (
                 <button
                   key={suggestion}
-                  onClick={() => onSuggestionClick(suggestion)}
+                  onClick={() => handleSuggestionClick(suggestion)}
                   className="px-2 py-1 text-xs bg-accent-1/10 hover:bg-accent-1/20 text-accent-1 rounded-md transition-all cursor-pointer hover:scale-110 hover:-translate-y-1"
                   style={{
                     animation: 'fadeInDown 0.5s ease-out forwards',

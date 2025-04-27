@@ -8,6 +8,7 @@ import {
 import { Icons } from './shared/Icons';
 import { useGithubToken } from '../hooks/useStorage';
 import GitHubTokenSection from './shared/GitHubTokenSection';
+import RecentGithubUsers from './shared/RecentGithubUsers';
 
 interface GithubProfileSearchProps {
   onSearch: (username: string, token?: string) => void;
@@ -24,8 +25,7 @@ const GithubProfileSearch = forwardRef(
       onSearch,
       isLoading,
       initialUsername = '',
-      // initialToken = '',
-      defaultUsername = '', // Use the defaultUsername prop
+      defaultUsername = '',
     }: GithubProfileSearchProps,
     ref
   ) => {
@@ -35,9 +35,16 @@ const GithubProfileSearch = forwardRef(
 
     // Use the secure hook for token management
     const [token, setToken, removeToken, isTokenLoading] = useGithubToken();
-    const [recentUsers, setRecentUsers] = useState<string[]>([]);
     const [showTokenSaved, setShowTokenSaved] = useState(false);
     const usernameTimeoutRef = useRef<number | null>(null);
+
+    // Reference to recent users functions
+    const recentUsersRef = useRef<{
+      addUser: (username: string) => void;
+      removeUser: (username: string) => void;
+      clearUsers: () => void;
+      getUsers: () => string[];
+    } | null>(null);
 
     // Track the last searched username to detect changes
     const [lastSearchedUsername, setLastSearchedUsername] = useState(
@@ -57,15 +64,17 @@ const GithubProfileSearch = forwardRef(
           console.error('Error setting token:', error);
         }
       },
-      setRecentUsers,
       handleQuickFill,
+      addRecentUser: (username: string) => {
+        recentUsersRef.current?.addUser(username);
+      },
     }));
 
     // Load saved values from localStorage on initial render
     useEffect(() => {
       const savedUsername =
         defaultUsername || localStorage.getItem('github_username');
-      const savedRecentUsers = localStorage.getItem('recent_github_users');
+      // const savedRecentUsers = localStorage.getItem('recent_github_users');
 
       if (savedUsername) {
         setUsername(savedUsername);
@@ -73,13 +82,13 @@ const GithubProfileSearch = forwardRef(
         setLastSearchedUsername(savedUsername);
       }
 
-      if (savedRecentUsers) {
-        try {
-          setRecentUsers(JSON.parse(savedRecentUsers));
-        } catch (e) {
-          console.error('Failed to parse recent users from localStorage', e);
-        }
-      }
+      // if (savedRecentUsers) {
+      //   try {
+      //     setRecentUsers(JSON.parse(savedRecentUsers));
+      //   } catch (e) {
+      //     console.error('Failed to parse recent users from localStorage', e);
+      //   }
+      // }
 
       // Auto-search with saved credentials (token is already loaded by the hook)
       if (savedUsername) {
@@ -137,16 +146,8 @@ const GithubProfileSearch = forwardRef(
         // Save to localStorage
         localStorage.setItem('github_username', username.trim());
 
-        // Save to recent users list
-        const updatedRecentUsers = [
-          ...new Set([username.trim(), ...recentUsers]),
-        ].slice(0, 5); // Keep only the 5 most recent
-
-        localStorage.setItem(
-          'recent_github_users',
-          JSON.stringify(updatedRecentUsers)
-        );
-        setRecentUsers(updatedRecentUsers);
+        // Add to recent users list
+        recentUsersRef.current?.addUser(username.trim());
 
         onSearch(username.trim(), token || undefined);
 
@@ -191,6 +192,7 @@ const GithubProfileSearch = forwardRef(
       }
     };
 
+    // Handler for when a recent user is selected
     const handleQuickFill = (selectedUsername: string) => {
       setUsername(selectedUsername);
       localStorage.setItem('github_username', selectedUsername);
@@ -211,21 +213,21 @@ const GithubProfileSearch = forwardRef(
     };
 
     // Handle removing specific user from recent searches
-    const handleRemoveRecentUser = (
-      userToRemove: string,
-      e: React.MouseEvent
-    ) => {
-      e.stopPropagation(); // Prevent triggering parent button
-
-      const updatedRecentUsers = recentUsers.filter(
-        user => user !== userToRemove
-      );
-      setRecentUsers(updatedRecentUsers);
-      localStorage.setItem(
-        'recent_github_users',
-        JSON.stringify(updatedRecentUsers)
-      );
-    };
+    //     const handleRemoveRecentUser = (
+    //       userToRemove: string,
+    //       e: React.MouseEvent
+    //     ) => {
+    //       e.stopPropagation(); // Prevent triggering parent button
+    //
+    //       const updatedRecentUsers = recentUsers.filter(
+    //         user => user !== userToRemove
+    //       );
+    //       setRecentUsers(updatedRecentUsers);
+    //       localStorage.setItem(
+    //         'recent_github_users',
+    //         JSON.stringify(updatedRecentUsers)
+    //       );
+    //     };
 
     return (
       <form onSubmit={handleSubmit} className="w-full mb-6">
@@ -274,48 +276,14 @@ const GithubProfileSearch = forwardRef(
             </button>
           </div>
 
-          {/* Recent users section with improved UI */}
-          {recentUsers.length > 0 && (
-            <div className="bg-l-bg-3/50 dark:bg-d-bg-3/50 p-2.5 rounded-lg">
-              <div className="flex items-center gap-2 mb-1.5 text-xs text-l-text-2 dark:text-d-text-2">
-                <Icons.Clock className="w-3.5 h-3.5" />
-                <span>Recent searches:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {recentUsers.map(user => (
-                  <div key={user} className="relative group">
-                    <button
-                      type="button"
-                      onClick={() => handleQuickFill(user)}
-                      className="pl-2.5 pr-7 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-all duration-200 cursor-pointer"
-                    >
-                      {user}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={e => handleRemoveRecentUser(user, e)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-l-text-3 dark:text-d-text-3 hover:text-accent-danger rounded-full p-0.5 cursor-pointer opacity-40 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200"
-                      aria-label={`Remove ${user} from recent searches`}
-                    >
-                      <Icons.Close className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    localStorage.removeItem('recent_github_users');
-                    setRecentUsers([]);
-                  }}
-                  className="px-2.5 py-1 text-xs rounded-full bg-accent-danger/10 text-accent-danger hover:bg-accent-danger/20 transition-colors duration-200 cursor-pointer"
-                >
-                  Clear history
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Recent users section */}
+          <RecentGithubUsers
+            onSelectUser={handleQuickFill}
+            className="mt-1"
+            recentUsersRef={recentUsersRef}
+          />
 
-          {/* Token section - replaced with the reusable component */}
+          {/* Token section */}
           <GitHubTokenSection
             token={token}
             onTokenChange={handleTokenChange}
