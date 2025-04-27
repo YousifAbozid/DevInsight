@@ -235,20 +235,24 @@ export default function ContributionHeatmap({
     }, 3000);
   };
 
-  if (!token) {
+  if (token) {
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 mb-4">
-          Contribution Heatmap
-        </h2>
-        <div className="bg-l-bg-3 dark:bg-d-bg-3 p-4 rounded-md">
-          <p className="text-l-text-2 dark:text-d-text-2 mb-2">
-            Please provide a GitHub access token to view the contribution
-            heatmap.
-          </p>
-          <p className="text-sm text-l-text-3 dark:text-d-text-3">
-            This feature requires authentication with the GitHub GraphQL API.
-            Click &quot;Show token input&quot; above the search button to add
+        <SectionHeader
+          title="Contribution Heatmap"
+          icon={Icons.Activity}
+          infoTooltip="This heatmap visualizes your GitHub contribution activity. Each cell represents a day, with color intensity showing the number of contributions made on that day."
+        />
+        <div className="text-center py-12 mt-4 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
+          <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-1 dark:bg-d-bg-1">
+            <Icons.Key className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+          </div>
+          <h3 className="text-lg font-semibold text-l-text-2 dark:text-d-text-2 mb-2">
+            Authentication Required
+          </h3>
+          <p className="text-l-text-3 dark:text-d-text-3 max-w-md mx-auto">
+            This feature requires a GitHub access token to fetch contribution
+            data. Click &quot;Github Token&quot; below the search button to add
             your token.
           </p>
         </div>
