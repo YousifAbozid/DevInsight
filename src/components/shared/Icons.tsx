@@ -94,6 +94,13 @@ import {
 
   // Add missing Loader icon for loading states
   Loader,
+
+  // Add missing icons for ThemeToggle
+  Sun,
+  Moon,
+
+  // Add missing icon for GithubCompareForm
+  Swords,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -256,4 +263,11 @@ export const Icons = {
 
   // Add missing Loader icon for loading states
   Loader: ({ className }: IconProps) => <Loader className={className} />,
+
+  // Add missing icons for ThemeToggle
+  Sun: ({ className }: IconProps) => <Sun className={className} />,
+  Moon: ({ className }: IconProps) => <Moon className={className} />,
+
+  // Add missing icon for GithubCompareForm
+  Swords: ({ className }: IconProps) => <Swords className={className} />,
 };
