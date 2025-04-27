@@ -22,13 +22,8 @@ export default function MostStarredRepos({
   if (!repositories || repositories.length === 0) {
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
-        <div className="flex items-center gap-2 mb-4">
-          <Icons.Star className="w-6 h-6 text-accent-1" />
-          <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1">
-            Most Starred Repositories
-          </h2>
-        </div>
-        <div className="text-center py-12 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
+        <SectionHeader title="Most Starred Repositories" icon={Icons.Star} />
+        <div className="text-center py-12 mt-4 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
           <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-1 dark:bg-d-bg-1">
             <Icons.Star className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
           </div>
