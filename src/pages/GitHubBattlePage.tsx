@@ -1,21 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import GithubCompareForm from '../components/GithubCompareForm';
 import GithubBattleResults from '../components/GithubBattleResults';
 import { useGithubUser, useUserRepositories } from '../services/githubService';
 import { useContributionData } from '../services/githubGraphQLService';
 import { Icons } from '../components/shared/Icons';
 import { useGithubToken } from '../hooks/useStorage';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function GitHubBattlePage() {
-  // Set page title
-  useEffect(() => {
-    document.title = 'GitHub Battle | DevInsight';
-
-    // Cleanup function to reset title when unmounting
-    return () => {
-      document.title = 'DevInsight';
-    };
-  }, []);
+  useDocumentTitle('GitHub Battle');
 
   const [usernames, setUsernames] = useState<{
     user1: string;

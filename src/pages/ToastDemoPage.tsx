@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useToast, ToastPosition } from '../context/ToastContext';
 import { Icons } from '../components/shared/Icons';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function ToastDemoPage() {
+  useDocumentTitle('Toast Notification Demo');
   const { notify } = useToast();
   const [duration, setDuration] = useState(3000);
   const [selectedPosition, setSelectedPosition] =

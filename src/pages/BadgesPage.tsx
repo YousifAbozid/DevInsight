@@ -1,17 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icons } from '../components/shared/Icons';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function BadgesPage() {
-  // Set page title
-  useEffect(() => {
-    document.title = 'Developer Badges | DevInsight';
-
-    // Cleanup function to reset title when unmounting
-    return () => {
-      document.title = 'DevInsight';
-    };
-  }, []);
+  useDocumentTitle('Developer Badges');
 
   // Category configuration - matches the one in DeveloperBadges.tsx
   const categoryInfo = {

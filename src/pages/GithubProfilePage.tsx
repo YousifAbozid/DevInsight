@@ -31,8 +31,10 @@ import MostStarredReposSkeleton from '../components/shared/Skeletons/MostStarred
 import RepoRecommenderSkeleton from '../components/shared/Skeletons/RepoRecommenderSkeleton';
 import LanguagePieChartSkeleton from '../components/shared/Skeletons/LanguagePieChartSkeleton';
 import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/ContributionHeatmapPageSkeleton';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function GithubProfilePage() {
+  useDocumentTitle();
   // Initialize username from localStorage if available
   const [username, setUsername] = useState(() => {
     // If there's no username in localStorage, return empty string

@@ -7,8 +7,10 @@ import {
   // useRecentItems,
   useRecentGithubUsers, // Import the correct hook
 } from '../hooks/useStorage';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function StorageHooksDemo() {
+  useDocumentTitle('Storage Hooks Demo');
   // Demo for simple localStorage hook
   const [simpleValue, setSimpleValue, clearSimpleValue] =
     useLocalStorage<string>('demo_simple', 'Hello World!');

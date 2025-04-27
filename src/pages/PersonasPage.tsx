@@ -1,17 +1,9 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icons } from '../components/shared/Icons';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function PersonasPage() {
-  // Set page title
-  useEffect(() => {
-    document.title = 'Coder Personas | DevInsight';
-
-    // Cleanup function to reset title when unmounting
-    return () => {
-      document.title = 'DevInsight';
-    };
-  }, []);
+  useDocumentTitle('Coder Personas');
 
   // All possible personas with their selection criteria
   const allPersonas = [
