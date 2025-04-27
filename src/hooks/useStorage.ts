@@ -373,7 +373,40 @@ export function useRecentGithubUsers(
         );
 
         // Add the username to the front and limit the list length
-        return [trimmedUsername, ...filteredUsers].slice(0, maxUsers);
+        const newUsers = [trimmedUsername, ...filteredUsers].slice(0, maxUsers);
+
+        // Dispatch both a storage event for other tabs and a custom event for same tab
+        try {
+          // Custom event for same tab communication
+          window.dispatchEvent(
+            new CustomEvent('recent_users_updated', {
+              detail: {
+                users: newUsers,
+                action: 'add',
+                username: trimmedUsername,
+              },
+            })
+          );
+
+          // Create a synthetic storage event for same-tab communication
+          // This helps components that only listen to storage events
+          const event = document.createEvent('StorageEvent');
+          event.initStorageEvent(
+            'storage',
+            false,
+            false,
+            'recent_github_users',
+            null,
+            JSON.stringify(newUsers),
+            window.location.href,
+            null
+          );
+          window.dispatchEvent(event);
+        } catch (err) {
+          console.error('Error dispatching events:', err);
+        }
+
+        return newUsers;
       });
     },
     [setUsers, maxUsers]
@@ -387,11 +420,130 @@ export function useRecentGithubUsers(
       setUsers(prevUsers => {
         // Handle the case where prevUsers might be null or undefined
         const safeUsers = Array.isArray(prevUsers) ? prevUsers : [];
-        return safeUsers.filter(user => user !== username);
+        const newUsers = safeUsers.filter(user => user !== username);
+
+        // Dispatch events
+        try {
+          // Custom event for same tab components
+          window.dispatchEvent(
+            new CustomEvent('recent_users_updated', {
+              detail: { users: newUsers, action: 'remove', username },
+            })
+          );
+
+          // Create a synthetic storage event
+          const event = document.createEvent('StorageEvent');
+          event.initStorageEvent(
+            'storage',
+            false,
+            false,
+            'recent_github_users',
+            null,
+            JSON.stringify(newUsers),
+            window.location.href,
+            null
+          );
+          window.dispatchEvent(event);
+        } catch (err) {
+          console.error('Error dispatching events:', err);
+        }
+
+        return newUsers;
       });
     },
     [setUsers]
   );
 
-  return [users, addUser, removeUser, clearUsers];
+  // Enhance the clearUsers function to trigger events
+  const enhancedClearUsers = useCallback(() => {
+    clearUsers();
+
+    // Dispatch events
+    try {
+      // Custom event for same tab communication
+      window.dispatchEvent(
+        new CustomEvent('recent_users_updated', {
+          detail: { users: [], action: 'clear' },
+        })
+      );
+
+      // Create a synthetic storage event
+      const event = document.createEvent('StorageEvent');
+      event.initStorageEvent(
+        'storage',
+        false,
+        false,
+        'recent_github_users',
+        null,
+        JSON.stringify([]),
+        window.location.href,
+        null
+      );
+      window.dispatchEvent(event);
+    } catch (err) {
+      console.error('Error dispatching events:', err);
+    }
+  }, [clearUsers]);
+
+  // Listen for updates from other components in the same tab
+  useEffect(() => {
+    const handleRecentUsersUpdate = (event: Event) => {
+      try {
+        const customEvent = event as CustomEvent;
+        const newUsers = customEvent.detail?.users;
+
+        if (
+          Array.isArray(newUsers) &&
+          JSON.stringify(newUsers) !== JSON.stringify(users)
+        ) {
+          setUsers(newUsers);
+        }
+      } catch (error) {
+        console.error('Error handling recent_users_updated event:', error);
+      }
+    };
+
+    // Add event listener for our custom event
+    window.addEventListener('recent_users_updated', handleRecentUsersUpdate);
+
+    return () => {
+      window.removeEventListener(
+        'recent_users_updated',
+        handleRecentUsersUpdate
+      );
+    };
+  }, [setUsers, users]);
+
+  // Re-read localStorage directly for backup synchronization
+  useEffect(() => {
+    const checkLocalStorage = () => {
+      try {
+        const storedData = localStorage.getItem('recent_github_users');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          if (
+            Array.isArray(parsedData) &&
+            JSON.stringify(parsedData) !== JSON.stringify(users)
+          ) {
+            setUsers(parsedData);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking localStorage:', error);
+      }
+    };
+
+    // Run once on mount and set up interval
+    checkLocalStorage();
+
+    // Also check when window gets focus
+    const handleFocus = () => checkLocalStorage();
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [setUsers, users]);
+
+  return [users, addUser, removeUser, enhancedClearUsers];
 }
