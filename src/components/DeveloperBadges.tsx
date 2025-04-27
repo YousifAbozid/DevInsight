@@ -101,14 +101,39 @@ export default function DeveloperBadges({
 
   if (!repositories || repositories.length === 0) {
     return (
-      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d shadow-sm">
-        <h2 className="text-xl font-bold text-l-text-1 dark:text-d-text-1 flex items-center gap-2 mb-2">
-          <Icons.Medal className="w-5 h-5 text-accent-1" />
-          Developer Achievements
-        </h2>
-        <p className="text-l-text-2 dark:text-d-text-2">
-          Repository data is needed to generate developer badges
-        </p>
+      <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
+        <SectionHeader
+          title="Developer Badges"
+          icon={Icons.Medal}
+          infoTooltip="Badges are awarded based on your GitHub activity and achievements. They come in four tiers: Bronze, Silver, Gold, and Platinum."
+          rightControls={
+            <div className="flex items-center gap-2">
+              <Link
+                to="/badges"
+                className="px-2.5 py-1.5 flex items-center justify-center gap-1.5 group rounded-md relative overflow-hidden border border-accent-1/50"
+                aria-label="View all badges"
+              >
+                <span className="absolute inset-0 bg-accent-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+                <Icons.Medal className="w-4 h-4 text-accent-1 z-10 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200" />
+                <span className="text-xs font-medium z-10 text-l-text-2 dark:text-d-text-2 group-hover:text-l-text-inv dark:group-hover:text-d-text-inv transition-colors duration-200">
+                  See all badges
+                </span>
+              </Link>
+            </div>
+          }
+        />
+        <div className="text-center py-12 mt-4 bg-l-bg-3/30 dark:bg-d-bg-3/30 rounded-lg border border-border-l dark:border-border-d">
+          <div className="mb-4 inline-block p-4 rounded-full bg-l-bg-1 dark:bg-d-bg-1">
+            <Icons.Medal className="w-10 h-10 text-l-text-3 dark:text-d-text-3" />
+          </div>
+          <h3 className="text-lg font-semibold text-l-text-2 dark:text-d-text-2 mb-2">
+            No developer badges available
+          </h3>
+          <p className="text-l-text-3 dark:text-d-text-3 max-w-md mx-auto">
+            Repository data is needed to generate developer badges. Create and
+            contribute to repositories to earn badges.
+          </p>
+        </div>
       </div>
     );
   }
