@@ -13,6 +13,7 @@ import RateLimitIndicator from './components/RateLimitIndicator';
 import { ToastProvider } from './context/ToastContext';
 import ToastContainer from './components/shared/ToastContainer';
 import { useGithubToken } from './hooks/useStorage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   const [token, setToken] = useState<string | undefined>(undefined);
@@ -37,10 +38,9 @@ function App() {
 
             <Routes>
               <Route path="/" element={<GithubProfilePage />} />
-
-              <Route path="/battle" element={<GitHubBattlePage />} />
-              <Route path="/personas" element={<PersonasPage />} />
               <Route path="/badges" element={<BadgesPage />} />
+              <Route path="/personas" element={<PersonasPage />} />
+              <Route path="/battle" element={<GitHubBattlePage />} />
               <Route path="/toast-demo" element={<ToastDemoPage />} />
               <Route path="/storage-demo" element={<StorageHooksDemo />} />
 
@@ -54,6 +54,9 @@ function App() {
               />
               {/* Legacy route - will redirect to the appropriate route */}
               <Route path="/:username" element={<PublicProfilePage />} />
+
+              {/* 404 Page - Must be the last route */}
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
 
