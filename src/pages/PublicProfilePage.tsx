@@ -5,6 +5,7 @@ import {
   useBatchUserData,
 } from '../services/githubService';
 import { useGithubToken } from '../hooks/useStorage';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import GitHubTokenSection from '../components/shared/GitHubTokenSection';
 import GithubProfileCard from '../components/GithubProfileCard';
 import LanguagePieChart from '../components/LanguagePieChart';
@@ -105,8 +106,11 @@ export default function PublicProfilePage({
   const pageUrl = `${window.location.origin}${profilePath}`;
 
   const pageTitle = username
-    ? `${username}'s GitHub ${detectedProfileType === 'organization' ? 'Organization' : 'Profile'} | DevInsight`
-    : 'DevInsight';
+    ? `${username}'s GitHub ${detectedProfileType === 'organization' ? 'Organization' : 'Profile'}`
+    : 'GitHub Profile Explorer';
+
+  // Use the document title hook with custom format to avoid double-formatting
+  useDocumentTitle(pageTitle, { format: 'custom' });
 
   const pageDescription = `View ${username}'s GitHub ${
     detectedProfileType === 'organization' ? 'organization' : 'profile'
@@ -133,10 +137,7 @@ export default function PublicProfilePage({
 
   // Update document metadata whenever username or user data changes
   useEffect(() => {
-    // Update page title
-    document.title = pageTitle;
-
-    // Update meta tags
+    // Update meta tags (skip title setting as it's now handled by useDocumentTitle)
     const updateMetaTag = (name: string, content: string) => {
       let meta = document.querySelector(
         `meta[name="${name}"]`
