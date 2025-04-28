@@ -201,6 +201,7 @@ export default function GithubBattleResults({
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+          {/* Common metrics for both users and organizations */}
           <ScoreBreakdownItem
             label="Repositories"
             user1Score={user1Score.metrics.repos}
@@ -216,22 +217,6 @@ export default function GithubBattleResults({
             user1Name={user1.user.login}
             user2Name={user2.user.login}
             icon={<Icons.Star className="w-4 h-4 text-accent-1" />}
-          />
-          <ScoreBreakdownItem
-            label="Commits"
-            user1Score={user1Score.metrics.commits}
-            user2Score={user2Score.metrics.commits}
-            user1Name={user1.user.login}
-            user2Name={user2.user.login}
-            icon={<Icons.Commit className="w-4 h-4 text-accent-1" />}
-          />
-          <ScoreBreakdownItem
-            label="Followers"
-            user1Score={user1Score.metrics.followers}
-            user2Score={user2Score.metrics.followers}
-            user1Name={user1.user.login}
-            user2Name={user2.user.login}
-            icon={<Icons.Users className="w-4 h-4 text-accent-1" />}
           />
           <ScoreBreakdownItem
             label="Experience"
@@ -265,14 +250,50 @@ export default function GithubBattleResults({
             user2Name={user2.user.login}
             icon={<Icons.BadgeCheck className="w-4 h-4 text-accent-1" />}
           />
-          <ScoreBreakdownItem
-            label="PRs"
-            user1Score={user1Score.metrics.prs}
-            user2Score={user2Score.metrics.prs}
-            user1Name={user1.user.login}
-            user2Name={user2.user.login}
-            icon={<Icons.GitPullRequest className="w-4 h-4 text-accent-1" />}
-          />
+
+          {/* User-specific metrics */}
+          {!isOrgBattle && (
+            <>
+              <ScoreBreakdownItem
+                label="Commits"
+                user1Score={user1Score.metrics.commits}
+                user2Score={user2Score.metrics.commits}
+                user1Name={user1.user.login}
+                user2Name={user2.user.login}
+                icon={<Icons.Commit className="w-4 h-4 text-accent-1" />}
+              />
+              <ScoreBreakdownItem
+                label="Followers"
+                user1Score={user1Score.metrics.followers}
+                user2Score={user2Score.metrics.followers}
+                user1Name={user1.user.login}
+                user2Name={user2.user.login}
+                icon={<Icons.Users className="w-4 h-4 text-accent-1" />}
+              />
+              <ScoreBreakdownItem
+                label="PRs"
+                user1Score={user1Score.metrics.prs}
+                user2Score={user2Score.metrics.prs}
+                user1Name={user1.user.login}
+                user2Name={user2.user.login}
+                icon={
+                  <Icons.GitPullRequest className="w-4 h-4 text-accent-1" />
+                }
+              />
+            </>
+          )}
+
+          {/* Organization-specific metrics */}
+          {isOrgBattle && (
+            <ScoreBreakdownItem
+              label="Activity"
+              user1Score={user1Score.metrics.activity}
+              user2Score={user2Score.metrics.activity}
+              user1Name={user1.user.login}
+              user2Name={user2.user.login}
+              icon={<Icons.Activity className="w-4 h-4 text-accent-1" />}
+            />
+          )}
         </div>
       </motion.div>
 
