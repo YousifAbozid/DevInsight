@@ -78,6 +78,7 @@ import {
   BarChart,
   BadgeCheck,
   Calculator, // Added Calculator icon for GithubBattleResults
+  TrendingUp, // Add the missing TrendingUp icon
 
   // New file type icons - fixed the name from FileCsv to Files
   FileJson,
@@ -245,6 +246,9 @@ export const Icons = {
   BadgeCheck: ({ className }: IconProps) => (
     <BadgeCheck className={className} />
   ),
+  TrendingUp: ({ className }: IconProps) => (
+    <TrendingUp className={className} />
+  ), // Add the TrendingUp icon component
 
   // Add missing Calculator icon
   Calculator: ({ className }: IconProps) => (

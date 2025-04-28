@@ -13,6 +13,7 @@ import { UserBattleCard } from './UserBattleCard';
 import { ScoreBreakdownItem } from './ScoreBreakdownItem';
 import { ScoringMethodItem } from './ScoringMethodItem';
 import { ContributionData } from '../../services/githubGraphQLService';
+import BattleResultsBanner from './BattleResultsBanner';
 
 interface BattleUserData {
   user: GithubUser;
@@ -40,6 +41,11 @@ export default function GithubBattleResults({
   // Determine winner
   const isDraw = user1Score.totalScore === user2Score.totalScore;
   const winner = user1Score.totalScore > user2Score.totalScore ? 1 : 2;
+
+  // Determine winner and loser for enhanced banner
+  const loserLogin = winner === 1 ? user2.user.login : user1.user.login;
+  const loserScore =
+    winner === 1 ? user2Score.totalScore : user1Score.totalScore;
 
   // Calculate badges for both users
   const user1Badges = useMemo(
@@ -108,18 +114,6 @@ export default function GithubBattleResults({
   // Get the entity type label for display
   const entityType = isOrgBattle ? 'organization' : 'developer';
 
-  const bannerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: 'easeOut',
-      },
-    },
-  };
-
   return (
     <motion.div
       className="space-y-6 sm:space-y-8"
@@ -127,40 +121,26 @@ export default function GithubBattleResults({
       initial="hidden"
       animate="visible"
     >
-      {/* Battle Result Banner - Improved for mobile */}
-      <motion.div
-        className="bg-gradient-to-r from-accent-1 to-accent-2 text-white rounded-lg p-6 sm:p-8 shadow-lg relative overflow-hidden"
-        variants={bannerVariants}
-      >
-        <div className="absolute inset-0 bg-white/5 backdrop-blur-[2px]"></div>
-        <div className="relative z-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 flex items-center justify-center gap-2">
-            <Icons.Trophy className="w-6 h-6 sm:w-8 sm:h-8" />
-            {isOrgBattle ? 'Organization' : 'Developer'} Battle Results
-          </h2>
-          {isDraw ? (
-            <p className="text-lg sm:text-xl text-center font-bold">
-              It&apos;s a draw! Both{' '}
-              {isOrgBattle ? 'organizations' : 'developers'} are evenly matched!
-            </p>
-          ) : (
-            <div className="text-center">
-              <div className="inline-block bg-white/20 px-3 sm:px-4 py-1 sm:py-2 rounded-full mb-2">
-                <span className="text-lg sm:text-xl font-bold">
-                  {winner === 1 ? user1.user.login : user2.user.login}
-                </span>
-              </div>
-              <p className="text-lg sm:text-xl font-bold">
-                wins with{' '}
-                <span className="text-xl sm:text-2xl bg-white/30 px-2 py-0.5 rounded">
-                  {winner === 1 ? user1Score.totalScore : user2Score.totalScore}
-                </span>{' '}
-                points!
-              </p>
-            </div>
-          )}
-        </div>
-      </motion.div>
+      {/* Battle Results Banner - Now using the enhanced component */}
+      <BattleResultsBanner
+        isOrgBattle={isOrgBattle}
+        isDraw={isDraw}
+        winner={winner as 1 | 2}
+        winnerLogin={winner === 1 ? user1.user.login : user2.user.login}
+        winnerScore={
+          winner === 1 ? user1Score.totalScore : user2Score.totalScore
+        }
+        loserLogin={loserLogin}
+        loserScore={loserScore}
+        user1={{
+          login: user1.user.login,
+          avatar_url: user1.user.avatar_url,
+        }}
+        user2={{
+          login: user2.user.login,
+          avatar_url: user2.user.avatar_url,
+        }}
+      />
 
       {/* Battle Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
