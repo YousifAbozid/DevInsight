@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import GithubCompareForm from '../components/GithubCompareForm';
-import GithubBattleResults from '../components/GithubBattleResults';
+import GithubCompareForm from '../components/battle/GithubCompareForm';
+import GithubBattleResults from '../components/battle/GithubBattleResults';
 import { useGithubUser, useUserRepositories } from '../services/githubService';
 import { useContributionData } from '../services/githubGraphQLService';
 import { Icons } from '../components/shared/Icons';
