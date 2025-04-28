@@ -6,6 +6,7 @@ import { useContributionData } from '../services/githubGraphQLService';
 import { Icons } from '../components/shared/Icons';
 import { useGithubToken } from '../hooks/useStorage';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import GithubBattleResultsSkeleton from '../components/shared/Skeletons/GithubBattleResultsSkeleton';
 
 export default function GitHubBattlePage() {
   const [usernames, setUsernames] = useState<{
@@ -126,11 +127,8 @@ export default function GitHubBattlePage() {
         initialToken={token}
       />
 
-      {isLoading && (
-        <div className="flex justify-center my-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent-1"></div>
-        </div>
-      )}
+      {/* Enhanced loading state with skeleton */}
+      {isLoading && usernames && <GithubBattleResultsSkeleton />}
 
       {/* Type mismatch error - Enhanced UI */}
       {!isLoading && typeMismatch && (
