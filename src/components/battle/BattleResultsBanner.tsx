@@ -99,10 +99,10 @@ export default function BattleResultsBanner({
       <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px]" />
 
       {/* Content container with padding */}
-      <div className="relative z-10 p-6 sm:p-8">
+      <div className="relative z-10 px-4 py-5 sm:p-6 md:p-8">
         {/* Header with trophy icon */}
         <motion.div
-          className="flex items-center justify-center gap-2 mb-4"
+          className="flex items-center justify-center gap-2 mb-4 sm:mb-5"
           variants={childVariants}
         >
           <motion.div
@@ -117,21 +117,23 @@ export default function BattleResultsBanner({
               ease: 'easeInOut',
             }}
           >
-            <Icons.Trophy className="w-7 h-7 sm:w-8 sm:h-8 text-yellow-300" />
+            <Icons.Trophy className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 text-yellow-300" />
           </motion.div>
-          <h2 className="text-2xl sm:text-3xl font-bold">Battle Results</h2>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+            Battle Results
+          </h2>
         </motion.div>
 
-        {/* VS Banner with user avatars */}
+        {/* VS Banner with user avatars - Larger avatars and better mobile responsiveness */}
         <motion.div
-          className="flex items-center justify-center gap-3 mb-4"
+          className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 mb-4 sm:mb-6"
           variants={childVariants}
         >
           <div className="flex flex-col items-center">
             <div
-              className={`p-1 rounded-full ${winner === 1 && !isDraw ? 'bg-yellow-300/50' : 'bg-white/20'}`}
+              className={`p-1 sm:p-1.5 rounded-full ${winner === 1 && !isDraw ? 'bg-yellow-300/50' : 'bg-white/20'}`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white/40">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-white/40">
                 <img
                   src={user1.avatar_url}
                   alt={user1.login}
@@ -139,22 +141,22 @@ export default function BattleResultsBanner({
                 />
               </div>
             </div>
-            <span className="mt-1 text-xs font-semibold max-w-[80px] truncate">
+            <span className="mt-1 text-xs sm:text-sm font-semibold max-w-[80px] sm:max-w-[100px] md:max-w-[140px] truncate text-center">
               {user1.login}
             </span>
           </div>
 
-          <div className="flex flex-col items-center">
-            <div className="bg-white/20 rounded-full px-2 py-1">
-              <span className="font-bold text-sm">VS</span>
+          <div className="flex flex-col items-center mx-1 sm:mx-2">
+            <div className="bg-white/20 rounded-full px-3 py-1.5">
+              <span className="font-bold text-sm sm:text-base">VS</span>
             </div>
           </div>
 
           <div className="flex flex-col items-center">
             <div
-              className={`p-1 rounded-full ${winner === 2 && !isDraw ? 'bg-yellow-300/50' : 'bg-white/20'}`}
+              className={`p-1 sm:p-1.5 rounded-full ${winner === 2 && !isDraw ? 'bg-yellow-300/50' : 'bg-white/20'}`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-white/40">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-white/40">
                 <img
                   src={user2.avatar_url}
                   alt={user2.login}
@@ -162,7 +164,7 @@ export default function BattleResultsBanner({
                 />
               </div>
             </div>
-            <span className="mt-1 text-xs font-semibold max-w-[80px] truncate">
+            <span className="mt-1 text-xs sm:text-sm font-semibold max-w-[80px] sm:max-w-[100px] md:max-w-[140px] truncate text-center">
               {user2.login}
             </span>
           </div>
@@ -181,7 +183,7 @@ export default function BattleResultsBanner({
             </p>
 
             {/* Equal stats visualization */}
-            <div className="mt-3 bg-white/10 p-2 rounded-lg max-w-xs mx-auto">
+            <div className="mt-3 bg-white/10 p-2 sm:p-3 rounded-lg mx-auto max-w-[90%] sm:max-w-xs">
               <div className="flex items-center justify-center gap-2">
                 <div className="flex-1 h-2 rounded-full bg-white/30" />
                 <div className="text-xs font-semibold px-2">Equal</div>
@@ -195,15 +197,15 @@ export default function BattleResultsBanner({
         ) : (
           <motion.div className="text-center" variants={childVariants}>
             {/* Winner declaration */}
-            <div className="relative inline-block mb-1">
+            <div className="relative inline-block mb-1 sm:mb-2">
               {/* Decorative stars around winner name */}
               {[...Array(6)].map((_, i) => (
                 <StarDecoration key={i} index={i} />
               ))}
 
-              <div className="bg-white/20 px-5 py-2 rounded-full border border-white/30 shadow-inner relative z-10">
+              <div className="bg-white/20 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full border border-white/30 shadow-inner relative z-10">
                 <motion.span
-                  className="text-xl font-bold"
+                  className="text-lg sm:text-xl font-bold"
                   animate={{ scale: [1, 1.03, 1] }}
                   transition={{
                     duration: 2,
@@ -225,7 +227,7 @@ export default function BattleResultsBanner({
                 </span>
               </div>
 
-              <div className="mt-2 w-full max-w-xs bg-white/10 p-3 rounded-lg">
+              <div className="mt-2 w-full sm:w-4/5 md:max-w-xs mx-auto bg-white/10 p-3 rounded-lg">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs opacity-80">Score</span>
                   <div className="font-bold text-base">
