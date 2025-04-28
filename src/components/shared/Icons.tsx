@@ -102,6 +102,9 @@ import {
   // Add missing icon for GithubCompareForm
   Swords,
   ArrowRight,
+
+  // Add Flag icon import
+  Flag,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -274,4 +277,7 @@ export const Icons = {
 
   // Add missing icon for GithubCompareForm
   Swords: ({ className }: IconProps) => <Swords className={className} />,
+
+  // Add missing Flag icon
+  Flag: ({ className }: IconProps) => <Flag className={className} />,
 };

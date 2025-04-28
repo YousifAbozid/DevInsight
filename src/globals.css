@@ -187,6 +187,13 @@
 	}
 }
 
+/* Grid pattern for battle banner */
+.bg-grid-pattern {
+	background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+	background-size: 20px 20px;
+}
+
 /* Special flip card effect for exporting data */
 .card-flip {
 	perspective: 1000px;
