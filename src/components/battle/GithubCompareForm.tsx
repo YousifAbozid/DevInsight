@@ -145,6 +145,18 @@ export default function GithubCompareForm({
       onSubmit={handleSubmit}
       className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-4 sm:p-6 border border-border-l dark:border-border-d mb-8"
     >
+      {/* Information Banner about comparison rules */}
+      <div className="mb-5 bg-accent-1/10 rounded-lg p-3 flex items-start gap-3 text-sm">
+        <Icons.Info className="w-5 h-5 text-accent-1 flex-shrink-0 mt-0.5" />
+        <div className="text-l-text-2 dark:text-d-text-2">
+          <p className="font-medium text-accent-1 mb-1">Battle Rules</p>
+          <p>
+            You can compare two GitHub users or two organizations, but you
+            cannot compare a user with an organization.
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div>
           <label
@@ -258,15 +270,21 @@ export default function GithubCompareForm({
           {isLoading ? (
             <>
               <Icons.Loader className="w-4 h-4 animate-spin" />
-              <span>Comparing...</span>
+              <span>Comparing Challengers...</span>
             </>
           ) : (
             <>
               <Icons.Swords className="w-4 h-4" />
-              <span>Compare Users</span>
+              <span>Start GitHub Battle</span>
             </>
           )}
         </button>
+
+        {/* Additional comparison hint */}
+        <p className="mt-3 text-xs text-center text-l-text-3 dark:text-d-text-3 flex items-center justify-center gap-1">
+          <Icons.GitBranch className="w-3 h-3" />
+          Enter GitHub usernames or organization names to compare their stats
+        </p>
       </div>
     </form>
   );
