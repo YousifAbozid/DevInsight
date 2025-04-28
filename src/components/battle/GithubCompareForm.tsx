@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Icons } from './shared/Icons';
-import { useGithubToken } from '../hooks/useStorage';
-import GitHubTokenSection from './shared/GitHubTokenSection';
-import RecentGithubUsers from './shared/RecentGithubUsers';
+import { Icons } from '../shared/Icons';
+import { useGithubToken } from '../../hooks/useStorage';
+import GitHubTokenSection from '../shared/GitHubTokenSection';
+import RecentGithubUsers from '../shared/RecentGithubUsers';
 
 interface GithubCompareFormProps {
   onCompare: (user1: string, user2: string, token?: string) => void;
