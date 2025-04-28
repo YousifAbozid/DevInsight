@@ -101,6 +101,7 @@ import {
 
   // Add missing icon for GithubCompareForm
   Swords,
+  ArrowRight,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -232,6 +233,9 @@ export const Icons = {
   Database: ({ className }: IconProps) => <Database className={className} />,
   ArrowUpRight: ({ className }: IconProps) => (
     <ArrowUpRight className={className} />
+  ),
+  ArrowRight: ({ className }: IconProps) => (
+    <ArrowRight className={className} />
   ),
   Gauge: ({ className }: IconProps) => <Gauge className={className} />,
   BarChart: ({ className }: IconProps) => <BarChart className={className} />,
