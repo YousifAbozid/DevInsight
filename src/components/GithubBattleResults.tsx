@@ -28,6 +28,7 @@ interface ScoreDetails {
     languages: number;
     quality: number;
     prs: number;
+    activity: number; // New metric for organization activity
   };
 }
 
@@ -478,6 +479,7 @@ function UserBattleCard({
   variants,
 }: UserBattleCardProps) {
   const { user, repositories, contributionData } = userData;
+  const isOrg = user.type === 'Organization';
 
   // Calculate comparison metrics
   const totalStars = repositories.reduce(
@@ -489,8 +491,30 @@ function UserBattleCard({
     0
   );
 
-  const totalCommits = contributionData?.totalContributions || 0;
-  const opponentCommits = opponent.contributionData?.totalContributions || 0;
+  // Different metrics for organizations vs users
+  const totalCommits = !isOrg ? contributionData?.totalContributions || 0 : 0;
+  const opponentCommits = !isOrg
+    ? opponent.contributionData?.totalContributions || 0
+    : 0;
+
+  // For organizations, calculate activity metric
+  const recentlyUpdatedRepos = isOrg
+    ? repositories.filter(repo => {
+        const updatedAt = new Date(repo.updated_at);
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        return updatedAt > threeMonthsAgo;
+      }).length
+    : 0;
+
+  const opponentRecentlyUpdatedRepos = isOrg
+    ? opponent.repositories.filter(repo => {
+        const updatedAt = new Date(repo.updated_at);
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        return updatedAt > threeMonthsAgo;
+      }).length
+    : 0;
 
   return (
     <motion.div
@@ -567,6 +591,7 @@ function UserBattleCard({
 
         {/* Stats - Make responsive for small screens */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          {/* Always show repositories for both users and orgs */}
           <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
@@ -590,29 +615,7 @@ function UserBattleCard({
             </div>
           </div>
 
-          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <Icons.Users className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
-                  Followers
-                </span>
-              </div>
-              {user.followers > opponent.user.followers && (
-                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
-                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
-                  {user.followers - opponent.user.followers}
-                </span>
-              )}
-            </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
-              {user.followers.toLocaleString()}
-            </div>
-            <div className="text-xs font-medium text-accent-1 mt-1">
-              +{score.metrics.followers} points
-            </div>
-          </div>
-
+          {/* Always show stars for both users and orgs */}
           <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
@@ -636,32 +639,106 @@ function UserBattleCard({
             </div>
           </div>
 
-          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <Icons.Commit className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1">
-                  Commits
-                </span>
+          {/* Show different metrics based on entity type */}
+          {!isOrg ? (
+            // User-specific metrics
+            <>
+              {/* Commits block */}
+              <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <Icons.Commit className="w-4 h-4 text-accent-1" />
+                    <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                      Commits
+                    </span>
+                  </div>
+                  {totalCommits > opponentCommits && (
+                    <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                      <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                      {totalCommits - opponentCommits}
+                    </span>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+                  {totalCommits.toLocaleString()}
+                </div>
+                <div className="text-xs font-medium text-accent-1 mt-1">
+                  +{score.metrics.commits} points
+                </div>
               </div>
-              {totalCommits > opponentCommits && (
-                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
-                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
-                  {totalCommits - opponentCommits}
-                </span>
-              )}
-            </div>
-            <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
-              {totalCommits.toLocaleString()}
-            </div>
-            <div className="text-xs font-medium text-accent-1 mt-1">
-              +{score.metrics.commits} points
-            </div>
-          </div>
-        </div>
 
-        {/* Additional Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              {/* Followers block */}
+              <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <Icons.Users className="w-4 h-4 text-accent-1" />
+                    <span className="font-medium text-l-text-1 dark:text-d-text-1">
+                      Followers
+                    </span>
+                  </div>
+                  {user.followers > opponent.user.followers && (
+                    <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                      <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                      {user.followers - opponent.user.followers}
+                    </span>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+                  {user.followers.toLocaleString()}
+                </div>
+                <div className="text-xs font-medium text-accent-1 mt-1">
+                  +{score.metrics.followers} points
+                </div>
+              </div>
+            </>
+          ) : (
+            // Organization-specific metrics
+            <>
+              {/* Activity block for organizations */}
+              <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <Icons.Activity className="w-4 h-4 text-accent-1" />
+                    <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
+                      Recent Activity
+                    </span>
+                  </div>
+                  {recentlyUpdatedRepos > opponentRecentlyUpdatedRepos && (
+                    <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                      <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                      {recentlyUpdatedRepos - opponentRecentlyUpdatedRepos}
+                    </span>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+                  {recentlyUpdatedRepos} active repos
+                </div>
+                <div className="text-xs font-medium text-accent-1 mt-1">
+                  +{score.metrics.activity} points
+                </div>
+              </div>
+
+              {/* Age block for organizations */}
+              <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <Icons.Calendar className="w-4 h-4 text-accent-1" />
+                    <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
+                      Organization Age
+                    </span>
+                  </div>
+                </div>
+                <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+                  {calculateAccountAge(user.created_at)} years
+                </div>
+                <div className="text-xs font-medium text-accent-1 mt-1">
+                  +{score.metrics.experience} points
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Continue with remaining blocks that apply to both... */}
           <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
@@ -996,81 +1073,171 @@ function ScoringMethodItem({
 function calculateScore(userData: BattleUserData): ScoreDetails {
   const { user, repositories, contributionData } = userData;
 
-  // Calculate account age in days
-  const accountAgeInDays = Math.floor(
-    (new Date().getTime() - new Date(user.created_at).getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
+  // Determine if this is an organization
+  const isOrg = user.type === 'Organization';
 
-  // Calculate experience based on account age (1 point per month, max 60)
-  const experiencePoints = Math.min(Math.floor(accountAgeInDays / 30), 60);
-
-  // Calculate stars (3 points per star, max 300)
+  // Calculate base metrics common to both users and organizations
   const totalStars = repositories.reduce(
     (sum, repo) => sum + repo.stargazers_count,
     0
   );
-  const starPoints = Math.min(totalStars * 3, 300);
-
-  // Calculate repositories (5 points per repo, max 250)
-  const repoPoints = Math.min(user.public_repos * 5, 250);
-
-  // Calculate followers (2 points per follower, max 200)
-  const followerPoints = Math.min(user.followers * 2, 200);
-
-  // Calculate commits from contribution data (0.5 points per commit, max 300)
-  const totalCommits = contributionData?.totalContributions || 0;
-  const commitPoints = Math.min(Math.floor(totalCommits * 0.5), 300);
-
-  // Calculate forks (4 points per fork, max 200)
   const totalForks = repositories.reduce(
     (sum, repo) => sum + repo.forks_count,
     0
   );
-  const forkPoints = Math.min(totalForks * 4, 200);
 
-  // Calculate language diversity (10 points per language, max 100)
-  const languages = new Set(
-    repositories.map(repo => repo.language).filter(Boolean)
-  );
-  const languagePoints = Math.min(languages.size * 10, 100);
+  // Calculate metrics appropriate for the entity type
+  if (isOrg) {
+    // Organization-specific scoring
+    const repoScore = Math.min(user.public_repos * 5, 300); // Max 300 points
+    const starsScore = Math.min(totalStars * 2, 400); // Max 400 points
+    const forksScore = Math.min(totalForks * 4, 250); // Max 250 points
 
-  // Calculate project quality (non-forked repos with stars > 0, 15 points each, max 150)
-  const qualityProjects = repositories.filter(
-    repo => !repo.fork && repo.stargazers_count > 0
-  ).length;
-  const qualityPoints = Math.min(qualityProjects * 15, 150);
+    // Organization age score (similar to user experience)
+    const creationDate = new Date(user.created_at);
+    const now = new Date();
+    const ageInMonths =
+      (now.getFullYear() - creationDate.getFullYear()) * 12 +
+      (now.getMonth() - creationDate.getMonth());
+    const ageScore = Math.min(ageInMonths * 2, 100); // Max 100 points
 
-  // Calculate contribution quality (PRs and issues can be estimated from contribution data)
-  // Since we don't have direct PR data, we'll estimate based on commits (10% of commit points)
-  const prPoints = Math.floor(commitPoints * 0.1);
+    // Repository quality (descriptions, READMEs, etc)
+    const reposWithDescriptions = repositories.filter(
+      repo => repo.description && repo.description.length > 20
+    ).length;
+    const qualityScore = Math.min(
+      Math.round(
+        (reposWithDescriptions / Math.max(1, repositories.length)) * 150
+      ),
+      150
+    );
 
-  // Calculate total score
-  const totalScore =
-    starPoints +
-    repoPoints +
-    followerPoints +
-    commitPoints +
-    experiencePoints +
-    forkPoints +
-    languagePoints +
-    qualityPoints +
-    prPoints;
+    // Language diversity
+    const uniqueLanguages = new Set(
+      repositories.map(repo => repo.language).filter(Boolean)
+    ).size;
+    const languageScore = Math.min(uniqueLanguages * 10, 100); // Max 100 points
 
-  return {
-    totalScore,
-    metrics: {
-      stars: starPoints,
-      repos: repoPoints,
-      commits: commitPoints,
-      followers: followerPoints,
-      experience: experiencePoints,
-      forks: forkPoints,
-      languages: languagePoints,
-      quality: qualityPoints,
-      prs: prPoints,
-    },
-  };
+    // Calculate activity score based on recent updates
+    const recentlyUpdatedRepos = repositories.filter(repo => {
+      const updatedAt = new Date(repo.updated_at);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      return updatedAt > threeMonthsAgo;
+    }).length;
+    const activityScore = Math.min(recentlyUpdatedRepos * 10, 200); // Max 200 points
+
+    return {
+      totalScore:
+        repoScore +
+        starsScore +
+        forksScore +
+        ageScore +
+        qualityScore +
+        languageScore +
+        activityScore,
+      metrics: {
+        repos: repoScore,
+        stars: starsScore,
+        commits: 0, // Organizations don't have direct commits
+        followers: 0, // Organizations don't have followers
+        experience: ageScore,
+        forks: forksScore,
+        languages: languageScore,
+        quality: qualityScore,
+        prs: 0, // Organizations don't have direct PRs
+        activity: activityScore, // New metric for organizations
+      },
+    };
+  } else {
+    // Existing user scoring logic
+    // Calculate account age in days
+    const accountAgeInDays = Math.floor(
+      (new Date().getTime() - new Date(user.created_at).getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
+
+    // Calculate experience based on account age (1 point per month, max 60)
+    const experiencePoints = Math.min(Math.floor(accountAgeInDays / 30), 60);
+
+    // Calculate stars (3 points per star, max 300)
+    const totalStars = repositories.reduce(
+      (sum, repo) => sum + repo.stargazers_count,
+      0
+    );
+    const starPoints = Math.min(totalStars * 3, 300);
+
+    // Calculate repositories (5 points per repo, max 250)
+    const repoPoints = Math.min(user.public_repos * 5, 250);
+
+    // Calculate followers (2 points per follower, max 200)
+    const followerPoints = Math.min(user.followers * 2, 200);
+
+    // Calculate commits from contribution data (0.5 points per commit, max 300)
+    const totalCommits = contributionData?.totalContributions || 0;
+    const commitPoints = Math.min(Math.floor(totalCommits * 0.5), 300);
+
+    // Calculate forks (4 points per fork, max 200)
+    const totalForks = repositories.reduce(
+      (sum, repo) => sum + repo.forks_count,
+      0
+    );
+    const forkPoints = Math.min(totalForks * 4, 200);
+
+    // Calculate language diversity (10 points per language, max 100)
+    const languages = new Set(
+      repositories.map(repo => repo.language).filter(Boolean)
+    );
+    const languagePoints = Math.min(languages.size * 10, 100);
+
+    // Calculate project quality (non-forked repos with stars > 0, 15 points each, max 150)
+    const qualityProjects = repositories.filter(
+      repo => !repo.fork && repo.stargazers_count > 0
+    ).length;
+    const qualityPoints = Math.min(qualityProjects * 15, 150);
+
+    // Calculate contribution quality (PRs and issues can be estimated from contribution data)
+    // Since we don't have direct PR data, we'll estimate based on commits (10% of commit points)
+    const prPoints = Math.floor(commitPoints * 0.1);
+
+    // Calculate activity score for users (similar to organizations)
+    const recentlyUpdatedRepos = repositories.filter(repo => {
+      const updatedAt = new Date(repo.updated_at);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      return updatedAt > threeMonthsAgo;
+    }).length;
+    const activityPoints = Math.min(recentlyUpdatedRepos * 10, 200);
+
+    // Calculate total score
+    const totalScore =
+      starPoints +
+      repoPoints +
+      followerPoints +
+      commitPoints +
+      experiencePoints +
+      forkPoints +
+      languagePoints +
+      qualityPoints +
+      prPoints +
+      activityPoints;
+
+    return {
+      totalScore,
+      metrics: {
+        stars: starPoints,
+        repos: repoPoints,
+        commits: commitPoints,
+        followers: followerPoints,
+        experience: experiencePoints,
+        forks: forkPoints,
+        languages: languagePoints,
+        quality: qualityPoints,
+        prs: prPoints,
+        activity: activityPoints,
+      },
+    };
+  }
 }
 
 // Utility functions for badges
