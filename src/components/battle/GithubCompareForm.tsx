@@ -59,6 +59,37 @@ export default function GithubCompareForm({
     }
   }, []);
 
+  // Utility function to safely add multiple users to recent users
+  const addMultipleUsers = async (usernames: {
+    user1?: string;
+    user2?: string;
+  }) => {
+    // Check if usernames are valid
+    const validUsernames = [];
+    if (usernames.user1?.trim())
+      validUsernames.push({
+        name: usernames.user1.trim(),
+        ref: recentUsersRef1,
+      });
+    if (usernames.user2?.trim())
+      validUsernames.push({
+        name: usernames.user2.trim(),
+        ref: recentUsersRef2,
+      });
+
+    // Skip if no valid usernames
+    if (validUsernames.length === 0) return;
+
+    // Add each username with a small delay between operations
+    for (const item of validUsernames) {
+      if (item.ref.current?.addUser) {
+        item.ref.current.addUser(item.name);
+        // Small delay to avoid localStorage race conditions
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    }
+  };
+
   // Handle token changes with feedback
   const handleTokenChange = async (newToken: string) => {
     try {
@@ -83,13 +114,15 @@ export default function GithubCompareForm({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (user1.trim() && user2.trim()) {
-      // Add users to recent users lists - only when Compare button is clicked
-      recentUsersRef1.current?.addUser(user1.trim());
-      recentUsersRef2.current?.addUser(user2.trim());
+      // Add users to recent users lists using our new utility function
+      await addMultipleUsers({
+        user1: user1.trim(),
+        user2: user2.trim(),
+      });
 
       onCompare(user1.trim(), user2.trim(), token || undefined);
 
