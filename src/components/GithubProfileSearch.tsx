@@ -74,21 +74,12 @@ const GithubProfileSearch = forwardRef(
     useEffect(() => {
       const savedUsername =
         defaultUsername || localStorage.getItem('github_username');
-      // const savedRecentUsers = localStorage.getItem('recent_github_users');
 
       if (savedUsername) {
         setUsername(savedUsername);
         // Also set as last searched username since we're auto-searching with it
         setLastSearchedUsername(savedUsername);
       }
-
-      // if (savedRecentUsers) {
-      //   try {
-      //     setRecentUsers(JSON.parse(savedRecentUsers));
-      //   } catch (e) {
-      //     console.error('Failed to parse recent users from localStorage', e);
-      //   }
-      // }
 
       // Auto-search with saved credentials (token is already loaded by the hook)
       if (savedUsername) {
