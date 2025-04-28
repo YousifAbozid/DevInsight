@@ -143,7 +143,7 @@ export default function GitHubBattlePage() {
       )}
 
       {/* Battle Error - Now extracted as a component */}
-      {!hasError && (
+      {hasError && (
         <BattleError
           usernames={usernames}
           user1ErrorType={user1ErrorType}
