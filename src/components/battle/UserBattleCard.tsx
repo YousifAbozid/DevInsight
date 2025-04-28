@@ -404,31 +404,34 @@ export function UserBattleCard({
             </div>
           </div>
 
-          <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <Icons.GitPullRequest className="w-4 h-4 text-accent-1" />
-                <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
-                  Pull Requests
+          {/* Only show PRs for individual users, not organizations */}
+          {!isOrg && (
+            <div className="bg-l-bg-1 dark:bg-d-bg-1 p-4 rounded-lg border border-border-l/30 dark:border-border-d/30 hover:border-accent-1/50 transition-colors flex flex-col">
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-2">
+                  <Icons.GitPullRequest className="w-4 h-4 text-accent-1" />
+                  <span className="font-medium text-l-text-1 dark:text-d-text-1 text-sm sm:text-base">
+                    Pull Requests
+                  </span>
+                </div>
+                {score.metrics.prs > opponent.score.metrics.prs && (
+                  <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
+                    <Icons.ChevronUp className="w-3 h-3 mr-1" />
+                    {score.metrics.prs - opponent.score.metrics.prs}
+                  </span>
+                )}
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
+                {Math.round(totalCommits * 0.1).toLocaleString()}
+                <span className="text-xs text-l-text-3 dark:text-d-text-3 ml-1">
+                  (est.)
                 </span>
               </div>
-              {score.metrics.prs > opponent.score.metrics.prs && (
-                <span className="text-xs bg-accent-success/20 text-accent-success p-1 rounded font-medium flex items-center">
-                  <Icons.ChevronUp className="w-3 h-3 mr-1" />
-                  {score.metrics.prs - opponent.score.metrics.prs}
-                </span>
-              )}
+              <div className="text-xs font-medium text-accent-1 mt-1">
+                +{score.metrics.prs} points
+              </div>
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-l-text-1 dark:text-d-text-1">
-              {Math.round(totalCommits * 0.1).toLocaleString()}
-              <span className="text-xs text-l-text-3 dark:text-d-text-3 ml-1">
-                (est.)
-              </span>
-            </div>
-            <div className="text-xs font-medium text-accent-1 mt-1">
-              +{score.metrics.prs} points
-            </div>
-          </div>
+          )}
         </div>
 
         {/* GitHub Details - Improved for mobile */}
