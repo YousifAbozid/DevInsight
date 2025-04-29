@@ -235,7 +235,7 @@ export default function ContributionHeatmap({
     }, 3000);
   };
 
-  if (token) {
+  if (!token) {
     return (
       <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d">
         <SectionHeader
