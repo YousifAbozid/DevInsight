@@ -6,6 +6,7 @@ import {
   saveRepositoriesData,
   useBatchUserData, // Added batch data hook
 } from '../services/githubService';
+import { useGithubToken } from '../hooks/useStorage'; // Import the secure token hook
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
 import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
@@ -42,9 +43,8 @@ export default function GithubProfilePage() {
     return storedUsername;
   });
 
-  const [token, setToken] = useState<string | undefined>(() => {
-    return localStorage.getItem('github_token') || undefined;
-  });
+  // Replace simple useState with secure useGithubToken hook
+  const [token, setToken] = useGithubToken();
 
   const searchRef = useRef<{
     setRecentUsers: (users: string[]) => void;
@@ -75,9 +75,18 @@ export default function GithubProfilePage() {
   // Show welcome screen immediately if there's no username
   const showWelcomeScreen = !username;
 
-  const handleSearch = (searchUsername: string, accessToken?: string) => {
+  // Update handleSearch to use async token setter
+  const handleSearch = async (searchUsername: string, accessToken?: string) => {
     setUsername(searchUsername);
-    setToken(accessToken);
+
+    // If a token is provided, securely store it
+    if (accessToken !== undefined) {
+      try {
+        await setToken(accessToken);
+      } catch (error) {
+        console.error('Error saving token:', error);
+      }
+    }
   };
 
   // New function to handle suggestion clicks

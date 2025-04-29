@@ -192,7 +192,7 @@ export const fetchRecommendedRepos = async (
   };
 
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const response = await fetch(
@@ -303,9 +303,9 @@ export const fetchUserPullRequests = async (
     'Content-Type': 'application/json',
   };
 
-  // Add authorization header if token is provided
+  // Add authorization header if token is provided - Use Bearer format instead
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
@@ -344,9 +344,9 @@ export const fetchUserIssues = async (
     'Content-Type': 'application/json',
   };
 
-  // Add authorization header if token is provided
+  // Add authorization header if token is provided - Use Bearer format instead
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
@@ -418,7 +418,7 @@ export const batchFetchUserData = async (
   };
 
   if (token) {
-    headers['Authorization'] = `token ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
