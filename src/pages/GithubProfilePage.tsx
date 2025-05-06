@@ -4,9 +4,11 @@ import {
   aggregateLanguageData,
   saveUserData,
   saveRepositoriesData,
-  useBatchUserData, // Added batch data hook
+  useBatchUserData,
 } from '../services/githubService';
-import { useGithubToken } from '../hooks/useStorage'; // Import the secure token hook
+import { useGithubToken } from '../hooks/useStorage';
+// Add the useBadges import
+import { useBadges } from '../hooks/useBadgeFunctions';
 import GithubProfileCard from '../components/GithubProfileCard';
 import GithubProfileSearch from '../components/GithubProfileSearch';
 import GithubProfileCardSkeleton from '../components/shared/Skeletons/GithubProfileCardSkeleton';
@@ -137,6 +139,13 @@ export default function GithubProfilePage() {
     : null;
 
   const languageData = repositories ? aggregateLanguageData(repositories) : [];
+
+  // Calculate badges for the user if they're not an organization
+  const badges = useBadges(
+    user && user.type !== 'Organization' ? user : null,
+    repositories,
+    contributionData
+  );
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -276,7 +285,7 @@ export default function GithubProfilePage() {
               user={user}
               repositories={repositories}
               languageData={languageData}
-              badges={[]}
+              badges={badges} // Pass the calculated badges here
             />
           )}
 

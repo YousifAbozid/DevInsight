@@ -60,7 +60,7 @@ export function getBadgeTierClass(tier: string): string {
 
 // Custom hook to calculate badges
 export function useBadges(
-  user: GithubUser,
+  user: GithubUser | null,
   repositories: Repository[] | undefined,
   contributionData?: ContributionData
 ): Badge[] {
