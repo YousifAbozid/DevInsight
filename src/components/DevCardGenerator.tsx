@@ -119,7 +119,7 @@ export default function DevCardGenerator({
               user={user}
               repositories={repositories}
               languageData={languageData}
-              badges={badges?.filter(b => b.earned).slice(0, 3)}
+              badges={badges?.filter(b => b.earned)}
               theme={selectedTheme}
             />
           </div>
