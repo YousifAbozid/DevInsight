@@ -39,8 +39,9 @@ export default function DevCard({
   const forkCount =
     repositories?.reduce((sum, repo) => sum + repo.forks_count, 0) || 0;
 
-  // Ensure badges array isn't empty to fix badge display
-  const hasBadges = badges && badges.length > 0;
+  // Filter to only show earned badges
+  const earnedBadges = badges?.filter(badge => badge.earned) || [];
+  const hasBadges = earnedBadges.length > 0;
 
   // Generate component based on theme
   switch (theme) {
@@ -145,16 +146,30 @@ export default function DevCard({
           </div>
 
           {hasBadges && (
-            <div className="mt-4 flex justify-center space-x-2">
-              {badges.map(badge => (
-                <div
-                  key={badge.id}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center ${getBadgeColor(badge.tier)} transition-transform hover:scale-110 duration-200 shadow-sm`}
-                  title={badge.name}
-                >
-                  <badge.icon className="w-5 h-5 text-white" />
-                </div>
-              ))}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                  <Icons.Medal className="w-3.5 h-3.5 mr-1.5 text-gray-500 dark:text-gray-400" />
+                  Developer Achievements
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {earnedBadges.length} earned
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {earnedBadges.map(badge => (
+                  <div
+                    key={badge.id}
+                    className={`px-2 py-1 rounded-full flex items-center gap-1.5 ${getBadgeColor(badge.tier)} transition-transform hover:scale-105 duration-200 shadow-sm bg-opacity-10 dark:bg-opacity-20`}
+                    title={badge.name}
+                  >
+                    <badge.icon className="w-4 h-4 text-gray-800 dark:text-gray-200" />
+                    <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
+                      {badge.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -316,16 +331,28 @@ export default function DevCard({
             </div>
 
             {hasBadges && (
-              <div className="mt-5 flex justify-center gap-2">
-                {badges.map(badge => (
-                  <div
-                    key={badge.id}
-                    className={`p-2 rounded-lg ${getBadgeGradient(badge.tier)} flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-200`}
-                    title={badge.name}
-                  >
-                    <badge.icon className="w-5 h-5 text-white" />
-                  </div>
-                ))}
+              <div className="w-full mt-5">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-semibold text-blue-100 flex items-center">
+                    <Icons.Medal className="w-4 h-4 mr-1.5 text-blue-200" />
+                    Developer Achievements
+                  </span>
+                  <span className="text-xs text-blue-200">
+                    {earnedBadges.length} earned
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {earnedBadges.map(badge => (
+                    <div
+                      key={badge.id}
+                      className={`px-2.5 py-1.5 rounded-md flex items-center gap-1.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all`}
+                      title={badge.name}
+                    >
+                      <badge.icon className="w-4 h-4 text-white" />
+                      <span className="text-xs text-white">{badge.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -490,17 +517,28 @@ export default function DevCard({
           </div>
 
           {hasBadges && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {badges.map(badge => (
-                <div
-                  key={badge.id}
-                  className="px-2.5 py-1.5 text-xs rounded-full flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                  title={badge.name}
-                >
-                  <badge.icon className="w-3.5 h-3.5" />
-                  <span>{badge.name}</span>
-                </div>
-              ))}
+            <div className="mt-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                  <Icons.Medal className="w-4 h-4 mr-1.5 text-gray-500 dark:text-gray-400" />
+                  Developer Achievements
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {earnedBadges.length} earned
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {earnedBadges.map(badge => (
+                  <div
+                    key={badge.id}
+                    className="px-2.5 py-1.5 text-xs rounded-full flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    title={badge.name}
+                  >
+                    <badge.icon className="w-3.5 h-3.5" />
+                    <span>{badge.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -629,11 +667,11 @@ export default function DevCard({
           <div className="mt-5">
             <div className="flex justify-between items-center mb-2">
               <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1 flex items-center gap-1.5">
-                <Icons.Folder className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
-                Top Languages
+                <Icons.Medal className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
+                Developer Achievements
               </div>
               <div className="text-xs text-l-text-3 dark:text-d-text-3">
-                {languageData.length} total
+                {earnedBadges.length} earned
               </div>
             </div>
 
@@ -676,14 +714,14 @@ export default function DevCard({
             </div>
           </div>
 
-          {hasBadges && badges.length > 0 && (
+          {hasBadges && (
             <div className="mt-5">
               <div className="text-sm font-medium text-l-text-1 dark:text-d-text-1 mb-2 flex items-center gap-1.5">
                 <Icons.Medal className="w-4 h-4 text-l-text-2 dark:text-d-text-2" />
-                Developer Badges
+                Developer Achievements
               </div>
               <div className="flex flex-wrap gap-2">
-                {badges.map(badge => (
+                {earnedBadges.map(badge => (
                   <div
                     key={badge.id}
                     className={`p-2 rounded-lg ${getBadgeBgClass(badge.tier)} flex flex-col items-center gap-1 hover:scale-105 transition-transform duration-200`}
@@ -721,13 +759,13 @@ export default function DevCard({
 function getBadgeBgClass(tier: string): string {
   switch (tier) {
     case 'bronze':
-      return 'bg-[#CD7F32]/10';
+      return 'bg-[#CD7F32]/10 text-[#CD7F32] dark:bg-[#CD7F32]/30 dark:text-[#CD7F32]';
     case 'silver':
-      return 'bg-[#C0C0C0]/10';
+      return 'bg-[#8E8E93]/10 text-[#8E8E93] dark:bg-[#8E8E93]/30 dark:text-[#C8C8C8]';
     case 'gold':
-      return 'bg-[#FFD700]/10';
+      return 'bg-[#FFD700]/10 text-[#FFD700] dark:bg-[#FFD700]/30 dark:text-[#FFD700]';
     case 'platinum':
-      return 'bg-[#E5E4E2]/10';
+      return 'bg-[#8A9BA8]/10 text-[#8A9BA8] dark:bg-[#8A9BA8]/30 dark:text-[#B8C5D0]';
     default:
       return 'bg-l-bg-3 dark:bg-d-bg-3';
   }
@@ -745,20 +783,5 @@ function getBadgeColor(tier: string): string {
       return 'bg-[#E5E4E2]';
     default:
       return 'bg-gray-400';
-  }
-}
-
-function getBadgeGradient(tier: string): string {
-  switch (tier) {
-    case 'bronze':
-      return 'bg-gradient-to-br from-amber-600 to-amber-700';
-    case 'silver':
-      return 'bg-gradient-to-br from-gray-400 to-gray-500';
-    case 'gold':
-      return 'bg-gradient-to-br from-yellow-400 to-yellow-500';
-    case 'platinum':
-      return 'bg-gradient-to-br from-gray-300 to-gray-400';
-    default:
-      return 'bg-gradient-to-br from-gray-500 to-gray-600';
   }
 }
