@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Icons } from './Icons';
 
 interface GitHubTokenSectionProps {
@@ -51,6 +51,25 @@ export default function GitHubTokenSection({
 }: GitHubTokenSectionProps) {
   const [showTokenInput, setShowTokenInput] = useState(defaultExpanded);
 
+  // Add a ref to track previous token value
+  const prevTokenRef = useRef(token);
+
+  // Add an effect to detect token changes
+  useEffect(() => {
+    if (prevTokenRef.current !== token) {
+      console.warn('Token changed in GitHubTokenSection');
+      prevTokenRef.current = token;
+    }
+  }, [token]);
+
+  // Wrap the token change handler to prevent unnecessary updates
+  const handleTokenChange = (newToken: string) => {
+    // Only update if the token actually changed
+    if (newToken !== token) {
+      onTokenChange(newToken);
+    }
+  };
+
   return (
     <div className={`mt-1 ${className}`}>
       <button
@@ -90,7 +109,7 @@ export default function GitHubTokenSection({
             <input
               type="password"
               value={token}
-              onChange={e => onTokenChange(e.target.value)}
+              onChange={e => handleTokenChange(e.target.value)}
               placeholder={placeholder}
               className="w-full pl-8 pr-16 py-2.5 text-sm rounded-lg bg-l-bg-2 dark:bg-d-bg-2 text-l-text-1 dark:text-d-text-1 border border-border-l dark:border-border-d focus:border-accent-1 focus:ring-1 focus:ring-accent-1 focus:outline-none transition-all duration-200"
               disabled={isLoading || isTokenLoading}

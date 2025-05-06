@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 // Get encryption secret from environment variables
 // Falls back to a default value if the env var is not available (development only)
@@ -316,7 +316,7 @@ export function useSecureStorage(
 // Simple example hooks for common use cases
 
 /**
- * Hook for managing GitHub token with encryption
+ * Hook for managing GitHub token with encryption and debouncing
  */
 export function useGithubToken(): [
   string,
@@ -325,7 +325,42 @@ export function useGithubToken(): [
   boolean,
   Error | null,
 ] {
-  return useSecureStorage('github_token', '');
+  const [value, baseSetValue, removeValue, isLoading, error] = useSecureStorage(
+    'github_token',
+    ''
+  );
+
+  // Keep track of the last update time to prevent rapid changes
+  const lastUpdateRef = useRef<number>(0);
+
+  // Debounced setter that prevents updates happening too rapidly
+  const setValue = useCallback(
+    async (newToken: string) => {
+      try {
+        // If the new token is the same as the current one, do nothing
+        if (newToken === value) {
+          return;
+        }
+
+        // Throttle updates to prevent rapid changes
+        // Only allow updates once every 500ms
+        const now = Date.now();
+        if (now - lastUpdateRef.current < 500) {
+          console.warn('Token update throttled - too soon after last update');
+          return;
+        }
+
+        lastUpdateRef.current = now;
+        await baseSetValue(newToken);
+      } catch (error) {
+        console.error('Error updating GitHub token:', error);
+        throw error;
+      }
+    },
+    [value, baseSetValue]
+  );
+
+  return [value, setValue, removeValue, isLoading, error];
 }
 
 /**

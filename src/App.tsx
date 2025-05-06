@@ -17,14 +17,16 @@ import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   const [token, setToken] = useState<string | undefined>(undefined);
-  const [storedToken, isLoading] = useGithubToken();
+  const [storedToken, , isLoading] = useGithubToken();
 
-  // Set token once loaded
+  // Improved token initialization
   useEffect(() => {
-    if (!isLoading && storedToken) {
+    // Only update local state if the token has loaded and is different from current state
+    if (!isLoading && storedToken !== token) {
+      console.warn('Initializing token from storage');
       setToken(storedToken);
     }
-  }, [isLoading, storedToken]);
+  }, [isLoading, storedToken, token]);
 
   return (
     <ToastProvider>
