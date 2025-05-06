@@ -740,39 +740,60 @@ export default function GithubProfileCard({
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-4">
+      <div
+        className={`grid grid-cols-2 ${user.type === 'User' ? 'md:grid-cols-6' : 'md:grid-cols-3'} gap-4 mt-4`}
+      >
+        {/* Repositories - shown for both users and organizations */}
         <StatCard
           title="Repos"
           value={user.public_repos}
           icon={<Icons.Folder className="w-5 h-5" />}
         />
+
+        {/* Followers - shown for both users and organizations */}
         <StatCard
           title="Followers"
           value={user.followers}
           icon={<Icons.Users className="w-5 h-5" />}
         />
-        <StatCard
-          title="Following"
-          value={user.following}
-          icon={<Icons.UserPlus className="w-5 h-5" />}
-        />
-        <StatCard
-          title="Gists"
-          value={user.public_gists}
-          icon={<Icons.FileText className="w-5 h-5" />}
-        />
-        <StatCard
-          title="PRs"
-          value={pullRequests}
-          isLoading={isPRsLoading}
-          icon={<Icons.GitPullRequest className="w-5 h-5" />}
-        />
-        <StatCard
-          title="Issues"
-          value={issues}
-          isLoading={isIssuesLoading}
-          icon={<Icons.AlertCircle className="w-5 h-5" />}
-        />
+
+        {/* Show different third stat based on profile type */}
+        {user.type === 'User' ? (
+          <StatCard
+            title="Following"
+            value={user.following}
+            icon={<Icons.UserPlus className="w-5 h-5" />}
+          />
+        ) : (
+          <StatCard
+            title="Members"
+            value={user.following || 0} // Organizations often use this field differently
+            icon={<Icons.UserPlus className="w-5 h-5" />}
+          />
+        )}
+
+        {/* The remaining stats are only shown for individual users */}
+        {user.type === 'User' && (
+          <>
+            <StatCard
+              title="Gists"
+              value={user.public_gists}
+              icon={<Icons.FileText className="w-5 h-5" />}
+            />
+            <StatCard
+              title="PRs"
+              value={pullRequests}
+              isLoading={isPRsLoading}
+              icon={<Icons.GitPullRequest className="w-5 h-5" />}
+            />
+            <StatCard
+              title="Issues"
+              value={issues}
+              isLoading={isIssuesLoading}
+              icon={<Icons.AlertCircle className="w-5 h-5" />}
+            />
+          </>
+        )}
       </div>
     </div>
   );
