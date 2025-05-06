@@ -28,6 +28,7 @@ import DeveloperBadgesSkeleton from '../components/shared/Skeletons/DeveloperBad
 import MostStarredReposSkeleton from '../components/shared/Skeletons/MostStarredReposSkeleton';
 import LanguagePieChartSkeleton from '../components/shared/Skeletons/LanguagePieChartSkeleton';
 import ContributionHeatmapPageSkeleton from '../components/shared/Skeletons/ContributionHeatmapPageSkeleton';
+import { useBadges } from '../hooks/useBadgeFunctions';
 
 // Define interface for JSON-LD structured data
 interface StructuredData {
@@ -290,6 +291,13 @@ export default function PublicProfilePage({
     return <Navigate to={`/${detectedProfileType}/${username}`} replace />;
   }
 
+  // Calculate badges for the user if they're not an organization
+  const badges = useBadges(
+    user && user.type !== 'Organization' ? user : null,
+    repositories,
+    contributionData
+  );
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6 md:mb-8">
@@ -387,7 +395,7 @@ export default function PublicProfilePage({
               user={user}
               repositories={repositories}
               languageData={languageData}
-              badges={[]}
+              badges={badges}
             />
           )}
 
