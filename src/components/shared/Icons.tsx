@@ -14,7 +14,6 @@ import {
   Info,
 
   // Additional icons for PersonasPage
-  TerminalSquare,
   Users,
   CheckCircle,
   Globe,
@@ -106,6 +105,9 @@ import {
 
   // Add Flag icon import
   Flag,
+
+  // File imports that need to be added
+  Plus,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -150,9 +152,7 @@ export const Icons = {
   Info: ({ className }: IconProps) => <Info className={className} />,
 
   // Additional icons for PersonasPage
-  Code: ({ className }: IconProps) => (
-    <TerminalSquare className={className} /> // Changed to TerminalSquare for consistency
-  ),
+  Code: ({ className }: IconProps) => <Code className={className} />, // Direct mapping to Code
   Users: ({ className }: IconProps) => <Users className={className} />,
   Check: ({ className }: IconProps) => <CheckCircle className={className} />,
   Globe: ({ className }: IconProps) => <Globe className={className} />,
@@ -284,4 +284,7 @@ export const Icons = {
 
   // Add missing Flag icon
   Flag: ({ className }: IconProps) => <Flag className={className} />,
+
+  // Add missing Plus icon
+  Plus: ({ className }: IconProps) => <Plus className={className} />,
 };
