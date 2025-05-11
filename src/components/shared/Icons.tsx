@@ -91,6 +91,7 @@ import {
   Share2,
   Image,
   FileCode,
+  Terminal, // Added Terminal icon
 
   // Add missing Loader icon for loading states
   Loader,
@@ -280,6 +281,7 @@ export const Icons = {
   Share2: ({ className }: IconProps) => <Share2 className={className} />,
   Image: ({ className }: IconProps) => <Image className={className} />,
   FileCode: ({ className }: IconProps) => <FileCode className={className} />,
+  Terminal: ({ className }: IconProps) => <Terminal className={className} />,
 
   // Add missing Loader icon for loading states
   Loader: ({ className }: IconProps) => <Loader className={className} />,
