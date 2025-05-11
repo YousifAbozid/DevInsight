@@ -20,8 +20,15 @@ interface DevCardGeneratorProps {
   badges?: Badge[];
 }
 
-// Limit theme types to only what's implemented
-type ThemeVariant = 'default' | 'minimal' | 'gradient' | 'github';
+// Updated to include only implemented themes
+type ThemeVariant =
+  | 'default'
+  | 'minimal'
+  | 'gradient'
+  | 'github'
+  | 'terminal-hacker'
+  | 'cyberpunk'
+  | 'pastel';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -41,7 +48,7 @@ export default function DevCardGenerator({
   const cardRef = useRef<HTMLDivElement>(null);
   const { notify } = useToast();
 
-  // Define theme options with descriptive information and valid Lucide icons
+  // Define theme options with descriptive information
   const themeOptions: ThemeOption[] = [
     {
       id: 'default',
@@ -66,6 +73,24 @@ export default function DevCardGenerator({
       name: 'GitHub',
       description: 'GitHub-inspired clean design',
       icon: Icons.GitHub,
+    },
+    {
+      id: 'terminal-hacker',
+      name: 'Terminal',
+      description: 'Green-on-black Linux terminal style',
+      icon: Icons.FileCode,
+    },
+    {
+      id: 'cyberpunk',
+      name: 'Cyberpunk',
+      description: 'Neon pink, purple and cyan with glow effects',
+      icon: Icons.Zap,
+    },
+    {
+      id: 'pastel',
+      name: 'Pastel Garden',
+      description: 'Soft, rounded design with pastel colors',
+      icon: Icons.Flower,
     },
   ];
 
