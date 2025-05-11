@@ -254,11 +254,20 @@ export default function GithubProfileCard({
   // Calculate next GitHub anniversary with countdown
   const calculateNextAnniversary = () => {
     const now = new Date();
-    const nextAnniversary = new Date(user.created_at);
-    nextAnniversary.setFullYear(now.getFullYear());
+    const joinDate = new Date(user.created_at);
+
+    // Get just the month and day of the join date
+    const joinMonth = joinDate.getMonth();
+    const joinDay = joinDate.getDate();
+
+    // Check if today is the anniversary
+    const isToday = now.getMonth() === joinMonth && now.getDate() === joinDay;
+
+    // Set up the next anniversary date
+    const nextAnniversary = new Date(now.getFullYear(), joinMonth, joinDay);
 
     // If the anniversary has already passed this year, set for next year
-    if (nextAnniversary < now) {
+    if (nextAnniversary < now && !isToday) {
       nextAnniversary.setFullYear(now.getFullYear() + 1);
     }
 
@@ -276,12 +285,13 @@ export default function GithubProfileCard({
       daysUntil: diffDays,
       hoursLeft,
       minutesLeft,
+      isAnniversaryToday: isToday,
     };
   };
 
   const accountAge = calculateAccountAge();
   const nextAnniversary = calculateNextAnniversary();
-  const isBirthday = nextAnniversary.daysUntil === 0;
+  const isBirthday = nextAnniversary.isAnniversaryToday;
 
   return (
     <div className="bg-l-bg-2 dark:bg-d-bg-2 rounded-lg p-6 border border-border-l dark:border-border-d relative">
