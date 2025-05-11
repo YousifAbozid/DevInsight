@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useUserPullRequests, useUserIssues } from '../services/githubService';
 import { Icons } from './shared/Icons';
@@ -485,30 +484,37 @@ export default function GithubProfileCard({
             )}
           </div>
 
-          {/* Modified: Links in column layout for better mobile display */}
+          {/* Enhanced Profile Links with consistent styling and new tab behavior */}
           <div className="flex flex-col w-full gap-3 mt-2">
             <a
               href={user.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full text-center text-accent-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover flex items-center justify-center cursor-pointer bg-l-bg-1 dark:bg-d-bg-1 px-3 py-2 rounded-md transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-l-bg-1 dark:bg-d-bg-1 hover:bg-l-bg-hover dark:hover:bg-d-bg-hover px-4 py-2.5 rounded-lg border border-border-l/30 dark:border-border-d/30 text-l-text-1 dark:text-d-text-1 hover:text-accent-1 transition-all duration-200 group shadow-sm hover:shadow-md"
             >
-              <Icons.ExternalLink className="w-4 h-4 mr-2" />
-              GitHub Profile
+              <Icons.GitHub className="w-5 h-5 text-accent-1 group-hover:scale-110 transition-transform" />
+              <span className="font-medium">GitHub Profile</span>
+              <Icons.ExternalLink className="w-4 h-4 ml-1 opacity-70 group-hover:opacity-100" />
             </a>
 
             {publicProfileUrl && (
-              <Link
-                to={publicProfileUrl}
-                className="w-full group relative flex items-center justify-center bg-gradient-to-r from-accent-1 to-accent-2 text-white px-3 py-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
+              <a
+                href={publicProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full group relative flex items-center justify-center gap-2 bg-gradient-to-r from-accent-1 to-accent-2 text-white px-4 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
               >
                 <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                <Icons.Eye className="w-4 h-4 mr-2 group-hover:animate-pulse" />
-                <span className="font-medium">DevInsight Profile</span>
-                <span className="ml-1.5 px-1 py-0.5 bg-white/20 rounded text-xs font-medium">
+                <span className="absolute inset-0 bg-gradient-to-r from-accent-2 to-accent-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                <Icons.Activity className="w-5 h-5 relative z-10 group-hover:scale-110 transition-transform" />
+                <span className="font-medium relative z-10">
+                  DevInsight Profile
+                </span>
+                <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded text-xs font-medium relative z-10">
                   Public
                 </span>
-              </Link>
+                <Icons.ExternalLink className="w-4 h-4 ml-1 opacity-70 group-hover:opacity-100 relative z-10" />
+              </a>
             )}
           </div>
         </div>
