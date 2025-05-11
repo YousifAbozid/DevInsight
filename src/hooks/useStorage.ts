@@ -382,7 +382,10 @@ export function useRecentGithubUsers(
   maxUsers: number = 5
 ): [
   string[],
-  (username: string) => void,
+  (
+    username: string,
+    options?: { noReorder?: boolean }
+  ) => { status: 'added' | 'exists' | 'error'; index: number },
   (username: string) => void,
   () => void,
 ] {
@@ -392,23 +395,44 @@ export function useRecentGithubUsers(
     []
   );
 
-  // Add username to the front of the list, remove duplicates, and limit length
+  // Add username to the list with configurable reordering behavior
   const addUser = useCallback(
-    (username: string) => {
-      if (!username || !username.trim()) return;
+    (username: string, options?: { noReorder?: boolean }) => {
+      if (!username || !username.trim()) return { status: 'error', index: -1 };
 
       const trimmedUsername = username.trim();
+      let result: { status: 'added' | 'exists' | 'error'; index: number } = {
+        status: 'added',
+        index: 0,
+      };
+
       setUsers((prevUsers: string[]) => {
         // Handle the case where prevUsers might be null or undefined
         const safeUsers: string[] = Array.isArray(prevUsers) ? prevUsers : [];
 
-        // Remove the username if it already exists (to move it to the front)
-        const filteredUsers: string[] = safeUsers.filter(
-          u => u !== trimmedUsername
-        );
+        // Check if the username already exists
+        const existingIndex = safeUsers.findIndex(u => u === trimmedUsername);
+        const alreadyExists = existingIndex !== -1;
 
-        // Add the username to the front and limit the list length
+        // If user exists and noReorder is true, don't change the order
+        if (alreadyExists && options?.noReorder) {
+          result = { status: 'exists', index: existingIndex };
+          return safeUsers; // Return unchanged list
+        }
+
+        // Otherwise, handle normally - remove if exists and add to front
+        const filteredUsers: string[] = alreadyExists
+          ? safeUsers.filter(u => u !== trimmedUsername)
+          : safeUsers;
+
+        // Add to front and limit length
         const newUsers = [trimmedUsername, ...filteredUsers].slice(0, maxUsers);
+
+        // Set result information
+        result = {
+          status: alreadyExists ? 'exists' : 'added',
+          index: 0, // Will be at the front of the list
+        };
 
         // Dispatch both a storage event for other tabs and a custom event for same tab
         try {
@@ -419,6 +443,7 @@ export function useRecentGithubUsers(
                 users: newUsers,
                 action: 'add',
                 username: trimmedUsername,
+                status: result.status,
               },
             })
           );
@@ -443,6 +468,8 @@ export function useRecentGithubUsers(
 
         return newUsers;
       });
+
+      return result;
     },
     [setUsers, maxUsers]
   );
@@ -580,5 +607,13 @@ export function useRecentGithubUsers(
     };
   }, [setUsers, users]);
 
-  return [users, addUser, removeUser, enhancedClearUsers];
+  return [users, addUser, removeUser, enhancedClearUsers] as [
+    string[],
+    (
+      username: string,
+      options?: { noReorder?: boolean }
+    ) => { status: 'added' | 'exists' | 'error'; index: number },
+    (username: string) => void,
+    () => void,
+  ];
 }

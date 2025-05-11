@@ -23,7 +23,10 @@ export default function GithubCompareForm({
 
   // References for recent users functionality
   const recentUsersRef1 = useRef<{
-    addUser: (username: string) => void;
+    addUser: (
+      username: string,
+      options?: { noReorder?: boolean }
+    ) => { status: 'added' | 'exists' | 'error'; index: number };
     removeUser: (username: string) => void;
     clearUsers: () => void;
     getUsers: () => string[];
@@ -83,7 +86,12 @@ export default function GithubCompareForm({
     // Add each username with a small delay between operations
     for (const item of validUsernames) {
       if (item.ref.current?.addUser) {
-        item.ref.current.addUser(item.name);
+        // Use the noReorder option if the user already exists
+        const currentUsers = item.ref.current.getUsers();
+        const exists = currentUsers.includes(item.name);
+
+        item.ref.current.addUser(item.name, { noReorder: exists });
+
         // Small delay to avoid localStorage race conditions
         await new Promise(resolve => setTimeout(resolve, 50));
       }

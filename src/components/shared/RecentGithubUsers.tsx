@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRecentGithubUsers } from '../../hooks/useStorage';
 import { Icons } from './Icons';
 
@@ -17,7 +17,10 @@ interface RecentGithubUsersProps {
 
   // Reference to access functions
   recentUsersRef?: React.MutableRefObject<{
-    addUser: (username: string) => void;
+    addUser: (
+      username: string,
+      options?: { noReorder?: boolean }
+    ) => { status: 'added' | 'exists' | 'error'; index: number };
     removeUser: (username: string) => void;
     clearUsers: () => void;
     getUsers: () => string[];
@@ -38,6 +41,13 @@ export default function RecentGithubUsers({
   // State to force re-render when localStorage changes
   const [localStorageUsers, setLocalStorageUsers] =
     useState<string[]>(recentUsers);
+
+  // Track which user was recently added for animation
+  const [recentlyAdded, setRecentlyAdded] = useState<string | null>(null);
+  const [recentlySelected, setRecentlySelected] = useState<string | null>(null);
+
+  // Refs to track the elements for better animations
+  const userItemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // Listen for changes to localStorage, including from other components
   useEffect(() => {
@@ -72,16 +82,23 @@ export default function RecentGithubUsers({
       }
     };
 
-    // Listen for custom events from WelcomeScreen
-    const handleCustomEvent = () => {
+    // Listen for custom events
+    const handleCustomEvent = (event: CustomEvent) => {
       checkLocalStorage();
+
+      // If this is an add event, set the recently added user for animation
+      if (event.detail?.action === 'add' && event.detail?.username) {
+        setRecentlyAdded(event.detail.username);
+        // Clear the animation highlight after 1.5 seconds
+        setTimeout(() => setRecentlyAdded(null), 1500);
+      }
     };
 
     // Add event listeners
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', checkLocalStorage);
     window.addEventListener(
-      'recent_users_added',
+      'recent_users_updated',
       handleCustomEvent as EventListener
     );
 
@@ -89,7 +106,7 @@ export default function RecentGithubUsers({
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', checkLocalStorage);
       window.removeEventListener(
-        'recent_users_added',
+        'recent_users_updated',
         handleCustomEvent as EventListener
       );
     };
@@ -97,7 +114,6 @@ export default function RecentGithubUsers({
 
   // Update localStorageUsers when recentUsers changes (from the hook)
   useEffect(() => {
-    // This ensures we sync with the hook's state
     setLocalStorageUsers(recentUsers);
   }, [recentUsers]);
 
@@ -105,8 +121,9 @@ export default function RecentGithubUsers({
   useEffect(() => {
     if (recentUsersRef) {
       recentUsersRef.current = {
-        addUser: (username: string) => {
-          addUser(username);
+        addUser: (username: string, options?: { noReorder?: boolean }) => {
+          const result = addUser(username, options);
+
           // Force immediate check of localStorage after adding a user
           const storedData = localStorage.getItem('recent_github_users');
           if (storedData) {
@@ -114,11 +131,21 @@ export default function RecentGithubUsers({
               const parsedData = JSON.parse(storedData);
               if (Array.isArray(parsedData)) {
                 setLocalStorageUsers(parsedData);
+
+                // Only highlight if it's a new addition or explicitly reordered
+                if (
+                  result.status === 'added' ||
+                  (result.status === 'exists' && !options?.noReorder)
+                ) {
+                  setRecentlyAdded(username);
+                  setTimeout(() => setRecentlyAdded(null), 1500);
+                }
               }
             } catch (error) {
               console.error('Error parsing recent users:', error);
             }
           }
+          return result;
         },
         removeUser: (username: string) => {
           removeUser(username);
@@ -130,7 +157,7 @@ export default function RecentGithubUsers({
         getUsers: () => localStorageUsers,
       };
     }
-  }, [addUser, removeUser, clearUsers, recentUsersRef]);
+  }, [addUser, removeUser, clearUsers, recentUsersRef, localStorageUsers]);
 
   // Skip rendering if there are no recent users
   if (localStorageUsers.length === 0) {
@@ -140,7 +167,28 @@ export default function RecentGithubUsers({
   // Handle removing a user
   const handleRemoveUser = (username: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering parent button
-    removeUser(username);
+
+    // Get the element before removing for animation
+    const element = userItemRefs.current.get(username);
+    if (element) {
+      // Add exit animation class
+      element.classList.add('scale-0', 'opacity-0');
+
+      // Remove after animation completes
+      setTimeout(() => {
+        removeUser(username);
+      }, 300);
+    } else {
+      removeUser(username);
+    }
+  };
+
+  // Handle user selection with animation
+  const handleSelectUser = (username: string) => {
+    setRecentlySelected(username);
+    // Clear highlight after animation completes
+    setTimeout(() => setRecentlySelected(null), 500);
+    onSelectUser(username, field);
   };
 
   return (
@@ -155,12 +203,23 @@ export default function RecentGithubUsers({
         {localStorageUsers.map(username => (
           <div
             key={`${field || 'default'}-${username}`}
-            className="relative group"
+            className="relative group transition-all duration-300 transform"
+            ref={el => {
+              if (el) userItemRefs.current.set(username, el);
+            }}
           >
             <button
               type="button"
-              onClick={() => onSelectUser(username, field)}
-              className="pl-2.5 pr-7 py-1 text-xs rounded-full bg-l-bg-2 dark:bg-d-bg-2 hover:bg-accent-1/10 hover:text-accent-1 dark:hover:bg-accent-1/10 dark:hover:text-accent-1 text-l-text-2 dark:text-d-text-2 border border-border-l/50 dark:border-border-d/50 transition-all duration-200 cursor-pointer"
+              onClick={() => handleSelectUser(username)}
+              className={`pl-2.5 pr-7 py-1 text-xs rounded-full cursor-pointer border transition-all duration-300 
+                ${
+                  recentlyAdded === username
+                    ? 'bg-accent-1/20 text-accent-1 border-accent-1/30 animate-pulse'
+                    : recentlySelected === username
+                      ? 'bg-accent-2/20 text-accent-2 border-accent-2/30'
+                      : 'bg-l-bg-2 dark:bg-d-bg-2 text-l-text-2 dark:text-d-text-2 border-border-l/50 dark:border-border-d/50'
+                }
+                hover:bg-accent-1/10 hover:text-accent-1 hover:border-accent-1/20 shadow-sm hover:shadow`}
             >
               {username}
             </button>

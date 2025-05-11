@@ -99,7 +99,7 @@ export default function GithubProfilePage() {
     // Save to localStorage and recent searches
     localStorage.setItem('github_username', suggestion);
 
-    // Update the recent users list in localStorage
+    // Update the recent users list in localStorage with noReorder option
     const savedRecentUsers = localStorage.getItem('recent_github_users');
     let recentUsers: string[] = [];
 
@@ -111,24 +111,32 @@ export default function GithubProfilePage() {
       }
     }
 
-    // Add the suggestion to recent users if not already there
-    const updatedRecentUsers = [...new Set([suggestion, ...recentUsers])].slice(
-      0,
-      5
-    ); // Keep only 5 most recent
+    // Check if suggestion already exists
+    const exists = recentUsers.includes(suggestion);
 
-    // Save updated recent users
-    localStorage.setItem(
-      'recent_github_users',
-      JSON.stringify(updatedRecentUsers)
-    );
+    // Add the suggestion to recent users without reordering if it already exists
+    if (exists) {
+      // Use existing search handler to perform the search without modifying the list
+      handleSearch(suggestion, token);
+    } else {
+      // Add as new item (will be at the front)
+      const updatedRecentUsers = [
+        ...new Set([suggestion, ...recentUsers]),
+      ].slice(0, 5); // Keep only 5 most recent
 
-    // Use existing search handler to perform the search
-    handleSearch(suggestion, token);
+      // Save updated recent users
+      localStorage.setItem(
+        'recent_github_users',
+        JSON.stringify(updatedRecentUsers)
+      );
 
-    // If searchRef exists, manually update its internal state
-    if (searchRef.current?.setRecentUsers) {
-      searchRef.current.setRecentUsers(updatedRecentUsers);
+      // Use existing search handler to perform the search
+      handleSearch(suggestion, token);
+
+      // If searchRef exists, manually update its internal state
+      if (searchRef.current?.setRecentUsers) {
+        searchRef.current.setRecentUsers(updatedRecentUsers);
+      }
     }
   };
 

@@ -40,7 +40,10 @@ const GithubProfileSearch = forwardRef(
 
     // Reference to recent users functions
     const recentUsersRef = useRef<{
-      addUser: (username: string) => void;
+      addUser: (
+        username: string,
+        options?: { noReorder?: boolean }
+      ) => { status: 'added' | 'exists' | 'error'; index: number };
       removeUser: (username: string) => void;
       clearUsers: () => void;
       getUsers: () => string[];
@@ -137,8 +140,12 @@ const GithubProfileSearch = forwardRef(
         // Save to localStorage
         localStorage.setItem('github_username', username.trim());
 
-        // Add to recent users list
-        recentUsersRef.current?.addUser(username.trim());
+        // Check if username already exists in recent users
+        const currentUsers = recentUsersRef.current?.getUsers() || [];
+        const exists = currentUsers.includes(username.trim());
+
+        // Add to recent users list with noReorder option if it already exists
+        recentUsersRef.current?.addUser(username.trim(), { noReorder: exists });
 
         onSearch(username.trim(), token || undefined);
 
