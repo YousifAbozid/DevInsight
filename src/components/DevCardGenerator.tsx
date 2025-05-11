@@ -30,7 +30,9 @@ type ThemeVariant =
   | 'cyberpunk'
   | 'pastel'
   | 'retro-arcade'
-  | 'galaxy-space';
+  | 'galaxy-space'
+  | 'matrix-rain'
+  | 'producthunt';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -105,6 +107,18 @@ export default function DevCardGenerator({
       name: 'Galaxy Space',
       description: 'Deep space theme with stars and cosmic elements',
       icon: Icons.Star,
+    },
+    {
+      id: 'matrix-rain',
+      name: 'Matrix Rain',
+      description: 'Green code falling on dark background',
+      icon: Icons.Code,
+    },
+    {
+      id: 'producthunt',
+      name: 'Product Hunt',
+      description: 'Clean white/orange product showcase design',
+      icon: Icons.Heart,
     },
   ];
 

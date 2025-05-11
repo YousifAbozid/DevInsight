@@ -8,6 +8,8 @@ import TerminalHackerTheme from './themes/TerminalHackerTheme';
 import CyberpunkTheme from './themes/CyberpunkTheme';
 import RetroArcadeTheme from './themes/RetroArcadeTheme';
 import GalaxySpaceTheme from './themes/GalaxySpaceTheme';
+import MatrixRainTheme from './themes/MatrixRainTheme';
+import ProductHuntTheme from './themes/ProductHuntTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -23,7 +25,9 @@ interface DevCardProps {
     | 'terminal-hacker'
     | 'cyberpunk'
     | 'retro-arcade'
-    | 'galaxy-space';
+    | 'galaxy-space'
+    | 'matrix-rain'
+    | 'producthunt';
 }
 
 export default function DevCard({
@@ -108,6 +112,26 @@ export default function DevCard({
     case 'galaxy-space':
       return (
         <GalaxySpaceTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'matrix-rain':
+      return (
+        <MatrixRainTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'producthunt':
+      return (
+        <ProductHuntTheme
           user={user}
           repositories={repositories}
           languageData={languageData}
