@@ -6,6 +6,8 @@ import GithubTheme from './themes/GithubTheme';
 import PastelGardenTheme from './themes/PastelGardenTheme';
 import TerminalHackerTheme from './themes/TerminalHackerTheme';
 import CyberpunkTheme from './themes/CyberpunkTheme';
+import RetroArcadeTheme from './themes/RetroArcadeTheme';
+import GalaxySpaceTheme from './themes/GalaxySpaceTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -19,7 +21,9 @@ interface DevCardProps {
     | 'github'
     | 'pastel'
     | 'terminal-hacker'
-    | 'cyberpunk';
+    | 'cyberpunk'
+    | 'retro-arcade'
+    | 'galaxy-space';
 }
 
 export default function DevCard({
@@ -84,6 +88,26 @@ export default function DevCard({
     case 'cyberpunk':
       return (
         <CyberpunkTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'retro-arcade':
+      return (
+        <RetroArcadeTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'galaxy-space':
+      return (
+        <GalaxySpaceTheme
           user={user}
           repositories={repositories}
           languageData={languageData}

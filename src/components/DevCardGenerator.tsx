@@ -20,7 +20,7 @@ interface DevCardGeneratorProps {
   badges?: Badge[];
 }
 
-// Updated to include only implemented themes
+// Updated to include all implemented themes
 type ThemeVariant =
   | 'default'
   | 'minimal'
@@ -28,7 +28,9 @@ type ThemeVariant =
   | 'github'
   | 'terminal-hacker'
   | 'cyberpunk'
-  | 'pastel';
+  | 'pastel'
+  | 'retro-arcade'
+  | 'galaxy-space';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -78,7 +80,7 @@ export default function DevCardGenerator({
       id: 'terminal-hacker',
       name: 'Terminal',
       description: 'Green-on-black Linux terminal style',
-      icon: Icons.FileCode,
+      icon: Icons.Terminal,
     },
     {
       id: 'cyberpunk',
@@ -91,6 +93,18 @@ export default function DevCardGenerator({
       name: 'Pastel Garden',
       description: 'Soft, rounded design with pastel colors',
       icon: Icons.Flower,
+    },
+    {
+      id: 'retro-arcade',
+      name: 'Retro Arcade',
+      description: 'Classic 90s arcade game style with pixel art',
+      icon: Icons.Trophy,
+    },
+    {
+      id: 'galaxy-space',
+      name: 'Galaxy Space',
+      description: 'Deep space theme with stars and cosmic elements',
+      icon: Icons.Star,
     },
   ];
 
