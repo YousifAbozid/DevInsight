@@ -10,6 +10,8 @@ import RetroArcadeTheme from './themes/RetroArcadeTheme';
 import GalaxySpaceTheme from './themes/GalaxySpaceTheme';
 import MatrixRainTheme from './themes/MatrixRainTheme';
 import ProductHuntTheme from './themes/ProductHuntTheme';
+import MonochromeBusinessTheme from './themes/MonochromeBusinessTheme';
+import BlueprintTheme from './themes/BlueprintTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -27,7 +29,9 @@ interface DevCardProps {
     | 'retro-arcade'
     | 'galaxy-space'
     | 'matrix-rain'
-    | 'producthunt';
+    | 'producthunt'
+    | 'monochrome-business'
+    | 'blueprint';
 }
 
 export default function DevCard({
@@ -132,6 +136,26 @@ export default function DevCard({
     case 'producthunt':
       return (
         <ProductHuntTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'monochrome-business':
+      return (
+        <MonochromeBusinessTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'blueprint':
+      return (
+        <BlueprintTheme
           user={user}
           repositories={repositories}
           languageData={languageData}

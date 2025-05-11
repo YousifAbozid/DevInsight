@@ -32,7 +32,9 @@ type ThemeVariant =
   | 'retro-arcade'
   | 'galaxy-space'
   | 'matrix-rain'
-  | 'producthunt';
+  | 'producthunt'
+  | 'monochrome-business'
+  | 'blueprint';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -119,6 +121,18 @@ export default function DevCardGenerator({
       name: 'Product Hunt',
       description: 'Clean white/orange product showcase design',
       icon: Icons.Heart,
+    },
+    {
+      id: 'monochrome-business',
+      name: 'Monochrome',
+      description: 'Professional grayscale business card style',
+      icon: Icons.Building,
+    },
+    {
+      id: 'blueprint',
+      name: 'Blueprint',
+      description: 'Engineering blueprint with technical details',
+      icon: Icons.FileText,
     },
   ];
 
