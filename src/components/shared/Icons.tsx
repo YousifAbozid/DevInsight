@@ -105,9 +105,18 @@ import {
 
   // Add Flag icon import
   Flag,
-
-  // File imports that need to be added
   Plus,
+
+  // Import proper Lucide icons to replace custom SVGs
+  Flower as LucideFlower,
+  Bug,
+  FileType,
+  Binary,
+
+  // Additional icons
+  Layout,
+  Minus,
+  Palette,
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -287,4 +296,16 @@ export const Icons = {
 
   // Add missing Plus icon
   Plus: ({ className }: IconProps) => <Plus className={className} />,
+
+  // Replace custom SVGs with Lucide icons
+  Flower: ({ className }: IconProps) => <LucideFlower className={className} />,
+  Butterfly: ({ className }: IconProps) => <Bug className={className} />,
+  JavaScript: ({ className }: IconProps) => <FileJson className={className} />,
+  TypeScript: ({ className }: IconProps) => <FileType className={className} />,
+  Python: ({ className }: IconProps) => <Binary className={className} />,
+
+  // Additional icons
+  Layout: ({ className }: IconProps) => <Layout className={className} />,
+  Minus: ({ className }: IconProps) => <Minus className={className} />,
+  Palette: ({ className }: IconProps) => <Palette className={className} />,
 };
