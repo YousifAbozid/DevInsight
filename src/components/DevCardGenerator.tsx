@@ -20,7 +20,15 @@ interface DevCardGeneratorProps {
   badges?: Badge[];
 }
 
+// Limit theme types to only what's implemented
 type ThemeVariant = 'default' | 'minimal' | 'gradient' | 'github';
+
+interface ThemeOption {
+  id: ThemeVariant;
+  name: string;
+  description: string;
+  icon: React.ElementType;
+}
 
 export default function DevCardGenerator({
   user,
@@ -32,6 +40,34 @@ export default function DevCardGenerator({
   const [isExporting, setIsExporting] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { notify } = useToast();
+
+  // Define theme options with descriptive information and valid Lucide icons
+  const themeOptions: ThemeOption[] = [
+    {
+      id: 'default',
+      name: 'Default',
+      description: 'Clean theme with accent colors',
+      icon: Icons.Layout,
+    },
+    {
+      id: 'minimal',
+      name: 'Minimal',
+      description: 'Simple, clean layout with subtle gradients',
+      icon: Icons.Minus,
+    },
+    {
+      id: 'gradient',
+      name: 'Gradient',
+      description: 'Vibrant blue-purple gradient background',
+      icon: Icons.Palette,
+    },
+    {
+      id: 'github',
+      name: 'GitHub',
+      description: 'GitHub-inspired clean design',
+      icon: Icons.GitHub,
+    },
+  ];
 
   // Generate the image using html-to-image
   const generateImage = async (format: 'png' | 'svg') => {
@@ -134,20 +170,24 @@ export default function DevCardGenerator({
             <label className="block mb-2 text-sm font-medium text-l-text-1 dark:text-d-text-1">
               Theme Style
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {(
-                ['default', 'minimal', 'gradient', 'github'] as ThemeVariant[]
-              ).map(theme => (
+            <div className="grid grid-cols-2 gap-3">
+              {themeOptions.map(theme => (
                 <button
-                  key={theme}
-                  className={`p-3 border rounded-md text-sm cursor-pointer  ${
-                    selectedTheme === theme
+                  key={theme.id}
+                  className={`p-3 border rounded-md text-sm cursor-pointer flex flex-col items-start ${
+                    selectedTheme === theme.id
                       ? 'border-accent-1 bg-accent-1/10 text-accent-1'
                       : 'border-border-l dark:border-border-d text-l-text-2 dark:text-d-text-2'
                   }`}
-                  onClick={() => setSelectedTheme(theme)}
+                  onClick={() => setSelectedTheme(theme.id)}
                 >
-                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  <div className="flex items-center gap-2 font-medium mb-1">
+                    <theme.icon className="w-4 h-4" />
+                    {theme.name}
+                  </div>
+                  <span className="text-xs opacity-80">
+                    {theme.description}
+                  </span>
                 </button>
               ))}
             </div>
