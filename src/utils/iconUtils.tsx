@@ -27,6 +27,6 @@ export function getIconForMetric(metricId: string): JSX.Element {
     case 'activity':
       return <Icons.Activity className="w-4 h-4" />;
     default:
-      return <Icons.Info className="w-4 h-4" />;
+      return <Icons.Hash className="w-4 h-4" />;
   }
 }

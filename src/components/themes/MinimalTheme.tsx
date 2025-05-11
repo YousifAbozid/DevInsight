@@ -67,19 +67,19 @@ export default function MinimalTheme({
   const hasBadges = earnedBadges.length > 0;
   const hasMoreBadges = earnedBadges.length > 3;
 
-  // Helper function to get badge color class
-  const getBadgeColor = (tier: string): string => {
+  // Enhanced badge styling with better contrast for both modes
+  const getBadgeStyles = (tier: string) => {
     switch (tier) {
       case 'bronze':
-        return 'bg-[#CD7F32]';
+        return 'bg-[#CD7F32]/10 dark:bg-[#CD7F32]/20 text-[#915C25] dark:text-[#EEBE94] border border-[#CD7F32]/30 dark:border-[#CD7F32]/50';
       case 'silver':
-        return 'bg-[#C0C0C0]';
+        return 'bg-[#C0C0C0]/10 dark:bg-[#C0C0C0]/20 text-[#757575] dark:text-[#E0E0E0] border border-[#C0C0C0]/30 dark:border-[#C0C0C0]/50';
       case 'gold':
-        return 'bg-[#FFD700]';
+        return 'bg-[#FFD700]/10 dark:bg-[#FFD700]/20 text-[#B59B2B] dark:text-[#FFE75C] border border-[#FFD700]/30 dark:border-[#FFD700]/50';
       case 'platinum':
-        return 'bg-[#E5E4E2]';
+        return 'bg-[#E5E4E2]/10 dark:bg-[#E5E4E2]/20 text-[#7B7B7B] dark:text-[#F0F0F0] border border-[#E5E4E2]/30 dark:border-[#E5E4E2]/50';
       default:
-        return 'bg-gray-400';
+        return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700';
     }
   };
 
@@ -89,7 +89,7 @@ export default function MinimalTheme({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* User header section */}
+      {/* User header section - improved responsive layout */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="relative mx-auto sm:mx-0">
           <img
@@ -110,7 +110,7 @@ export default function MinimalTheme({
         </div>
       </div>
 
-      {/* Stats grid */}
+      {/* Stats grid - improved responsive grid */}
       <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <div className="text-center p-3 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 shadow-sm">
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center">
@@ -158,7 +158,7 @@ export default function MinimalTheme({
         </div>
       </div>
 
-      {/* Activity Section */}
+      {/* Activity Section - improved colors for dark mode */}
       <div className="mt-4 grid grid-cols-2 gap-2">
         <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 flex items-center justify-between">
           <div className="flex items-center">
@@ -184,7 +184,7 @@ export default function MinimalTheme({
         </div>
       </div>
 
-      {/* Languages Section */}
+      {/* Languages Section - improved colors for dark mode */}
       <div className="mt-5 space-y-1.5">
         <div className="flex items-center justify-between text-xs text-gray-800 dark:text-gray-200 font-medium">
           <span>Languages</span>
@@ -222,7 +222,7 @@ export default function MinimalTheme({
         </div>
       </div>
 
-      {/* Badges Section with improved display */}
+      {/* Badges Section with improved contrast for dark mode */}
       {hasBadges && (
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
@@ -238,17 +238,15 @@ export default function MinimalTheme({
             {displayBadges.map(badge => (
               <div
                 key={badge.id}
-                className={`px-2 py-1 rounded-full flex items-center gap-1.5 ${getBadgeColor(badge.tier)} transition-transform hover:scale-105 duration-200 shadow-sm bg-opacity-10 dark:bg-opacity-20`}
+                className={`px-2 py-1 rounded-full flex items-center gap-1.5 ${getBadgeStyles(badge.tier)} transition-transform hover:scale-105 duration-200 shadow-sm`}
                 title={badge.name}
               >
-                <badge.icon className="w-4 h-4 text-gray-800 dark:text-gray-200" />
-                <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
-                  {badge.name}
-                </span>
+                <badge.icon className="w-4 h-4" />
+                <span className="text-xs font-medium">{badge.name}</span>
               </div>
             ))}
             {hasMoreBadges && (
-              <div className="px-2 py-1 rounded-full flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 transition-transform hover:scale-105 duration-200 shadow-sm">
+              <div className="px-2 py-1 rounded-full flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 transition-transform hover:scale-105 duration-200 shadow-sm border border-gray-200 dark:border-gray-700">
                 <Icons.Plus className="w-3.5 h-3.5" />
                 <span className="text-xs font-medium">
                   {earnedBadges.length - 3} more
