@@ -57,7 +57,6 @@ export default function GitHubTokenSection({
   // Add an effect to detect token changes
   useEffect(() => {
     if (prevTokenRef.current !== token) {
-      console.warn('Token changed in GitHubTokenSection');
       prevTokenRef.current = token;
     }
   }, [token]);
