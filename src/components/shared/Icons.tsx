@@ -118,6 +118,18 @@ import {
   Layout,
   Minus,
   Palette,
+
+  // Import language-related icons
+  Coffee, // For Java
+  Gem, // For Ruby
+  FileType2, // For HTML
+  PaintBucket, // For CSS
+  Brackets, // For PHP
+  Workflow, // For Go
+  CircleDot, // For C
+  CircleDashed, // For C++
+  Hash as HashIcon, // For C#
+  Cog, // For Rust
 } from 'lucide-react';
 
 // Define interface for icon props
@@ -305,6 +317,20 @@ export const Icons = {
   JavaScript: ({ className }: IconProps) => <FileJson className={className} />,
   TypeScript: ({ className }: IconProps) => <FileType className={className} />,
   Python: ({ className }: IconProps) => <Binary className={className} />,
+
+  // Add programming language icons
+  Java: ({ className }: IconProps) => <Coffee className={className} />,
+  Ruby: ({ className }: IconProps) => <Gem className={className} />,
+  Html: ({ className }: IconProps) => <FileType2 className={className} />,
+  Css: ({ className }: IconProps) => <PaintBucket className={className} />,
+  Php: ({ className }: IconProps) => <Brackets className={className} />,
+  Go: ({ className }: IconProps) => <Workflow className={className} />,
+  C: ({ className }: IconProps) => <CircleDot className={className} />,
+  CPlusPlus: ({ className }: IconProps) => (
+    <CircleDashed className={className} />
+  ),
+  CSharp: ({ className }: IconProps) => <HashIcon className={className} />,
+  Rust: ({ className }: IconProps) => <Cog className={className} />,
 
   // Additional icons
   Layout: ({ className }: IconProps) => <Layout className={className} />,
