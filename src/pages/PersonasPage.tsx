@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { Icons } from '../components/shared/Icons';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { CallToAction } from '../components/shared/CallToAction';
 
 export default function PersonasPage() {
   useDocumentTitle('Coder Personas');
@@ -240,21 +240,12 @@ export default function PersonasPage() {
         ))}
       </div>
 
-      <div className="mt-8 p-6 bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border border-dashed border-border-l dark:border-border-d text-center">
-        <h3 className="text-xl font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
-          Want to know your Coder Persona?
-        </h3>
-        <p className="text-l-text-2 dark:text-d-text-2 mb-4">
-          Enter your GitHub username and discover which persona best represents
-          your coding style.
-        </p>
-        <Link
-          to="/"
-          className="inline-block px-6 py-3 bg-accent-1 text-white rounded-lg hover:bg-accent-1/90 transition-colors"
-        >
-          Search GitHub Profile
-        </Link>
-      </div>
+      <CallToAction
+        title="Want to know your Coder Persona?"
+        description="Enter your GitHub username and discover which persona best represents your coding style."
+        buttonText="Search GitHub Profile"
+        buttonLink="/"
+      />
     </div>
   );
 }

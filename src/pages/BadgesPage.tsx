@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
 import { Icons } from '../components/shared/Icons';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { CallToAction } from '../components/shared/CallToAction';
 
 export default function BadgesPage() {
   useDocumentTitle('Developer Badges');
@@ -403,21 +403,12 @@ export default function BadgesPage() {
         </div>
       ))}
 
-      <div className="mt-8 p-6 bg-l-bg-2 dark:bg-d-bg-2 rounded-lg border border-dashed border-border-l dark:border-border-d text-center">
-        <h3 className="text-xl font-semibold text-l-text-1 dark:text-d-text-1 mb-2">
-          Want to earn your Developer Badges?
-        </h3>
-        <p className="text-l-text-2 dark:text-d-text-2 mb-4">
-          Enter your GitHub username to see which badges you&apos;ve already
-          earned and which ones you&apos;re close to unlocking.
-        </p>
-        <Link
-          to="/"
-          className="inline-block px-6 py-3 bg-accent-1 text-white rounded-lg hover:bg-accent-1/90 transition-colors"
-        >
-          Search GitHub Profile
-        </Link>
-      </div>
+      <CallToAction
+        title="Want to earn your Developer Badges?"
+        description="Enter your GitHub username to see which badges you've already earned and which ones you're close to unlocking."
+        buttonText="Search GitHub Profile"
+        buttonLink="/"
+      />
     </div>
   );
 }
