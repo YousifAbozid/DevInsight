@@ -279,6 +279,7 @@ const GithubProfileSearch = forwardRef(
             onSelectUser={handleQuickFill}
             className="mt-1"
             recentUsersRef={recentUsersRef}
+            currentUsername={username}
           />
 
           {/* Token section */}

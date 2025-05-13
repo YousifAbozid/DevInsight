@@ -25,6 +25,9 @@ interface RecentGithubUsersProps {
     clearUsers: () => void;
     getUsers: () => string[];
   } | null>;
+
+  // Current username in the search field to highlight
+  currentUsername?: string;
 }
 
 export default function RecentGithubUsers({
@@ -33,6 +36,7 @@ export default function RecentGithubUsers({
   className = '',
   maxUsers = 5,
   recentUsersRef,
+  currentUsername = '',
 }: RecentGithubUsersProps) {
   // Use the recentGithubUsers hook
   const [recentUsers, addUser, removeUser, clearUsers] =
@@ -191,6 +195,24 @@ export default function RecentGithubUsers({
     onSelectUser(username, field);
   };
 
+  // Helper to determine styling for each user button
+  const getUserButtonStyle = (username: string) => {
+    // Currently typed username matches this recent user (case-insensitive)
+    const isCurrentlyTyped =
+      currentUsername &&
+      username.toLowerCase() === currentUsername.toLowerCase();
+
+    if (recentlyAdded === username) {
+      return 'bg-accent-1/20 text-accent-1 border-accent-1/30 animate-pulse';
+    } else if (recentlySelected === username) {
+      return 'bg-accent-2/20 text-accent-2 border-accent-2/30';
+    } else if (isCurrentlyTyped) {
+      return 'bg-accent-1/10 text-accent-1 border-accent-1/30 ring-1 ring-accent-1/30';
+    } else {
+      return 'bg-l-bg-2 dark:bg-d-bg-2 text-l-text-2 dark:text-d-text-2 border-border-l/50 dark:border-border-d/50';
+    }
+  };
+
   return (
     <div
       className={`bg-l-bg-3/50 dark:bg-d-bg-3/50 p-2.5 rounded-lg ${className}`}
@@ -212,13 +234,7 @@ export default function RecentGithubUsers({
               type="button"
               onClick={() => handleSelectUser(username)}
               className={`pl-2.5 pr-7 py-1 text-xs rounded-full cursor-pointer border transition-all duration-300 
-                ${
-                  recentlyAdded === username
-                    ? 'bg-accent-1/20 text-accent-1 border-accent-1/30 animate-pulse'
-                    : recentlySelected === username
-                      ? 'bg-accent-2/20 text-accent-2 border-accent-2/30'
-                      : 'bg-l-bg-2 dark:bg-d-bg-2 text-l-text-2 dark:text-d-text-2 border-border-l/50 dark:border-border-d/50'
-                }
+                ${getUserButtonStyle(username)}
                 hover:bg-accent-1/10 hover:text-accent-1 hover:border-accent-1/20 shadow-sm hover:shadow`}
             >
               {username}

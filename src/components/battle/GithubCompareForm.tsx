@@ -239,6 +239,7 @@ export default function GithubCompareForm({
             field="user1"
             className="mt-2"
             recentUsersRef={recentUsersRef1}
+            currentUsername={user1}
           />
         </div>
 
@@ -282,6 +283,7 @@ export default function GithubCompareForm({
             field="user2"
             className="mt-2"
             recentUsersRef={recentUsersRef2}
+            currentUsername={user2}
           />
         </div>
       </div>
