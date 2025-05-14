@@ -147,9 +147,9 @@ export default function GithubTheme({
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <div className="bg-gray-50 dark:bg-gray-800 py-3 px-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 mb-1">
-              <Icons.Users className="w-4 h-4 text-purple-500" />
+              <Icons.Users className="w-4 h-4 text-purple-500 flex-shrink-0" />
               <span className="text-xs font-medium">Followers</span>
             </div>
             <div className="text-xl font-bold text-gray-900 dark:text-white">
