@@ -55,7 +55,7 @@ export default function ProductHuntTheme({
 
   return (
     <div
-      className="w-full max-w-md bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300"
+      className="w-full max-w-md bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-all duration-300"
       style={{
         boxShadow: isHovered
           ? '0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 5px rgba(0, 0, 0, 0.03)'
@@ -65,17 +65,17 @@ export default function ProductHuntTheme({
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Header with user info */}
-      <div className="p-5 border-b border-gray-100">
+      <div className="p-5 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-4">
           <img
             src={user.avatar_url}
             alt={user.login}
-            className="w-14 h-14 rounded-full border border-gray-100 shadow-sm transition-transform duration-300"
+            className="w-14 h-14 rounded-full border border-gray-100 dark:border-gray-700 shadow-sm transition-transform duration-300"
             style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
           />
 
           <div>
-            <h2 className="text-gray-900 text-lg font-bold flex items-center gap-2">
+            <h2 className="text-gray-900 dark:text-gray-100 text-lg font-bold flex items-center gap-2">
               {user.name || user.login}
               <a
                 href={`https://github.com/${user.login}`}
@@ -87,7 +87,7 @@ export default function ProductHuntTheme({
               </a>
             </h2>
 
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm">
               <Icons.GitHub className="w-3.5 h-3.5" />
               <span>@{user.login}</span>
             </div>
@@ -101,14 +101,16 @@ export default function ProductHuntTheme({
         </div>
 
         {user.bio && (
-          <p className="text-gray-600 text-sm mt-3 px-1">{user.bio}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-sm mt-3 px-1">
+            {user.bio}
+          </p>
         )}
       </div>
 
       {/* Showcase project section */}
       <div className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-gray-900 font-bold text-base">
+          <h3 className="text-gray-900 dark:text-gray-100 font-bold text-base">
             Featured Projects
           </h3>
           <a
@@ -126,9 +128,9 @@ export default function ProductHuntTheme({
           {topRepos.map(repo => (
             <div
               key={repo.id}
-              className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors"
+              className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-colors"
             >
-              <div className="w-10 h-10 rounded-md bg-gray-50 flex items-center justify-center text-gray-500">
+              <div className="w-10 h-10 rounded-md bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
                 {repo.language ? (
                   <span
                     className="w-3 h-3 rounded-full"
@@ -148,18 +150,18 @@ export default function ProductHuntTheme({
                   href={repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 font-medium hover:text-[#da552f] transition-colors truncate block"
+                  className="text-gray-900 dark:text-gray-100 font-medium hover:text-[#da552f] transition-colors truncate block"
                 >
                   {repo.name}
                 </a>
                 {repo.description && (
-                  <p className="text-gray-500 text-sm truncate">
+                  <p className="text-gray-500 dark:text-gray-400 text-sm truncate">
                     {repo.description}
                   </p>
                 )}
               </div>
 
-              <div className="flex items-center gap-3 text-gray-500 text-sm">
+              <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 text-sm">
                 <div className="flex items-center gap-1">
                   <Icons.Star className="w-4 h-4 text-yellow-400" />
                   <span>{repo.stargazers_count}</span>
@@ -175,23 +177,23 @@ export default function ProductHuntTheme({
 
         {/* Last updated section */}
         {lastUpdatedRepo && (
-          <div className="border-t border-gray-100 pt-5">
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-gray-900 font-bold text-base">
+              <h3 className="text-gray-900 dark:text-gray-100 font-bold text-base">
                 Latest Update
               </h3>
-              <span className="text-gray-500 text-sm">
+              <span className="text-gray-500 dark:text-gray-400 text-sm">
                 {formatDate(lastUpdatedRepo.updated_at)}
               </span>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between mb-2">
                 <a
                   href={lastUpdatedRepo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 font-medium hover:text-[#da552f] transition-colors flex items-center gap-1"
+                  className="text-gray-900 dark:text-gray-100 font-medium hover:text-[#da552f] transition-colors flex items-center gap-1"
                 >
                   {lastUpdatedRepo.name}
                   <Icons.ArrowUpRight className="w-3.5 h-3.5" />
@@ -219,13 +221,13 @@ export default function ProductHuntTheme({
               </div>
 
               {lastUpdatedRepo.description && (
-                <p className="text-gray-600 text-sm mb-3">
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
                   {lastUpdatedRepo.description}
                 </p>
               )}
 
               <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-3 text-gray-500">
+                <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-1">
                     <Icons.Eye className="w-4 h-4" />
                     <span>{lastUpdatedRepo.watchers_count}</span>
@@ -255,14 +257,16 @@ export default function ProductHuntTheme({
       </div>
 
       {/* Footer */}
-      <div className="bg-gray-50 px-5 py-3 border-t border-gray-100 flex justify-between items-center">
-        <div className="text-gray-500 text-xs">Generated with DevInsight</div>
+      <div className="bg-gray-50 dark:bg-gray-800 px-5 py-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <div className="text-gray-500 dark:text-gray-400 text-xs">
+          Generated with DevInsight
+        </div>
 
         <div className="flex gap-3">
-          <button className="text-gray-500 hover:text-gray-700 transition-colors">
+          <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
             <Icons.Share2 className="w-4 h-4" />
           </button>
-          <button className="text-gray-500 hover:text-gray-700 transition-colors">
+          <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
             <Icons.Heart className="w-4 h-4" />
           </button>
         </div>
