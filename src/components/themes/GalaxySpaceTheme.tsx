@@ -137,10 +137,26 @@ export default function GalaxySpaceTheme({
                     className="absolute rounded-full w-8 h-8 flex items-center justify-center"
                     style={{
                       backgroundColor: lang.color,
-                      transform: `rotate(${angle}deg) translateX(80px)`,
+                      top: '50%',
+                      left: '50%',
+                      transformOrigin: 'center',
+                      transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(80px)`,
                       animation: `orbit-planet 20s linear ${delay}s infinite`,
                       boxShadow: `0 0 10px ${lang.color}`,
                       zIndex: 5,
+                      opacity: 0, // Start with opacity 0
+                      transition: 'opacity 0.8s ease-in-out', // Add transition for opacity
+                      animationFillMode: 'forwards', // Keep final state of animation
+                      // Fade in after a slight delay
+                      animationDelay: `${delay + 0.2}s`,
+                    }}
+                    onAnimationStart={e => {
+                      // Fade in when animation starts
+                      setTimeout(() => {
+                        if (e.target instanceof HTMLElement) {
+                          e.target.style.opacity = '1';
+                        }
+                      }, 100);
                     }}
                   >
                     <span className="text-xs font-bold text-white">
@@ -304,11 +320,23 @@ export default function GalaxySpaceTheme({
         }
 
         @keyframes orbit-planet {
-          from {
-            transform: rotate(0deg) translateX(80px);
+          0% {
+            transform: translate(-50%, -50%) rotate(0deg) translateX(80px);
           }
-          to {
-            transform: rotate(360deg) translateX(80px);
+          100% {
+            transform: translate(-50%, -50%) rotate(360deg) translateX(80px);
+          }
+        }
+
+        /* New animation for initial placement */
+        @keyframes planet-appear {
+          0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.2);
+          }
+          100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
           }
         }
 
