@@ -118,6 +118,11 @@ import {
   Layout,
   Minus,
   Palette,
+  TrendingDown,
+
+  // Add missing imports for theme icons
+  Sunset,
+  Type,
 
   // Import language-related icons
   Coffee, // For Java
@@ -271,6 +276,9 @@ export const Icons = {
   TrendingUp: ({ className }: IconProps) => (
     <TrendingUp className={className} />
   ), // Add the TrendingUp icon component
+  TrendingDown: ({ className }: IconProps) => (
+    <TrendingDown className={className} />
+  ), // Add the TrendingDown icon component
 
   // Add missing Calculator icon
   Calculator: ({ className }: IconProps) => (
@@ -336,4 +344,8 @@ export const Icons = {
   Layout: ({ className }: IconProps) => <Layout className={className} />,
   Minus: ({ className }: IconProps) => <Minus className={className} />,
   Palette: ({ className }: IconProps) => <Palette className={className} />,
+
+  // Add missing icons for theme options
+  Sunset: ({ className }: IconProps) => <Sunset className={className} />,
+  Type: ({ className }: IconProps) => <Type className={className} />,
 };
