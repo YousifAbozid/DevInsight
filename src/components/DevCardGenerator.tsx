@@ -39,7 +39,9 @@ type ThemeVariant =
   | 'minimal-typographic'
   | 'finance-dashboard'
   | 'spotify-wrapped'
-  | 'anime-card';
+  | 'anime-card'
+  | 'ios-widget'
+  | 'night-sky';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -168,6 +170,18 @@ export default function DevCardGenerator({
       name: 'Anime Card',
       description: 'Collectible battle card with stats and abilities',
       icon: Icons.Trophy,
+    },
+    {
+      id: 'ios-widget',
+      name: 'iOS Widget',
+      description: 'Apple-style glass widget with calendar and stats',
+      icon: Icons.Smartphone,
+    },
+    {
+      id: 'night-sky',
+      name: 'Night Sky',
+      description: 'Star map with repository constellations',
+      icon: Icons.Moon,
     },
   ];
 
