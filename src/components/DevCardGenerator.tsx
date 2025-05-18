@@ -37,7 +37,9 @@ type ThemeVariant =
   | 'blueprint'
   | 'vaporwave-dream'
   | 'minimal-typographic'
-  | 'finance-dashboard';
+  | 'finance-dashboard'
+  | 'spotify-wrapped'
+  | 'anime-card';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -154,6 +156,18 @@ export default function DevCardGenerator({
       name: 'Dashboard',
       description: 'Professional statistics dashboard layout',
       icon: Icons.BarChart,
+    },
+    {
+      id: 'spotify-wrapped',
+      name: 'Wrapped',
+      description: 'Music-inspired year in review style',
+      icon: Icons.Music,
+    },
+    {
+      id: 'anime-card',
+      name: 'Anime Card',
+      description: 'Collectible battle card with stats and abilities',
+      icon: Icons.Trophy,
     },
   ];
 
