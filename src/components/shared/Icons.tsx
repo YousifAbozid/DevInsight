@@ -124,6 +124,7 @@ import {
   Sunset,
   Type,
   Music,
+  Smartphone,
 
   // Import language-related icons
   Coffee, // For Java
@@ -280,6 +281,9 @@ export const Icons = {
   TrendingDown: ({ className }: IconProps) => (
     <TrendingDown className={className} />
   ), // Add the TrendingDown icon component
+  Smartphone: ({ className }: IconProps) => (
+    <Smartphone className={className} />
+  ), // Add the Smartphone icon component
 
   // Add missing Calculator icon
   Calculator: ({ className }: IconProps) => (
