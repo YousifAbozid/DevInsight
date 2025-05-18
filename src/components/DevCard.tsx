@@ -12,6 +12,9 @@ import MatrixRainTheme from './themes/MatrixRainTheme';
 import ProductHuntTheme from './themes/ProductHuntTheme';
 import MonochromeBusinessTheme from './themes/MonochromeBusinessTheme';
 import BlueprintTheme from './themes/BlueprintTheme';
+import VaporwaveDreamTheme from './themes/VaporwaveDreamTheme';
+import MinimalTypographicTheme from './themes/MinimalTypographicTheme';
+import FinanceDashboardTheme from './themes/FinanceDashboardTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -31,7 +34,10 @@ interface DevCardProps {
     | 'matrix-rain'
     | 'producthunt'
     | 'monochrome-business'
-    | 'blueprint';
+    | 'blueprint'
+    | 'vaporwave-dream'
+    | 'minimal-typographic'
+    | 'finance-dashboard';
 }
 
 export default function DevCard({
@@ -156,6 +162,36 @@ export default function DevCard({
     case 'blueprint':
       return (
         <BlueprintTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'vaporwave-dream':
+      return (
+        <VaporwaveDreamTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'minimal-typographic':
+      return (
+        <MinimalTypographicTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'finance-dashboard':
+      return (
+        <FinanceDashboardTheme
           user={user}
           repositories={repositories}
           languageData={languageData}

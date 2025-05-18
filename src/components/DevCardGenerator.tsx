@@ -34,7 +34,10 @@ type ThemeVariant =
   | 'matrix-rain'
   | 'producthunt'
   | 'monochrome-business'
-  | 'blueprint';
+  | 'blueprint'
+  | 'vaporwave-dream'
+  | 'minimal-typographic'
+  | 'finance-dashboard';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -133,6 +136,24 @@ export default function DevCardGenerator({
       name: 'Blueprint',
       description: 'Engineering blueprint with technical details',
       icon: Icons.FileText,
+    },
+    {
+      id: 'vaporwave-dream',
+      name: 'Vaporwave',
+      description: 'Retro 80s aesthetic with neon colors',
+      icon: Icons.Sunset,
+    },
+    {
+      id: 'minimal-typographic',
+      name: 'Typography',
+      description: 'Clean, minimal layout with focus on typography',
+      icon: Icons.Type,
+    },
+    {
+      id: 'finance-dashboard',
+      name: 'Dashboard',
+      description: 'Professional statistics dashboard layout',
+      icon: Icons.BarChart,
     },
   ];
 
