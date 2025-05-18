@@ -19,6 +19,8 @@ import SpotifyWrappedTheme from './themes/SpotifyWrappedTheme';
 import AnimeCardTheme from './themes/AnimeCardTheme';
 import IOSWidgetTheme from './themes/IOSWidgetTheme';
 import NightSkyTheme from './themes/NightSkyTheme';
+import FuturisticHUDTheme from './themes/FuturisticHUDTheme';
+import MinecraftStatsTheme from './themes/MinecraftStatsTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -45,7 +47,9 @@ interface DevCardProps {
     | 'spotify-wrapped'
     | 'anime-card'
     | 'ios-widget'
-    | 'night-sky';
+    | 'night-sky'
+    | 'futuristic-hud'
+    | 'minecraft-stats';
 }
 
 export default function DevCard({
@@ -240,6 +244,26 @@ export default function DevCard({
     case 'night-sky':
       return (
         <NightSkyTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'futuristic-hud':
+      return (
+        <FuturisticHUDTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'minecraft-stats':
+      return (
+        <MinecraftStatsTheme
           user={user}
           repositories={repositories}
           languageData={languageData}

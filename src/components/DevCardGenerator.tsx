@@ -41,7 +41,9 @@ type ThemeVariant =
   | 'spotify-wrapped'
   | 'anime-card'
   | 'ios-widget'
-  | 'night-sky';
+  | 'night-sky'
+  | 'futuristic-hud'
+  | 'minecraft-stats';
 
 interface ThemeOption {
   id: ThemeVariant;
@@ -182,6 +184,18 @@ export default function DevCardGenerator({
       name: 'Night Sky',
       description: 'Star map with repository constellations',
       icon: Icons.Moon,
+    },
+    {
+      id: 'futuristic-hud',
+      name: 'Iron Man HUD',
+      description: 'Holographic interface with sci-fi elements',
+      icon: Icons.Zap,
+    },
+    {
+      id: 'minecraft-stats',
+      name: 'Minecraft',
+      description: 'Pixelated blocks with gaming achievements',
+      icon: Icons.Cubes,
     },
   ];
 
