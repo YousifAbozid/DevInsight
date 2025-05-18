@@ -123,6 +123,7 @@ import {
   // Add missing imports for theme icons
   Sunset,
   Type,
+  Music,
 
   // Import language-related icons
   Coffee, // For Java
@@ -348,4 +349,5 @@ export const Icons = {
   // Add missing icons for theme options
   Sunset: ({ className }: IconProps) => <Sunset className={className} />,
   Type: ({ className }: IconProps) => <Type className={className} />,
+  Music: ({ className }: IconProps) => <Music className={className} />,
 };
