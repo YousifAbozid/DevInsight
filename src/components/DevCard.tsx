@@ -15,6 +15,10 @@ import BlueprintTheme from './themes/BlueprintTheme';
 import VaporwaveDreamTheme from './themes/VaporwaveDreamTheme';
 import MinimalTypographicTheme from './themes/MinimalTypographicTheme';
 import FinanceDashboardTheme from './themes/FinanceDashboardTheme';
+import SpotifyWrappedTheme from './themes/SpotifyWrappedTheme';
+import AnimeCardTheme from './themes/AnimeCardTheme';
+import IOSWidgetTheme from './themes/IOSWidgetTheme';
+import NightSkyTheme from './themes/NightSkyTheme';
 
 interface DevCardProps {
   user: GithubUser;
@@ -37,7 +41,11 @@ interface DevCardProps {
     | 'blueprint'
     | 'vaporwave-dream'
     | 'minimal-typographic'
-    | 'finance-dashboard';
+    | 'finance-dashboard'
+    | 'spotify-wrapped'
+    | 'anime-card'
+    | 'ios-widget'
+    | 'night-sky';
 }
 
 export default function DevCard({
@@ -192,6 +200,46 @@ export default function DevCard({
     case 'finance-dashboard':
       return (
         <FinanceDashboardTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'spotify-wrapped':
+      return (
+        <SpotifyWrappedTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'anime-card':
+      return (
+        <AnimeCardTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'ios-widget':
+      return (
+        <IOSWidgetTheme
+          user={user}
+          repositories={repositories}
+          languageData={languageData}
+          badges={badges}
+        />
+      );
+
+    case 'night-sky':
+      return (
+        <NightSkyTheme
           user={user}
           repositories={repositories}
           languageData={languageData}
