@@ -1,163 +1,171 @@
-# DevInsight: GitHub Profile Analytics Dashboard
+# DevInsight
 
-<p align="center">
-  <img src="public/favicon.svg" alt="DevInsight Logo" width="200"/>
-</p>
+<div align="center">
+  <img src="/public/favicon.svg" alt="DevInsight Logo" width="120" />
+  <h3>Visual GitHub dashboard for developers</h3>
+  <p>Analyze profiles, repositories, languages, and contributions with beautiful visualizations</p>
+  
+  <p>
+    <a href="#features">Features</a> •
+    <a href="#live-demo">Live Demo</a> •
+    <a href="#technologies">Technologies</a> •
+    <a href="#installation">Installation</a> •
+    <a href="#usage">Usage</a> •
+    <a href="#screenshots">Screenshots</a> •
+    <a href="#contributing">Contributing</a> •
+    <a href="#license">License</a>
+  </p>
+</div>
 
-DevInsight is a comprehensive visual analytics dashboard for GitHub profiles that empowers developers to gain deeper insights into their coding activities, repository performance, language preferences, and contribution patterns. Whether you're preparing for job interviews, analyzing your development journey, or showcasing your portfolio, DevInsight provides rich, data-driven visualizations to tell your developer story.
+## Overview
 
-## 🔍 Features
+DevInsight is a feature-rich GitHub analytics platform that transforms raw GitHub data into meaningful visualizations and insights. Whether you're analyzing your own GitHub profile, exploring other developers' work, or comparing GitHub users in battles, DevInsight provides a beautiful and interactive way to understand GitHub activity patterns, repository statistics, and developer behaviors.
 
-- **Profile Analytics**: Comprehensive overview of GitHub profiles with key metrics and statistics
-- **Repository Insights**: Detailed analysis of repositories, including stars, forks, and activity metrics
-- **Language Distribution**: Visual breakdown of programming languages used across all repositories
-- **Contribution Graphs**: Time-series visualizations of commit activity and contribution patterns
-- **Star History**: Track repository popularity over time with star history charts
-- **Exportable Reports**: Generate and download visual reports for portfolios or presentations
-- **Customizable Dashboard**: Arrange and prioritize the metrics that matter most to you
-- **Dark/Light Mode**: Seamless theme switching for comfortable viewing in any environment
-- **Responsive Design**: Optimized for both desktop and mobile devices
+## Features
 
-## 🛠️ Technologies Used
+### 📊 Comprehensive GitHub Analytics
 
-DevInsight leverages modern web technologies for optimal performance and user experience:
+- **GitHub Profile Visualization**: Detailed profile statistics, repository analysis, and contribution data
+- **Language Distribution Analysis**: Visualize programming language usage across repositories with interactive pie charts
+- **Contribution Heatmaps**: Calendar-style visualization of GitHub activity over time
+- **Developer Journey Timeline**: Track key milestones in a developer's GitHub history
 
-- **React 19**: For building a reactive and component-based UI
-- **TypeScript**: Ensuring type safety and enhanced developer experience
-- **Vite**: Fast development and optimized production builds
-- **Tailwind CSS v4**: Utility-first styling with seamless dark mode support
-- **React Router**: Handling navigation and routing
-- **TanStack React Query**: Managing API requests with caching and state synchronization
-- **Chart.js & React-Chartjs-2**: Creating dynamic and responsive data visualizations
-- **Framer Motion**: Adding smooth animations and transitions
-- **Crypto-js**: Secure handling of API keys and sensitive data
-- **HTML-to-Image**: Generating shareable graphics from dashboard components
+### 🌟 Developer Personas & Insights
 
-## 📋 Prerequisites
+- **Coder Persona Analysis**: Identify developer strengths based on GitHub activity patterns
+- **Personalized GitHub Insights**: Get customized insights about coding patterns, achievements, and milestones
+- **Developer Badges**: Earn and showcase achievements based on GitHub activity
 
-Before you begin, ensure you have the following installed:
+### 🎨 Customizable Dev Cards
 
-- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
-- npm (v9.0.0 or higher) or [Yarn](https://yarnpkg.com/) (v1.22.0 or higher)
-- Git
+- **Dev Card Generator**: Create beautiful, shareable cards showcasing your GitHub profile
+- **Multiple Themes**: Choose from 15+ beautiful themes including GitHub, Cyberpunk, Futuristic HUD, and more
+- **Export Options**: Download cards as images, share your GitHub stats
 
-## 🚀 Getting Started
+### 🥊 GitHub Battles
 
-### Installation
+- **User vs. User Comparison**: Compare two GitHub users with detailed metrics
+- **Organization vs. Organization**: Compare GitHub organizations
+- **Comprehensive Scoring System**: Evaluate profiles based on stars, commits, repositories, followers, and more
 
-1. Clone the repository:
+### 🔍 Advanced Features
 
-   ```bash
-   git clone https://github.com/YousifAbozid/DevInsight.git
-   cd DevInsight
-   ```
+- **Repository Recommendations**: Get personalized repository suggestions based on profile analysis
+- **Most Starred Repositories**: Quick access to a user's most popular projects
+- **Rate Limit Monitoring**: Track GitHub API usage with built-in rate limit indicator
+- **Profile Export**: Export GitHub profile data in multiple formats (JSON, CSV, Text)
 
-2. Install dependencies:
+## Live Demo
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+[View the live application](#) _(Add your deployed app URL here)_
 
-3. Create a `.env` file in the root directory with your GitHub API credentials:
+## Technologies
 
-   ```
-   VITE_GITHUB_API_KEY=your_github_personal_access_token
-   ```
+- **Frontend Framework**: React 19 with TypeScript
+- **Routing**: React Router v7
+- **Styling**: Tailwind CSS v4
+- **Data Fetching**: TanStack Query (React Query)
+- **Animation**: Framer Motion
+- **Charts**: Chart.js with React-Chartjs-2
+- **Build Tool**: Vite
+- **State Management**: React Context API
+- **Performance Optimization**: Query caching, image optimization, code splitting
 
-   > 💡 **Note**: You can create a GitHub personal access token by following [these instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+## Installation
 
-4. Start the development server:
+```bash
+# Clone the repository
+git clone https://github.com/YousifAbozid/DevInsight.git
 
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+# Navigate to project directory
+cd DevInsight
 
-5. Open your browser and visit http://localhost:5173
+# Install dependencies
+npm install
 
-### Available Scripts
+# Start development server
+npm run dev
+```
 
-- **`npm run dev`**: Start the development server
-- **`npm run build`**: Type-check and build the app for production
-- **`npm run preview`**: Preview the production build locally
-- **`npm run lint`**: Check for code issues using ESLint
-- **`npm run lint:fix`**: Automatically fix ESLint issues
-- **`npm run format`**: Format all files with Prettier
-- **`npm run format:check`**: Check if files are properly formatted
-- **`npm run fix-all`**: Run both lint:fix and format to fix all issues
-- **`npm run type-check`**: Run TypeScript type checking
-- **`npm run upgrade`**: Update all dependencies to their latest versions
+## Usage
 
-## 🔐 Authentication & Security
+### GitHub Token (Optional)
 
-DevInsight uses GitHub's OAuth for authentication and secure API access.
+DevInsight works without authentication, but using a GitHub token provides:
 
-### Authentication Flow
+- Higher API rate limits
+- Access to private repositories (if authorized)
+- More detailed contribution data
 
-1. User initiates GitHub login
-2. User authorizes DevInsight to access their GitHub data
-3. GitHub redirects back to DevInsight with an authorization code
-4. DevInsight exchanges the code for an access token
-5. Access token is securely stored and used for API requests
+To add your GitHub token:
 
-### Token Storage
+1. Create a token at [GitHub Developer Settings](https://github.com/settings/tokens)
+2. Add the token to the application's settings page
+3. The token is stored securely in your browser's local storage
 
-GitHub tokens are securely encrypted using crypto-js before being stored in browser storage.
+### Profile Analysis
 
-## 📱 Responsive Design
+1. Enter a GitHub username in the search bar
+2. View detailed visualizations of the user's GitHub activity
+3. Explore different sections for deeper insights
 
-DevInsight is fully responsive and optimized for various screen sizes:
+### GitHub Battles
 
-- **Desktop**: Full-featured dashboard with multi-column layout
-- **Tablet**: Reorganized layout with preserved functionality
-- **Mobile**: Streamlined interface with prioritized information
+1. Navigate to the Battle page
+2. Enter two GitHub usernames or organization names
+3. View the comprehensive comparison and see who comes out on top
 
-Responsive behavior is implemented using Tailwind CSS breakpoints and dynamic component rendering.
+### Dev Card Generator
 
-## ⚡ Performance Optimization
+1. Search for a GitHub profile
+2. Navigate to the Dev Card section
+3. Choose your preferred theme
+4. Download or share your personalized GitHub stats card
 
-DevInsight employs several optimizations for smooth performance:
+## Screenshots
 
-- **React Query Caching**: Minimize API calls with intelligent caching
-- **Code Splitting**: Load components on-demand for faster initial loading
-- **Memoization**: Prevent unnecessary re-renders with React.memo and useMemo
-- **Virtualization**: Efficiently render large lists of repositories
-- **API Rate Limiting**: Smart handling of GitHub API rate limits
+_Add screenshots of your application here_
 
-## 🤝 Contributing
+## Project Structure
 
-Contributions to DevInsight are welcome! Here's how you can contribute:
+```
+.
+├── src/
+│   ├── components/      # UI components
+│   │   ├── battle/      # GitHub Battle components
+│   │   ├── shared/      # Reusable UI components
+│   │   └── themes/      # Dev Card themes
+│   ├── context/         # React context providers
+│   ├── hooks/           # Custom React hooks
+│   ├── pages/           # Application pages
+│   ├── services/        # GitHub API services
+│   ├── types/           # TypeScript type definitions
+│   └── utils/           # Utility functions
+├── public/              # Static assets
+└── index.html           # HTML entry point
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-Please ensure your code follows the project's style guidelines and passes all tests.
+## License
 
-### Development Guidelines
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- Follow the existing code style
-- Write comprehensive comments
-- Include appropriate unit tests
-- Update documentation as needed
+## Acknowledgments
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-Yousif Abozid - [@YousifAbozid](https://github.com/YousifAbozid)
-
-Project Link: [https://github.com/YousifAbozid/DevInsight](https://github.com/YousifAbozid/DevInsight)
+- GitHub API for providing access to developer data
+- The open-source community for invaluable libraries and tools
 
 ---
 
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/YousifAbozid">Yousif Abozid</a>
-</p>
+<div align="center">
+  <p>Made with ❤️ by <a href="https://github.com/YousifAbozid">Yousif Abozid</a></p>
+</div>
