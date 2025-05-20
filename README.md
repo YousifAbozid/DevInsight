@@ -2,9 +2,15 @@
 
 <div align="center">
   <img src="/public/favicon.svg" alt="DevInsight Logo" width="120" />
-  <h3>Visual GitHub dashboard for developers</h3>
-  <p>Analyze profiles, repositories, languages, and contributions with beautiful visualizations</p>
+  <h3>🚀 Visual GitHub Analytics Dashboard for Developers</h3>
+  <p>Transform GitHub profiles into beautiful insights with advanced visualizations and metrics</p>
   
+  [![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  [![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+  [![Demo](https://img.shields.io/badge/Live_Demo-00C7B7?style=for-the-badge&logo=vercel&logoColor=white)](https://github-dev-insight.vercel.app/)
+
   <p>
     <a href="#features">Features</a> •
     <a href="#live-demo">Live Demo</a> •
