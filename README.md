@@ -57,7 +57,7 @@ DevInsight is a feature-rich GitHub analytics platform that transforms raw GitHu
 
 ## Live Demo
 
-[View the live application](#) _(Add your deployed app URL here)_
+[View the live application](https://github-dev-insight.vercel.app/)
 
 ## Technologies
 
@@ -157,7 +157,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
