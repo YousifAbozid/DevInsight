@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useLocalStorage from 'use-local-storage';
+import { useLocalStorage } from '../hooks/useStorage';
 import { Icons } from './shared/Icons';
 
 const ThemeToggle = () => {
