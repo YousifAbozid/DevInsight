@@ -124,7 +124,37 @@ To add your GitHub token:
 
 ## Screenshots
 
-_Add screenshots of your application here_
+<div align="center">
+  <h3>Application Overview</h3>
+  <p>Full application dashboard view</p>
+  <img src="public/1.png" alt="DevInsight Dashboard" style="max-height: 600px; width: auto; margin: 0 auto;" />
+</div>
+
+<div align="center" style="margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+  <div style="flex: 1; min-width: 300px; max-width: 45%;">
+    <h4>Profile Analysis</h4>
+    <img src="public/profile-analysis.png" alt="GitHub Profile Analysis" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 300px; max-width: 45%;">
+    <h4>Language Distribution</h4>
+    <img src="public/language-chart.png" alt="Language Distribution Chart" width="100%" />
+  </div>
+</div>
+
+<div align="center" style="margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+  <div style="flex: 1; min-width: 300px; max-width: 45%;">
+    <h4>GitHub Battle Comparison</h4>
+    <img src="public/5.png" alt="GitHub Battle Feature" width="100%" />
+  </div>
+  <div style="flex: 1; min-width: 300px; max-width: 45%;">
+    <h4>Dev Card Themes</h4>
+    <img src="public/dev-card-themes.png" alt="Dev Card Theme Selector" width="100%" />
+  </div>
+</div>
+
+<div align="center" style="margin-top: 30px;">
+  <p><em>Note: Replace the placeholder image paths with actual screenshots once available</em></p>
+</div>
 
 ## Project Structure
 
