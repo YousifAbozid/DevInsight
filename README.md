@@ -14,8 +14,8 @@
   <div align="center">
     <table>
       <tr>
-        <td align="center"><a href="#-overview"><img src="https://img.icons8.com/color/28/overview.png" width="24px" height="24px"/><br/>Overview</a></td>
-        <td align="center"><a href="#features"><img src="https://img.icons8.com/color/28/features.png" width="24px" height="24px"/><br/>Features</a></td>
+        <td align="center"><a href="#-overview"><img src="https://img.icons8.com/color/28/dashboard-layout.png" width="24px" height="24px"/><br/>Overview</a></td>
+        <td align="center"><a href="#features"><img src="https://img.icons8.com/color/28/list.png" width="24px" height="24px"/><br/>Features</a></td>
         <td align="center"><a href="#live-demo"><img src="https://img.icons8.com/color/28/monitor.png" width="24px" height="24px"/><br/>Demo</a></td>
         <td align="center"><a href="#technologies"><img src="https://img.icons8.com/color/28/source-code.png" width="24px" height="24px"/><br/>Tech Stack</a></td>
       </tr>
