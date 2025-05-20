@@ -14,22 +14,22 @@
   <div align="center">
     <table>
       <tr>
-        <td align="center"><a href="#-overview"><img src="https://img.icons8.com/fluency/28/overview.png" width="24px" height="24px"/><br/>Overview</a></td>
-        <td align="center"><a href="#features"><img src="https://img.icons8.com/fluency/28/features.png" width="24px" height="24px"/><br/>Features</a></td>
-        <td align="center"><a href="#live-demo"><img src="https://img.icons8.com/fluency/28/monitor.png" width="24px" height="24px"/><br/>Demo</a></td>
-        <td align="center"><a href="#technologies"><img src="https://img.icons8.com/fluency/28/code.png" width="24px" height="24px"/><br/>Tech Stack</a></td>
+        <td align="center"><a href="#-overview"><img src="https://img.icons8.com/color/28/overview.png" width="24px" height="24px"/><br/>Overview</a></td>
+        <td align="center"><a href="#features"><img src="https://img.icons8.com/color/28/features.png" width="24px" height="24px"/><br/>Features</a></td>
+        <td align="center"><a href="#live-demo"><img src="https://img.icons8.com/color/28/monitor.png" width="24px" height="24px"/><br/>Demo</a></td>
+        <td align="center"><a href="#technologies"><img src="https://img.icons8.com/color/28/source-code.png" width="24px" height="24px"/><br/>Tech Stack</a></td>
       </tr>
       <tr>
-        <td align="center"><a href="#installation"><img src="https://img.icons8.com/fluency/28/download.png" width="24px" height="24px"/><br/>Installation</a></td>
-        <td align="center"><a href="#usage"><img src="https://img.icons8.com/fluency/28/instruction-manual.png" width="24px" height="24px"/><br/>Usage</a></td>
-        <td align="center"><a href="#screenshots"><img src="https://img.icons8.com/fluency/28/image.png" width="24px" height="24px"/><br/>Screenshots</a></td>
-        <td align="center"><a href="#project-structure"><img src="https://img.icons8.com/fluency/28/folder-tree.png" width="24px" height="24px"/><br/>Structure</a></td>
+        <td align="center"><a href="#installation"><img src="https://img.icons8.com/color/28/download.png" width="24px" height="24px"/><br/>Installation</a></td>
+        <td align="center"><a href="#usage"><img src="https://img.icons8.com/color/28/user-manual.png" width="24px" height="24px"/><br/>Usage</a></td>
+        <td align="center"><a href="#screenshots"><img src="https://img.icons8.com/color/28/image.png" width="24px" height="24px"/><br/>Screenshots</a></td>
+        <td align="center"><a href="#project-structure"><img src="https://img.icons8.com/color/28/folder-tree.png" width="24px" height="24px"/><br/>Structure</a></td>
       </tr>
       <tr>
-        <td align="center"><a href="#contributing"><img src="https://img.icons8.com/fluency/28/pull-request.png" width="24px" height="24px"/><br/>Contributing</a></td>
-        <td align="center"><a href="#license"><img src="https://img.icons8.com/fluency/28/certificate.png" width="24px" height="24px"/><br/>License</a></td>
-        <td align="center"><a href="#acknowledgments"><img src="https://img.icons8.com/fluency/28/prize.png" width="24px" height="24px"/><br/>Credits</a></td>
-        <td align="center"><a href="https://github.com/YousifAbozid/DevInsight/issues"><img src="https://img.icons8.com/fluency/28/comments.png" width="24px" height="24px"/><br/>Feedback</a></td>
+        <td align="center"><a href="#contributing"><img src="https://img.icons8.com/color/28/pull-request.png" width="24px" height="24px"/><br/>Contributing</a></td>
+        <td align="center"><a href="#license"><img src="https://img.icons8.com/color/28/certificate.png" width="24px" height="24px"/><br/>License</a></td>
+        <td align="center"><a href="#acknowledgments"><img src="https://img.icons8.com/color/28/prize.png" width="24px" height="24px"/><br/>Credits</a></td>
+        <td align="center"><a href="https://github.com/YousifAbozid/DevInsight/issues"><img src="https://img.icons8.com/color/28/comments.png" width="24px" height="24px"/><br/>Feedback</a></td>
       </tr>
     </table>
   </div>
