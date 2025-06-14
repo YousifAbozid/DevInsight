@@ -41,7 +41,7 @@ export default function Footer() {
       scale: 1.15,
       transition: {
         duration: 0.3,
-        type: 'spring',
+        type: 'spring' as const,
         stiffness: 300,
       },
     },
